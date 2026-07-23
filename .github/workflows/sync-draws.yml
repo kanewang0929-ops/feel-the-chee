@@ -1,0 +1,50 @@
+name: 同步大乐透历史开奖
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/sync_draws.py"
+      - ".github/workflows/sync-draws.yml"
+  schedule:
+    # 北京时间周一、周三、周六 22:10 与 22:35
+    - cron: "10,35 14 * * 1,3,6"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-dlt-history
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch all official draw history
+        run: python scripts/sync_draws.py
+
+      - name: Commit updated archive
+        run: |
+          if git diff --quiet -- data/draws.json; then
+            echo "No draw changes detected."
+            exit 0
+          fi
+
+          git config user.name "feel-the-chee-sync"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/draws.json
+          git commit -m "data: sync official DLT draw history"
+          git push
