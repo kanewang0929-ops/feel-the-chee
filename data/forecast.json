@@ -1,0 +1,138 @@
+{
+  "modelVersion": "v2.0-full-history",
+  "generatedAt": "2026-07-23T03:44:44.502287+00:00",
+  "targetIssue": "26083",
+  "targetDate": "2026-07-25",
+  "historyCount": 2900,
+  "historyRange": {
+    "earliestIssue": "07001",
+    "earliestDate": "2007-05-30",
+    "latestIssue": "26082",
+    "latestDate": "2026-07-22"
+  },
+  "latestDraw": {
+    "front": [
+      "16",
+      "26",
+      "27",
+      "28",
+      "34"
+    ],
+    "back": [
+      "02",
+      "06"
+    ]
+  },
+  "calibration": {
+    "front": {
+      "tests": 90,
+      "averageMainHits": 0.7,
+      "averageWiderHits": 1.356,
+      "objective": 3.456,
+      "selectedProfile": "stable-history"
+    },
+    "back": {
+      "tests": 90,
+      "averageMainHits": 0.4,
+      "averageWiderHits": 0.833,
+      "objective": 2.033,
+      "selectedProfile": "transition-led"
+    },
+    "frontWeights": {
+      "long": 0.16,
+      "r10": 0.07,
+      "r30": 0.12,
+      "r100": 0.2,
+      "r300": 0.14,
+      "gap": 0.11,
+      "momentum": 0.08,
+      "transition": 0.12
+    },
+    "backWeights": {
+      "long": 0.06,
+      "r10": 0.1,
+      "r30": 0.14,
+      "r100": 0.16,
+      "r300": 0.08,
+      "gap": 0.11,
+      "momentum": 0.1,
+      "transition": 0.25
+    },
+    "note": "匹配度是模型内部结构评分，不是中奖概率。"
+  },
+  "results": [
+    {
+      "rank": 1,
+      "label": "主路径",
+      "front": [
+        "03",
+        "13",
+        "22",
+        "26",
+        "29"
+      ],
+      "back": [
+        "02",
+        "12"
+      ],
+      "fit": 85.0,
+      "reason": "全历史先验与近期节奏共同评分；前区和值93、跨度26、奇偶3:2、低高区2:3，并保留不同的号码迁移路径。"
+    },
+    {
+      "rank": 2,
+      "label": "周期修正",
+      "front": [
+        "06",
+        "10",
+        "13",
+        "26",
+        "29"
+      ],
+      "back": [
+        "02",
+        "07"
+      ],
+      "fit": 80.0,
+      "reason": "全历史先验与近期节奏共同评分；前区和值84、跨度23、奇偶2:3、低高区3:2，并保留不同的号码迁移路径。"
+    },
+    {
+      "rank": 3,
+      "label": "结构对冲",
+      "front": [
+        "10",
+        "13",
+        "22",
+        "26",
+        "33"
+      ],
+      "back": [
+        "02",
+        "11"
+      ],
+      "fit": 77.9,
+      "reason": "全历史先验与近期节奏共同评分；前区和值104、跨度23、奇偶2:3、低高区2:3，并保留不同的号码迁移路径。"
+    }
+  ],
+  "signals": {
+    "frontTop10": [
+      "26",
+      "29",
+      "13",
+      "22",
+      "10",
+      "21",
+      "23",
+      "33",
+      "06",
+      "20"
+    ],
+    "backTop6": [
+      "02",
+      "12",
+      "11",
+      "07",
+      "10",
+      "01"
+    ]
+  }
+}
