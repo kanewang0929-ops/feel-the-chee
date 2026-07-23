@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>彩票预测实验室 · 结构修正版</title>
+<style>
+:root{
+  --bg:#0a1020;
+  --panel:#121a35;
+  --panel2:#172142;
+  --line:rgba(255,255,255,.10);
+  --text:#eef3ff;
+  --muted:#aab6d4;
+  --blue:#7c96ff;
+  --green:#55d99a;
+  --yellow:#ffd166;
+  --red:#ff6b6b;
+  --shadow:0 18px 50px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 15% 0%,rgba(124,150,255,.24),transparent 28%),
+    radial-gradient(circle at 90% 10%,rgba(85,217,154,.14),transparent 25%),
+    linear-gradient(180deg,#09101f,#0e1530);
+  color:var(--text);
+  font-family:"PingFang SC","Microsoft YaHei",Arial,sans-serif;
+}
+.shell{max-width:1280px;margin:0 auto;padding:24px}
+.header{
+  display:flex;justify-content:space-between;align-items:center;gap:20px;
+  padding:20px 24px;border:1px solid var(--line);border-radius:22px;
+  background:rgba(255,255,255,.045);box-shadow:var(--shadow);backdrop-filter:blur(16px)
+}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{
+  width:48px;height:48px;border-radius:15px;display:grid;place-items:center;
+  color:#07101f;font-weight:900;font-size:21px;
+  background:linear-gradient(135deg,var(--blue),var(--green))
+}
+.brand h1{margin:0;font-size:24px}
+.brand p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.next{
+  padding:10px 14px;border:1px solid rgba(124,150,255,.26);
+  background:rgba(124,150,255,.14);border-radius:999px;color:#dfe6ff;font-size:13px
+}
+.tabs{
+  display:flex;gap:10px;flex-wrap:wrap;margin-top:20px
+}
+.tab{
+  border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);
+  padding:12px 18px;border-radius:13px;cursor:pointer;font-weight:700
+}
+.tab.active{background:linear-gradient(135deg,var(--blue),#9a7cff);border-color:transparent}
+.page{display:none;margin-top:20px}
+.page.active{display:block}
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:20px}
+.card{
+  border:1px solid var(--line);border-radius:20px;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.03));
+  box-shadow:var(--shadow);padding:22px
+}
+.card h2,.card h3{margin-top:0}
+.muted{color:var(--muted);line-height:1.7}
+.section-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:14px}
+.badge{
+  display:inline-flex;padding:7px 11px;border-radius:999px;font-size:12px;font-weight:800;
+  border:1px solid var(--line);white-space:nowrap
+}
+.badge.blue{background:rgba(124,150,255,.14);color:#dfe5ff}
+.badge.gold{background:rgba(255,209,102,.14);color:#ffe6a7}
+.forecast-list{display:grid;gap:14px}
+.forecast{
+  padding:18px;border-radius:17px;border:1px solid var(--line);background:rgba(255,255,255,.035)
+}
+.forecast-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:13px}
+.score{
+  padding:6px 10px;border-radius:999px;background:rgba(85,217,154,.13);
+  color:#caffea;border:1px solid rgba(85,217,154,.22);font-size:12px;font-weight:800
+}
+.numbers{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.ball{
+  width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+  background:#eef2ff;color:#152040;font-weight:900;border:1px solid rgba(255,255,255,.20)
+}
+.ball.back{background:linear-gradient(135deg,var(--green),var(--blue));color:#07101f}
+.plus{margin:0 4px;color:#bea9ff;font-size:20px;font-weight:900}
+.reason{margin-top:11px;color:var(--muted);font-size:13px;line-height:1.6}
+.chee-bars{display:grid;gap:10px;margin:14px 0 18px}
+.chee-row{display:grid;grid-template-columns:60px 1fr 42px;gap:10px;align-items:center;font-size:13px}
+.bar{height:9px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:999px}
+.toolbar{
+  display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-bottom:14px
+}
+.search{
+  min-width:220px;padding:11px 13px;border-radius:12px;border:1px solid var(--line);
+  background:rgba(255,255,255,.04);color:var(--text);outline:none
+}
+table{width:100%;border-collapse:collapse}
+th,td{padding:13px 10px;border-bottom:1px solid var(--line);text-align:center;font-size:13px}
+th{color:#cbd5f3;font-weight:800}
+.status{
+  display:inline-flex;padding:6px 10px;border-radius:999px;font-weight:800;font-size:12px
+}
+.wait{background:var(--yellow);color:#3c2e00}
+.ok{background:var(--green);color:#062718}
+.fail{background:var(--red);color:white}
+.btn{
+  border:0;border-radius:9px;padding:8px 11px;color:white;cursor:pointer;font-weight:700
+}
+.btn.edit{background:#647dff}
+.btn.del{background:#d75568}
+.pager{display:flex;justify-content:center;gap:7px;margin-top:16px}
+.pager button{
+  border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);
+  min-width:34px;height:34px;border-radius:9px;cursor:pointer
+}
+.pager button.active{background:var(--blue)}
+.log-list{display:grid;gap:14px}
+.log{
+  display:grid;grid-template-columns:110px 1fr;gap:16px;padding:18px;
+  border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.035)
+}
+.log-time{color:#c8d2ef;font-size:12px}
+.log-title{font-weight:800;margin-bottom:7px}
+.log-body{color:var(--muted);line-height:1.7;font-size:13px}
+.weight-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.weight{
+  padding:16px;border-radius:15px;border:1px solid var(--line);background:rgba(255,255,255,.035)
+}
+.weight strong{font-size:24px;display:block;margin-top:6px}
+.modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.66);display:none;align-items:center;justify-content:center;padding:20px
+}
+.modal.show{display:flex}
+.modal-card{width:min(560px,100%);background:#131b36;border:1px solid var(--line);border-radius:18px;padding:22px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid input{
+  width:100%;padding:11px 12px;border-radius:11px;border:1px solid var(--line);
+  background:rgba(255,255,255,.04);color:var(--text)
+}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.weight-grid{grid-template-columns:1fr 1fr}.header{align-items:flex-start;flex-direction:column}}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}.weight-grid{grid-template-columns:1fr}.log{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="header">
+    <div class="brand">
+      <div class="logo">彩</div>
+      <div>
+        <h1>彩票预测实验室</h1>
+        <p>预测中心 · 管理员后台 · 模型学习</p>
+      </div>
+    </div>
+    <div class="next">下一期开奖：2026/07/25 星期六</div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-page="prediction">预测中心</button>
+    <button class="tab" data-page="admin">管理员后台</button>
+    <button class="tab" data-page="learning">模型学习</button>
+  </nav>
+
+  <main>
+    <section id="prediction" class="page active">
+      <div class="grid">
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <h2>AI 预测结果</h2>
+              <div class="muted">统计预测模型输出 3 组候选结果。</div>
+            </div>
+            <span class="badge blue">3 组结果</span>
+          </div>
+
+          <div class="forecast-list">
+            <div class="forecast">
+              <div class="forecast-top"><strong>预测结果 1</strong><span class="score">模型匹配度 81.6</span></div>
+              <div class="numbers">
+                <span class="ball">05</span><span class="ball">13</span><span class="ball">20</span><span class="ball">23</span><span class="ball">32</span>
+                <span class="plus">+</span>
+                <span class="ball back">07</span><span class="ball back">08</span>
+              </div>
+              <div class="reason">近期趋势、遗漏周期和结构分布的综合结果。</div>
+            </div>
+
+            <div class="forecast">
+              <div class="forecast-top"><strong>预测结果 2</strong><span class="score">模型匹配度 78.9</span></div>
+              <div class="numbers">
+                <span class="ball">02</span><span class="ball">15</span><span class="ball">21</span><span class="ball">27</span><span class="ball">34</span>
+                <span class="plus">+</span>
+                <span class="ball back">05</span><span class="ball back">11</span>
+              </div>
+              <div class="reason">加强高位号码与后区冷号的候选路径。</div>
+            </div>
+
+            <div class="forecast">
+              <div class="forecast-top"><strong>预测结果 3</strong><span class="score">模型匹配度 75.4</span></div>
+              <div class="numbers">
+                <span class="ball">06</span><span class="ball">14</span><span class="ball">19</span><span class="ball">28</span><span class="ball">35</span>
+                <span class="plus">+</span>
+                <span class="ball back">03</span><span class="ball back">09</span>
+              </div>
+              <div class="reason">更偏实验型结构，用于保留另一条可能走势。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <h2>Feel the Chee</h2>
+              <div class="muted">易经数字五行预测模型输出 2 组结果。</div>
+            </div>
+            <span class="badge gold">2 组结果</span>
+          </div>
+
+          <div class="chee-bars">
+            <div class="chee-row"><span>金</span><div class="bar"><div class="fill" style="width:82%"></div></div><span>82</span></div>
+            <div class="chee-row"><span>火</span><div class="bar"><div class="fill" style="width:55%"></div></div><span>55</span></div>
+            <div class="chee-row"><span>土</span><div class="bar"><div class="fill" style="width:44%"></div></div><span>44</span></div>
+            <div class="chee-row"><span>木</span><div class="bar"><div class="fill" style="width:38%"></div></div><span>38</span></div>
+            <div class="chee-row"><span>水</span><div class="bar"><div class="fill" style="width:24%"></div></div><span>24</span></div>
+          </div>
+
+          <div class="forecast-list">
+            <div class="forecast">
+              <div class="forecast-top"><strong>Chee 结果 1</strong><span class="score">Chee 值 84.2</span></div>
+              <div class="numbers">
+                <span class="ball">04</span><span class="ball">13</span><span class="ball">21</span><span class="ball">28</span><span class="ball">33</span>
+                <span class="plus">+</span>
+                <span class="ball back">06</span><span class="ball back">11</span>
+              </div>
+              <div class="reason">偏向补足水与土，修正当前五行失衡。</div>
+            </div>
+
+            <div class="forecast">
+              <div class="forecast-top"><strong>Chee 结果 2</strong><span class="score">Chee 值 79.6</span></div>
+              <div class="numbers">
+                <span class="ball">05</span><span class="ball">14</span><span class="ball">20</span><span class="ball">27</span><span class="ball">34</span>
+                <span class="plus">+</span>
+                <span class="ball back">03</span><span class="ball back">09</span>
+              </div>
+              <div class="reason">强调金向水的过渡，并保留火元素延续。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="admin" class="page">
+      <div class="card">
+        <div class="section-head">
+          <div>
+            <h2>管理员后台</h2>
+            <div class="muted">查看历史开奖记录，编辑或删除错误数据，并检查同步状态。</div>
+          </div>
+          <span class="badge blue">每页 10 条</span>
+        </div>
+
+        <div class="toolbar">
+          <input id="searchInput" class="search" placeholder="搜索期次或日期">
+          <div class="muted">状态：黄色等待、绿色成功、红色失败</div>
+        </div>
+
+        <div style="overflow:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>期次</th>
+                <th>开奖日期</th>
+                <th>开奖号码</th>
+                <th>同步状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="drawBody"></tbody>
+          </table>
+        </div>
+        <div id="pager" class="pager"></div>
+      </div>
+    </section>
+
+    <section id="learning" class="page">
+      <div class="card">
+        <div class="section-head">
+          <div>
+            <h2>模型学习</h2>
+            <div class="muted">记录 AI 预测模型如何用“预测结果 + 实际结果”持续调整策略。</div>
+          </div>
+          <span class="badge blue">模型版本 v1.3</span>
+        </div>
+
+        <div class="weight-grid">
+          <div class="weight"><span class="muted">趋势分析</span><strong>34%</strong></div>
+          <div class="weight"><span class="muted">遗漏周期</span><strong>24%</strong></div>
+          <div class="weight"><span class="muted">冷热转换</span><strong>22%</strong></div>
+          <div class="weight"><span class="muted">结构分布</span><strong>20%</strong></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>学习路径日志</h3>
+        <div class="log-list">
+          <div class="log">
+            <div class="log-time">26082 开奖后</div>
+            <div>
+              <div class="log-title">高位号码权重上调</div>
+              <div class="log-body">上一期三组预测平均高位号码不足，而实际结果集中在 26 至 34 区间。趋势分析权重由 31% 调整为 34%。</div>
+            </div>
+          </div>
+          <div class="log">
+            <div class="log-time">26081 开奖后</div>
+            <div>
+              <div class="log-title">后区冷号策略修正</div>
+              <div class="log-body">后区预测连续两期偏向热号，但实际结果出现 09、12。系统提高冷号回补特征，并降低短期重复权重。</div>
+            </div>
+          </div>
+          <div class="log">
+            <div class="log-time">26080 开奖后</div>
+            <div>
+              <div class="log-title">和值区间重新校准</div>
+              <div class="log-body">预测和值连续偏高，实际和值为 74。系统将最近 20 期和值分布权重提高，并减少固定中高区间限制。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="editModal" class="modal">
+  <div class="modal-card">
+    <h3>编辑开奖记录</h3>
+    <div class="form-grid">
+      <input id="editIssue" placeholder="期次">
+      <input id="editDate" placeholder="日期">
+      <input id="editFront" placeholder="前区：01 02 03 04 05">
+      <input id="editBack" placeholder="后区：01 02">
+    </div>
+    <div class="modal-actions">
+      <button class="btn del" onclick="closeModal()">取消</button>
+      <button class="btn edit" onclick="saveEdit()">保存修改</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const tabs=[...document.querySelectorAll(".tab")];
+tabs.forEach(btn=>btn.addEventListener("click",()=>{
+  tabs.forEach(x=>x.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+  document.getElementById(btn.dataset.page).classList.add("active");
+}));
+
+let draws=[
+  {issue:"26083",date:"2026-07-25",front:"等待开奖",back:"",status:"等待自动同步"},
+  {issue:"26082",date:"2026-07-22",front:"16 26 27 28 34",back:"02 06",status:"已同步"},
+  {issue:"26081",date:"2026-07-20",front:"08 16 18 24 34",back:"09 12",status:"已同步"},
+  {issue:"26080",date:"2026-07-18",front:"05 10 15 21 23",back:"07 08",status:"已同步"},
+  {issue:"26079",date:"2026-07-15",front:"06 08 23 26 27",back:"05 12",status:"已同步"},
+  {issue:"26078",date:"2026-07-13",front:"02 13 20 25 32",back:"08 11",status:"已同步"},
+  {issue:"26077",date:"2026-07-11",front:"04 14 19 24 27",back:"06 07",status:"已同步"},
+  {issue:"26076",date:"2026-07-08",front:"15 20 27 28 35",back:"02 11",status:"已同步"},
+  {issue:"26075",date:"2026-07-06",front:"01 06 16 18 26",back:"04 10",status:"已同步"},
+  {issue:"26074",date:"2026-07-04",front:"01 04 10 23 25",back:"01 12",status:"已同步"},
+  {issue:"26073",date:"2026-07-01",front:"04 10 22 23 33",back:"02 12",status:"同步失败"},
+  {issue:"26072",date:"2026-06-29",front:"01 13 26 29 30",back:"09 11",status:"已同步"}
+];
+let currentPage=1;
+const pageSize=10;
+let editingIndex=null;
+
+function statusClass(s){
+  if(s==="已同步") return "ok";
+  if(s==="同步失败") return "fail";
+  return "wait";
+}
+
+function filteredDraws(){
+  const q=document.getElementById("searchInput").value.trim();
+  if(!q) return draws.map((d,i)=>({...d,_i:i}));
+  return draws.map((d,i)=>({...d,_i:i})).filter(d=>d.issue.includes(q)||d.date.includes(q));
+}
+
+function renderAdmin(){
+  const list=filteredDraws();
+  const pages=Math.max(1,Math.ceil(list.length/pageSize));
+  if(currentPage>pages) currentPage=pages;
+  const rows=list.slice((currentPage-1)*pageSize,currentPage*pageSize);
+  document.getElementById("drawBody").innerHTML=rows.map(d=>`
+    <tr>
+      <td>${d.issue}</td>
+      <td>${d.date}</td>
+      <td>${d.front}${d.back?` + ${d.back}`:""}</td>
+      <td><span class="status ${statusClass(d.status)}">${d.status}</span></td>
+      <td>
+        <button class="btn edit" onclick="openEdit(${d._i})">编辑</button>
+        <button class="btn del" onclick="deleteDraw(${d._i})">删除</button>
+      </td>
+    </tr>`).join("");
+  document.getElementById("pager").innerHTML=Array.from({length:pages},(_,i)=>`
+    <button class="${i+1===currentPage?"active":""}" onclick="currentPage=${i+1};renderAdmin()">${i+1}</button>
+  `).join("");
+}
+
+document.getElementById("searchInput").addEventListener("input",()=>{currentPage=1;renderAdmin()});
+
+function openEdit(i){
+  editingIndex=i;
+  const d=draws[i];
+  editIssue.value=d.issue;
+  editDate.value=d.date;
+  editFront.value=d.front;
+  editBack.value=d.back;
+  editModal.classList.add("show");
+}
+function closeModal(){editModal.classList.remove("show")}
+function saveEdit(){
+  draws[editingIndex]={...draws[editingIndex],issue:editIssue.value,date:editDate.value,front:editFront.value,back:editBack.value};
+  closeModal();renderAdmin();
+}
+function deleteDraw(i){
+  if(confirm("确认删除这条开奖记录？")){draws.splice(i,1);renderAdmin()}
+}
+renderAdmin();
+</script>
+</body>
+</html>
