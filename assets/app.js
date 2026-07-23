@@ -8,6 +8,7 @@ tabs.forEach(btn=>btn.addEventListener("click",()=>{
 
 const LIVE_HISTORY_URL="https://raw.githubusercontent.com/yangxb919/lottery-data/main/data/dlt.json";
 const LOCAL_HISTORY_URL="./data/draws.json";
+const FORECAST_URL="./data/forecast.json";
 
 let draws=[];
 let currentPage=1;
@@ -59,16 +60,12 @@ async function fetchJson(url){
 async function fetchLiveHistory(){
   const payload=await fetchJson(LIVE_HISTORY_URL);
   if(!Array.isArray(payload)) throw new Error("历史数据格式错误");
-
   const normalized=payload.map(normalizeDraw).filter(validDraw);
   if(normalized.length<1000) throw new Error(`历史数据不足：${normalized.length}`);
-
   normalized.sort((a,b)=>{
     const dateOrder=b.date.localeCompare(a.date);
-    if(dateOrder!==0) return dateOrder;
-    return Number(b.issue)-Number(a.issue);
+    return dateOrder!==0?dateOrder:Number(b.issue)-Number(a.issue);
   });
-
   return {
     draws:normalized,
     meta:{
@@ -97,18 +94,10 @@ async function fetchLocalHistory(){
 async function loadDraws(){
   document.getElementById("syncMeta").textContent="正在同步全部历史开奖记录...";
   let localResult=null;
-
-  try{
-    localResult=await fetchLocalHistory();
-  }catch(error){
-    console.warn("Local history unavailable",error);
-  }
-
+  try{localResult=await fetchLocalHistory()}catch(error){console.warn("Local history unavailable",error)}
   try{
     const liveResult=await fetchLiveHistory();
-    const selected=localResult&&localResult.draws.length>=liveResult.draws.length
-      ?localResult
-      :liveResult;
+    const selected=localResult&&localResult.draws.length>=liveResult.draws.length?localResult:liveResult;
     draws=applyBrowserOverrides(selected.draws);
     syncMeta=selected.meta;
   }catch(error){
@@ -121,9 +110,93 @@ async function loadDraws(){
       syncMeta={total:draws.length,source:"应急预览数据",error:String(error)};
     }
   }
-
   currentPage=1;
   renderAdmin();
+}
+
+function ball(number,back=false){
+  return `<span class="ball${back?" back":""}">${number}</span>`;
+}
+
+function forecastCard(result){
+  return `<div class="forecast">
+    <div class="forecast-top">
+      <strong>预测结果 ${result.rank} · ${result.label}</strong>
+      <span class="score">模型匹配度 ${Number(result.fit).toFixed(1)}</span>
+    </div>
+    <div class="numbers">
+      ${result.front.map(n=>ball(n)).join("")}
+      <span class="plus">+</span>
+      ${result.back.map(n=>ball(n,true)).join("")}
+    </div>
+    <div class="reason">${result.reason}</div>
+  </div>`;
+}
+
+function percent(value){return `${Math.round(value*100)}%`}
+
+function renderForecast(payload){
+  const list=document.querySelector("#prediction .grid > .card:first-child .forecast-list");
+  if(list&&Array.isArray(payload.results)) list.innerHTML=payload.results.map(forecastCard).join("");
+
+  const description=document.querySelector("#prediction .grid > .card:first-child .section-head .muted");
+  if(description){
+    description.textContent=`基于 ${Number(payload.historyCount).toLocaleString("zh-CN")} 期历史数据，滚动回测后输出 3 组候选结果。`;
+  }
+
+  const next=document.querySelector(".next");
+  if(next) next.textContent=`下一期开奖：${payload.targetDate} · 第${payload.targetIssue}期`;
+
+  const weights=payload.calibration?.frontWeights||{};
+  const aggregate=[
+    (weights.r10||0)+(weights.r30||0)+(weights.r100||0)+(weights.r300||0),
+    weights.gap||0,
+    (weights.long||0)+(weights.momentum||0),
+    weights.transition||0
+  ];
+  document.querySelectorAll("#learning .weight-grid .weight strong").forEach((node,index)=>{
+    if(aggregate[index]!==undefined) node.textContent=percent(aggregate[index]);
+  });
+
+  const version=document.querySelector("#learning .section-head .badge");
+  if(version) version.textContent=`模型版本 ${payload.modelVersion}`;
+
+  const front=payload.calibration?.front||{};
+  const back=payload.calibration?.back||{};
+  const logs=document.querySelector("#learning .log-list");
+  if(logs){
+    logs.innerHTML=`
+      <div class="log">
+        <div class="log-time">第${payload.targetIssue}期</div>
+        <div>
+          <div class="log-title">完成全历史预测更新</div>
+          <div class="log-body">读取 ${Number(payload.historyCount).toLocaleString("zh-CN")} 期数据，从 ${payload.historyRange.earliestDate} 至 ${payload.historyRange.latestDate}，生成三条互相分散的候选路径。</div>
+        </div>
+      </div>
+      <div class="log">
+        <div class="log-time">前区回测</div>
+        <div>
+          <div class="log-title">采用 ${front.selectedProfile||"校准"} 权重组合</div>
+          <div class="log-body">最近 ${front.tests||0} 个滚动测试中，前区前5名平均命中 ${front.averageMainHits??"-"} 个，前10名平均覆盖 ${front.averageWiderHits??"-"} 个。</div>
+        </div>
+      </div>
+      <div class="log">
+        <div class="log-time">后区回测</div>
+        <div>
+          <div class="log-title">采用 ${back.selectedProfile||"校准"} 权重组合</div>
+          <div class="log-body">最近 ${back.tests||0} 个滚动测试中，后区前2名平均命中 ${back.averageMainHits??"-"} 个，前5名平均覆盖 ${back.averageWiderHits??"-"} 个。迁移关系获得更高权重。</div>
+        </div>
+      </div>`;
+  }
+}
+
+async function loadForecast(){
+  try{
+    const payload=await fetchJson(FORECAST_URL);
+    renderForecast(payload);
+  }catch(error){
+    console.warn("Forecast unavailable",error);
+  }
 }
 
 function statusClass(s){
@@ -145,7 +218,6 @@ function renderAdmin(){
   const pages=Math.max(1,Math.ceil(list.length/pageSize));
   if(currentPage>pages) currentPage=pages;
   const rows=list.slice((currentPage-1)*pageSize,currentPage*pageSize);
-
   document.getElementById("drawBody").innerHTML=rows.map(d=>`
     <tr>
       <td>${d.issue}</td>
@@ -172,12 +244,8 @@ function renderAdmin(){
   document.getElementById("pager").innerHTML=pageButtons.join("");
 
   const total=syncMeta.total||draws.length;
-  const range=syncMeta.earliestDate&&syncMeta.latestDate
-    ?`${syncMeta.earliestDate} 至 ${syncMeta.latestDate}`
-    :"完整可用范围";
-  const source=syncMeta.source||"历史开奖数据库";
-  document.getElementById("syncMeta").textContent=
-    `已同步 ${total.toLocaleString("zh-CN")} 期 · ${range} · ${source}`;
+  const range=syncMeta.earliestDate&&syncMeta.latestDate?`${syncMeta.earliestDate} 至 ${syncMeta.latestDate}`:"完整可用范围";
+  document.getElementById("syncMeta").textContent=`已同步 ${total.toLocaleString("zh-CN")} 期 · ${range} · ${syncMeta.source||"历史开奖数据库"}`;
 }
 
 document.getElementById("searchInput").addEventListener("input",()=>{currentPage=1;renderAdmin()});
@@ -194,14 +262,7 @@ function openEdit(i){
 function closeModal(){editModal.classList.remove("show")}
 function saveEdit(){
   const originalIssue=draws[editingIndex].issue;
-  const updated={
-    ...draws[editingIndex],
-    issue:editIssue.value.trim(),
-    date:editDate.value.trim(),
-    front:editFront.value.trim(),
-    back:editBack.value.trim(),
-    status:"已同步"
-  };
+  const updated={...draws[editingIndex],issue:editIssue.value.trim(),date:editDate.value.trim(),front:editFront.value.trim(),back:editBack.value.trim(),status:"已同步"};
   if(!validDraw(updated)){
     alert("号码格式不正确。前区需要5个不重复的01至35号码，后区需要2个不重复的01至12号码。");
     return;
@@ -225,3 +286,4 @@ function deleteDraw(i){
 }
 
 loadDraws();
+loadForecast();
