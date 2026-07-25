@@ -1,41 +1,45 @@
-name: Generate full-history forecast
+name: 手动重跑自适应预测
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "scripts/generate_forecast.py"
-      - "data/draws.json"
-      - ".github/workflows/generate-forecast.yml"
-  schedule:
-    - cron: "20 14 * * 1,3,6"
 
 permissions:
   contents: write
 
+concurrency:
+  group: manual-adaptive-forecast
+  cancel-in-progress: false
+
 jobs:
   forecast:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Generate forecast
-        run: python scripts/generate_forecast.py
+      - name: Evaluate available result and regenerate forecast
+        run: python scripts/learn_and_forecast.py
 
-      - name: Commit forecast when changed
+      - name: Commit model outputs when changed
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/forecast.json
+          git config user.name "feel-the-chee-learning-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/forecast.json data/forecast-history.json data/learning-log.json data/model-state.json
+
           if git diff --cached --quiet; then
             echo "Forecast unchanged"
-          else
-            git commit -m "data: refresh full-history AI forecast"
-            git push
+            exit 0
           fi
+
+          git commit -m "data: manually refresh adaptive forecast"
+          git pull --rebase origin main
+          git push origin main
