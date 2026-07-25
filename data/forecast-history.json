@@ -212,5 +212,227 @@
         "rule": "Live feedback is an exponential moving average with a bounded influence on walk-forward selection."
       }
     }
+  },
+  {
+    "modelVersion": "v2.1-adaptive",
+    "generatedAt": "2026-07-25T16:55:02.368510+00:00",
+    "targetIssue": "26084",
+    "targetDate": "2026-07-27",
+    "historyCount": 2901,
+    "historyRange": {
+      "earliestIssue": "07001",
+      "earliestDate": "2007-05-30",
+      "latestIssue": "26083",
+      "latestDate": "2026-07-25"
+    },
+    "latestDraw": {
+      "front": [
+        "14",
+        "15",
+        "16",
+        "23",
+        "26"
+      ],
+      "back": [
+        "07",
+        "09"
+      ]
+    },
+    "lastEvaluation": {
+      "issue": "26083",
+      "date": "2026-07-25",
+      "evaluatedAt": "2026-07-25T16:54:54.300896+00:00",
+      "actual": {
+        "front": [
+          "14",
+          "15",
+          "16",
+          "23",
+          "26"
+        ],
+        "back": [
+          "07",
+          "09"
+        ]
+      },
+      "predictionModelVersion": "v2.0-full-history",
+      "results": [
+        {
+          "rank": 1,
+          "label": "主路径",
+          "frontHits": [
+            "26"
+          ],
+          "backHits": [],
+          "frontHitCount": 1,
+          "backHitCount": 0
+        },
+        {
+          "rank": 2,
+          "label": "周期修正",
+          "frontHits": [
+            "26"
+          ],
+          "backHits": [
+            "07"
+          ],
+          "frontHitCount": 1,
+          "backHitCount": 1
+        },
+        {
+          "rank": 3,
+          "label": "结构对冲",
+          "frontHits": [
+            "26"
+          ],
+          "backHits": [],
+          "frontHitCount": 1,
+          "backHitCount": 0
+        }
+      ],
+      "summary": {
+        "averageFrontHits": 1.0,
+        "averageBackHits": 0.333,
+        "bestFrontHits": 1,
+        "bestBackHits": 1
+      },
+      "learningUpdate": {
+        "frontProfile": "stable-history",
+        "backProfile": "transition-led",
+        "frontReward": 0.2,
+        "backReward": 0.166667,
+        "frontState": {
+          "evaluations": 1,
+          "lastHitRate": 0.2,
+          "emaHitRate": 0.2
+        },
+        "backState": {
+          "evaluations": 1,
+          "lastHitRate": 0.166667,
+          "emaHitRate": 0.166667
+        },
+        "rule": "Live feedback is an exponential moving average with a bounded influence on walk-forward selection."
+      }
+    },
+    "calibration": {
+      "front": {
+        "tests": 90,
+        "averageMainHits": 0.667,
+        "averageWiderHits": 1.422,
+        "historicalObjective": 3.422,
+        "adaptiveBonus": 0.0,
+        "objective": 3.422,
+        "selectedProfile": "balanced",
+        "liveEvaluations": 0,
+        "liveEmaHitRate": null
+      },
+      "back": {
+        "tests": 90,
+        "averageMainHits": 0.333,
+        "averageWiderHits": 0.867,
+        "historicalObjective": 1.867,
+        "adaptiveBonus": 0.0,
+        "objective": 1.867,
+        "selectedProfile": "stable-history",
+        "liveEvaluations": 0,
+        "liveEmaHitRate": null
+      },
+      "frontWeights": {
+        "long": 0.08,
+        "r10": 0.12,
+        "r30": 0.18,
+        "r100": 0.18,
+        "r300": 0.08,
+        "gap": 0.12,
+        "momentum": 0.1,
+        "transition": 0.14
+      },
+      "backWeights": {
+        "long": 0.16,
+        "r10": 0.07,
+        "r30": 0.12,
+        "r100": 0.2,
+        "r300": 0.14,
+        "gap": 0.11,
+        "momentum": 0.08,
+        "transition": 0.12
+      },
+      "note": "匹配度是模型内部结构评分，不是中奖概率。实时反馈仅小幅修正，历史滚动回测仍占主导。"
+    },
+    "results": [
+      {
+        "rank": 1,
+        "label": "主路径",
+        "front": [
+          "06",
+          "13",
+          "22",
+          "26",
+          "29"
+        ],
+        "back": [
+          "05",
+          "07"
+        ],
+        "fit": 85.0,
+        "reason": "全历史先验与近期节奏共同评分；前区和值96、跨度23、奇偶2:3、低高区2:3，并保留不同的号码迁移路径。"
+      },
+      {
+        "rank": 2,
+        "label": "周期修正",
+        "front": [
+          "03",
+          "13",
+          "22",
+          "23",
+          "26"
+        ],
+        "back": [
+          "05",
+          "11"
+        ],
+        "fit": 81.6,
+        "reason": "全历史先验与近期节奏共同评分；前区和值87、跨度23、奇偶3:2、低高区2:3，并保留不同的号码迁移路径。"
+      },
+      {
+        "rank": 3,
+        "label": "结构对冲",
+        "front": [
+          "03",
+          "13",
+          "15",
+          "26",
+          "29"
+        ],
+        "back": [
+          "02",
+          "07"
+        ],
+        "fit": 79.3,
+        "reason": "全历史先验与近期节奏共同评分；前区和值86、跨度26、奇偶4:1、低高区3:2，并保留不同的号码迁移路径。"
+      }
+    ],
+    "signals": {
+      "frontTop10": [
+        "26",
+        "13",
+        "23",
+        "29",
+        "22",
+        "10",
+        "21",
+        "15",
+        "06",
+        "18"
+      ],
+      "backTop6": [
+        "07",
+        "05",
+        "02",
+        "11",
+        "12",
+        "10"
+      ]
+    }
   }
 ]
