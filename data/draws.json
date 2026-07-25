@@ -2,22 +2,32 @@
   "meta": {
     "game": "超级大乐透",
     "gameNo": "85",
-    "total": 2900,
-    "latestIssue": "26082",
-    "latestDate": "2026-07-22",
+    "total": 2901,
+    "latestIssue": "26083",
+    "latestDate": "2026-07-25",
     "earliestIssue": "07001",
     "earliestDate": "2007-05-30",
-    "syncedAt": "2026-07-23T11:35:48+08:00",
+    "syncedAt": "2026-07-26T00:54:54+08:00",
     "source": "500.com 全量历史镜像",
     "sourceUrls": [
       "https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry",
       "https://raw.githubusercontent.com/yangxb919/lottery-data/main/data/dlt.json"
     ],
     "warnings": [
-      "official: Failed to fetch https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=85&provinceId=0&pageSize=100&isVerify=1&pageNo=1: <urlopen error _ssl.c:993: The handshake operation timed out>"
+      "official: Failed to fetch https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=85&provinceId=0&pageSize=100&isVerify=1&pageNo=1: HTTP Error 567: Unknown Status"
     ]
   },
   "draws": [
+    {
+      "issue": "26083",
+      "date": "2026-07-25",
+      "front": "14 15 16 23 26",
+      "back": "07 09",
+      "status": "已同步",
+      "source": "500.com",
+      "sales": null,
+      "pool": null
+    },
     {
       "issue": "26082",
       "date": "2026-07-22",
