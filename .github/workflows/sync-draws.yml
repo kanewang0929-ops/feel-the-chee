@@ -9,6 +9,8 @@ on:
       - "scripts/sync_draws.py"
       - "scripts/learn_and_forecast.py"
       - "scripts/generate_forecast.py"
+      - "scripts/learn_and_chee.py"
+      - "data/chee-forecast.json"
       - ".github/workflows/sync-draws.yml"
   schedule:
     # 北京时间周一、周三、周六 22:10、22:35、23:00。
@@ -25,7 +27,7 @@ concurrency:
 jobs:
   sync-learn-forecast:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -41,20 +43,32 @@ jobs:
       - name: Synchronize complete draw history
         run: python scripts/sync_draws.py
 
-      - name: Evaluate previous forecast and generate next forecast
+      - name: Evaluate AI forecast and generate next forecast
         run: python scripts/learn_and_forecast.py
+
+      - name: Evaluate Feel the Chee and generate next results
+        run: python scripts/learn_and_chee.py
 
       - name: Commit draw, learning, and forecast updates
         run: |
           git config user.name "feel-the-chee-learning-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/draws.json data/forecast.json data/forecast-history.json data/learning-log.json data/model-state.json
+          git add \
+            data/draws.json \
+            data/forecast.json \
+            data/forecast-history.json \
+            data/learning-log.json \
+            data/model-state.json \
+            data/chee-forecast.json \
+            data/chee-forecast-history.json \
+            data/chee-learning-log.json \
+            data/chee-model-state.json
 
           if git diff --cached --quiet; then
             echo "No draw or model changes detected."
             exit 0
           fi
 
-          git commit -m "data: sync draw, learn, and publish next forecast"
+          git commit -m "data: sync draw and refresh AI plus Chee forecasts"
           git pull --rebase origin main
           git push origin main
