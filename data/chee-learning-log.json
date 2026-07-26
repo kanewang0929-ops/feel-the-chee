@@ -1,0 +1,69 @@
+[
+  {
+    "issue": "26083",
+    "date": "2026-07-25",
+    "evaluatedAt": "2026-07-26T02:13:00.102119+00:00",
+    "actual": {
+      "front": [
+        "14",
+        "15",
+        "16",
+        "23",
+        "26"
+      ],
+      "back": [
+        "07",
+        "09"
+      ],
+      "elements": {
+        "木": 1,
+        "火": 1,
+        "土": 1,
+        "金": 2,
+        "水": 2
+      }
+    },
+    "predictionModelVersion": "v1.0-chee",
+    "results": [
+      {
+        "rank": 1,
+        "label": "五行主衡",
+        "frontHits": [],
+        "backHits": [],
+        "frontHitCount": 0,
+        "backHitCount": 0,
+        "elementSimilarity": 0.571,
+        "reward": 0.1829
+      },
+      {
+        "rank": 2,
+        "label": "生化对冲",
+        "frontHits": [
+          "14"
+        ],
+        "backHits": [
+          "09"
+        ],
+        "frontHitCount": 1,
+        "backHitCount": 1,
+        "elementSimilarity": 0.714,
+        "reward": 0.436
+      }
+    ],
+    "summary": {
+      "averageFrontHits": 0.5,
+      "averageBackHits": 0.5,
+      "averageElementSimilarity": 0.642,
+      "averageReward": 0.3094
+    },
+    "learningUpdate": {
+      "profile": "balanced-repair",
+      "state": {
+        "evaluations": 1,
+        "lastReward": 0.309414,
+        "emaReward": 0.309414
+      },
+      "rule": "Number hits and five-element distribution similarity update an exponential moving average with bounded influence."
+    }
+  }
+]
