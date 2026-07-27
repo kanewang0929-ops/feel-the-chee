@@ -74,5 +74,83 @@
       },
       "rule": "Live feedback is an exponential moving average with a bounded influence on walk-forward selection."
     }
+  },
+  {
+    "issue": "26084",
+    "date": "2026-07-27",
+    "evaluatedAt": "2026-07-27T19:01:36.548528+00:00",
+    "actual": {
+      "front": [
+        "13",
+        "25",
+        "30",
+        "32",
+        "33"
+      ],
+      "back": [
+        "04",
+        "05"
+      ]
+    },
+    "predictionModelVersion": "v2.1-adaptive",
+    "results": [
+      {
+        "rank": 1,
+        "label": "主路径",
+        "frontHits": [
+          "13"
+        ],
+        "backHits": [
+          "05"
+        ],
+        "frontHitCount": 1,
+        "backHitCount": 1
+      },
+      {
+        "rank": 2,
+        "label": "周期修正",
+        "frontHits": [
+          "13"
+        ],
+        "backHits": [
+          "05"
+        ],
+        "frontHitCount": 1,
+        "backHitCount": 1
+      },
+      {
+        "rank": 3,
+        "label": "结构对冲",
+        "frontHits": [
+          "13"
+        ],
+        "backHits": [],
+        "frontHitCount": 1,
+        "backHitCount": 0
+      }
+    ],
+    "summary": {
+      "averageFrontHits": 1.0,
+      "averageBackHits": 0.667,
+      "bestFrontHits": 1,
+      "bestBackHits": 1
+    },
+    "learningUpdate": {
+      "frontProfile": "balanced",
+      "backProfile": "stable-history",
+      "frontReward": 0.2,
+      "backReward": 0.333333,
+      "frontState": {
+        "evaluations": 1,
+        "lastHitRate": 0.2,
+        "emaHitRate": 0.2
+      },
+      "backState": {
+        "evaluations": 1,
+        "lastHitRate": 0.333333,
+        "emaHitRate": 0.333333
+      },
+      "rule": "Live feedback is an exponential moving average with a bounded influence on walk-forward selection."
+    }
   }
 ]

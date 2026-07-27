@@ -125,5 +125,254 @@
         "rule": "Number hits and five-element distribution similarity update an exponential moving average with bounded influence."
       }
     }
+  },
+  {
+    "modelVersion": "v1.1-adaptive-chee",
+    "generatedAt": "2026-07-26T02:13:03.704745+00:00",
+    "targetIssue": "26084",
+    "targetDate": "2026-07-27",
+    "historyCount": 2901,
+    "historyRange": {
+      "earliestIssue": "07001",
+      "earliestDate": "2007-05-30",
+      "latestIssue": "26083",
+      "latestDate": "2026-07-25"
+    },
+    "mapping": {
+      "水": [
+        1,
+        6
+      ],
+      "火": [
+        2,
+        7
+      ],
+      "木": [
+        3,
+        8
+      ],
+      "金": [
+        4,
+        9
+      ],
+      "土": [
+        0,
+        5
+      ]
+    },
+    "elementStrengths": {
+      "金": 24,
+      "火": 29,
+      "土": 42,
+      "木": 55,
+      "水": 88
+    },
+    "analysis": {
+      "dominant": "水",
+      "weakest": "火",
+      "flowTarget": "木"
+    },
+    "lastEvaluation": {
+      "issue": "26083",
+      "date": "2026-07-25",
+      "evaluatedAt": "2026-07-26T02:13:00.102119+00:00",
+      "actual": {
+        "front": [
+          "14",
+          "15",
+          "16",
+          "23",
+          "26"
+        ],
+        "back": [
+          "07",
+          "09"
+        ],
+        "elements": {
+          "木": 1,
+          "火": 1,
+          "土": 1,
+          "金": 2,
+          "水": 2
+        }
+      },
+      "predictionModelVersion": "v1.0-chee",
+      "results": [
+        {
+          "rank": 1,
+          "label": "五行主衡",
+          "frontHits": [],
+          "backHits": [],
+          "frontHitCount": 0,
+          "backHitCount": 0,
+          "elementSimilarity": 0.571,
+          "reward": 0.1829
+        },
+        {
+          "rank": 2,
+          "label": "生化对冲",
+          "frontHits": [
+            "14"
+          ],
+          "backHits": [
+            "09"
+          ],
+          "frontHitCount": 1,
+          "backHitCount": 1,
+          "elementSimilarity": 0.714,
+          "reward": 0.436
+        }
+      ],
+      "summary": {
+        "averageFrontHits": 0.5,
+        "averageBackHits": 0.5,
+        "averageElementSimilarity": 0.642,
+        "averageReward": 0.3094
+      },
+      "learningUpdate": {
+        "profile": "balanced-repair",
+        "state": {
+          "evaluations": 1,
+          "lastReward": 0.309414,
+          "emaReward": 0.309414
+        },
+        "rule": "Number hits and five-element distribution similarity update an exponential moving average with bounded influence."
+      }
+    },
+    "calibration": {
+      "tests": 60,
+      "averageFrontHits": 0.75,
+      "averageBackHits": 0.3333,
+      "averageElementSimilarity": 0.381,
+      "historicalObjective": 2.4274,
+      "adaptiveBonus": 0.0,
+      "objective": 2.4274,
+      "liveEvaluations": 0,
+      "liveEmaReward": null,
+      "selectedProfile": "sheng-flow",
+      "selectedLabel": "生化流转"
+    },
+    "results": [
+      {
+        "rank": 1,
+        "label": "五行主衡",
+        "front": [
+          "07",
+          "13",
+          "18",
+          "22",
+          "33"
+        ],
+        "back": [
+          "03",
+          "11"
+        ],
+        "cheeValue": 86.0,
+        "elements": {
+          "木": 4,
+          "火": 2,
+          "土": 0,
+          "金": 0,
+          "水": 1
+        },
+        "reason": "以火为回补重点，由水势导出生化路径；前区覆盖火、木，兼顾五行平衡、相生关系与号码周期。"
+      },
+      {
+        "rank": 2,
+        "label": "生化对冲",
+        "front": [
+          "07",
+          "12",
+          "13",
+          "23",
+          "33"
+        ],
+        "back": [
+          "05",
+          "11"
+        ],
+        "cheeValue": 80.8,
+        "elements": {
+          "木": 3,
+          "火": 2,
+          "土": 1,
+          "金": 0,
+          "水": 1
+        },
+        "reason": "以火为回补重点，由水势导出生化路径；前区覆盖火、木，兼顾五行平衡、相生关系与号码周期。"
+      }
+    ],
+    "note": "Chee值衡量五行结构与历史周期的内部匹配，不是中奖概率。",
+    "evaluation": {
+      "issue": "26084",
+      "date": "2026-07-27",
+      "evaluatedAt": "2026-07-27T19:01:46.675638+00:00",
+      "actual": {
+        "front": [
+          "13",
+          "25",
+          "30",
+          "32",
+          "33"
+        ],
+        "back": [
+          "04",
+          "05"
+        ],
+        "elements": {
+          "木": 2,
+          "火": 1,
+          "土": 3,
+          "金": 1,
+          "水": 0
+        }
+      },
+      "predictionModelVersion": "v1.1-adaptive-chee",
+      "results": [
+        {
+          "rank": 1,
+          "label": "五行主衡",
+          "frontHits": [
+            "13",
+            "33"
+          ],
+          "backHits": [],
+          "frontHitCount": 2,
+          "backHitCount": 0,
+          "elementSimilarity": 0.429,
+          "reward": 0.3139
+        },
+        {
+          "rank": 2,
+          "label": "生化对冲",
+          "frontHits": [
+            "13",
+            "33"
+          ],
+          "backHits": [
+            "05"
+          ],
+          "frontHitCount": 2,
+          "backHitCount": 1,
+          "elementSimilarity": 0.571,
+          "reward": 0.4787
+        }
+      ],
+      "summary": {
+        "averageFrontHits": 2.0,
+        "averageBackHits": 0.5,
+        "averageElementSimilarity": 0.5,
+        "averageReward": 0.3963
+      },
+      "learningUpdate": {
+        "profile": "sheng-flow",
+        "state": {
+          "evaluations": 1,
+          "lastReward": 0.3963,
+          "emaReward": 0.3963
+        },
+        "rule": "Number hits and five-element distribution similarity update an exponential moving average with bounded influence."
+      }
+    }
   }
 ]

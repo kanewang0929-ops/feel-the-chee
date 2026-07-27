@@ -65,5 +65,76 @@
       },
       "rule": "Number hits and five-element distribution similarity update an exponential moving average with bounded influence."
     }
+  },
+  {
+    "issue": "26084",
+    "date": "2026-07-27",
+    "evaluatedAt": "2026-07-27T19:01:46.675638+00:00",
+    "actual": {
+      "front": [
+        "13",
+        "25",
+        "30",
+        "32",
+        "33"
+      ],
+      "back": [
+        "04",
+        "05"
+      ],
+      "elements": {
+        "木": 2,
+        "火": 1,
+        "土": 3,
+        "金": 1,
+        "水": 0
+      }
+    },
+    "predictionModelVersion": "v1.1-adaptive-chee",
+    "results": [
+      {
+        "rank": 1,
+        "label": "五行主衡",
+        "frontHits": [
+          "13",
+          "33"
+        ],
+        "backHits": [],
+        "frontHitCount": 2,
+        "backHitCount": 0,
+        "elementSimilarity": 0.429,
+        "reward": 0.3139
+      },
+      {
+        "rank": 2,
+        "label": "生化对冲",
+        "frontHits": [
+          "13",
+          "33"
+        ],
+        "backHits": [
+          "05"
+        ],
+        "frontHitCount": 2,
+        "backHitCount": 1,
+        "elementSimilarity": 0.571,
+        "reward": 0.4787
+      }
+    ],
+    "summary": {
+      "averageFrontHits": 2.0,
+      "averageBackHits": 0.5,
+      "averageElementSimilarity": 0.5,
+      "averageReward": 0.3963
+    },
+    "learningUpdate": {
+      "profile": "sheng-flow",
+      "state": {
+        "evaluations": 1,
+        "lastReward": 0.3963,
+        "emaReward": 0.3963
+      },
+      "rule": "Number hits and five-element distribution similarity update an exponential moving average with bounded influence."
+    }
   }
 ]
