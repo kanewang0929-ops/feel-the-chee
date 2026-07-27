@@ -374,5 +374,187 @@
         "rule": "Number hits and five-element distribution similarity update an exponential moving average with bounded influence."
       }
     }
+  },
+  {
+    "modelVersion": "v1.1-adaptive-chee",
+    "generatedAt": "2026-07-27T19:01:50.305751+00:00",
+    "targetIssue": "26085",
+    "targetDate": "2026-07-29",
+    "historyCount": 2902,
+    "historyRange": {
+      "earliestIssue": "07001",
+      "earliestDate": "2007-05-30",
+      "latestIssue": "26084",
+      "latestDate": "2026-07-27"
+    },
+    "mapping": {
+      "水": [
+        1,
+        6
+      ],
+      "火": [
+        2,
+        7
+      ],
+      "木": [
+        3,
+        8
+      ],
+      "金": [
+        4,
+        9
+      ],
+      "土": [
+        0,
+        5
+      ]
+    },
+    "elementStrengths": {
+      "金": 24,
+      "火": 52,
+      "土": 85,
+      "木": 88,
+      "水": 76
+    },
+    "analysis": {
+      "dominant": "木",
+      "weakest": "火",
+      "flowTarget": "火"
+    },
+    "lastEvaluation": {
+      "issue": "26084",
+      "date": "2026-07-27",
+      "evaluatedAt": "2026-07-27T19:01:46.675638+00:00",
+      "actual": {
+        "front": [
+          "13",
+          "25",
+          "30",
+          "32",
+          "33"
+        ],
+        "back": [
+          "04",
+          "05"
+        ],
+        "elements": {
+          "木": 2,
+          "火": 1,
+          "土": 3,
+          "金": 1,
+          "水": 0
+        }
+      },
+      "predictionModelVersion": "v1.1-adaptive-chee",
+      "results": [
+        {
+          "rank": 1,
+          "label": "五行主衡",
+          "frontHits": [
+            "13",
+            "33"
+          ],
+          "backHits": [],
+          "frontHitCount": 2,
+          "backHitCount": 0,
+          "elementSimilarity": 0.429,
+          "reward": 0.3139
+        },
+        {
+          "rank": 2,
+          "label": "生化对冲",
+          "frontHits": [
+            "13",
+            "33"
+          ],
+          "backHits": [
+            "05"
+          ],
+          "frontHitCount": 2,
+          "backHitCount": 1,
+          "elementSimilarity": 0.571,
+          "reward": 0.4787
+        }
+      ],
+      "summary": {
+        "averageFrontHits": 2.0,
+        "averageBackHits": 0.5,
+        "averageElementSimilarity": 0.5,
+        "averageReward": 0.3963
+      },
+      "learningUpdate": {
+        "profile": "sheng-flow",
+        "state": {
+          "evaluations": 1,
+          "lastReward": 0.3963,
+          "emaReward": 0.3963
+        },
+        "rule": "Number hits and five-element distribution similarity update an exponential moving average with bounded influence."
+      }
+    },
+    "calibration": {
+      "tests": 60,
+      "averageFrontHits": 0.5667,
+      "averageBackHits": 0.35,
+      "averageElementSimilarity": 0.3881,
+      "historicalObjective": 2.1602,
+      "adaptiveBonus": 0.0073,
+      "objective": 2.1675,
+      "liveEvaluations": 1,
+      "liveEmaReward": 0.3094,
+      "selectedProfile": "balanced-repair",
+      "selectedLabel": "平衡补缺"
+    },
+    "results": [
+      {
+        "rank": 1,
+        "label": "五行主衡",
+        "front": [
+          "07",
+          "13",
+          "17",
+          "22",
+          "32"
+        ],
+        "back": [
+          "03",
+          "11"
+        ],
+        "cheeValue": 86.0,
+        "elements": {
+          "木": 2,
+          "火": 4,
+          "土": 0,
+          "金": 0,
+          "水": 1
+        },
+        "reason": "以火为回补重点，由木势导出生化路径；前区覆盖火、木，兼顾五行平衡、相生关系与号码周期。"
+      },
+      {
+        "rank": 2,
+        "label": "生化对冲",
+        "front": [
+          "07",
+          "12",
+          "17",
+          "22",
+          "33"
+        ],
+        "back": [
+          "08",
+          "11"
+        ],
+        "cheeValue": 83.4,
+        "elements": {
+          "木": 2,
+          "火": 4,
+          "土": 0,
+          "金": 0,
+          "水": 1
+        },
+        "reason": "以火为回补重点，由木势导出生化路径；前区覆盖火、木，兼顾五行平衡、相生关系与号码周期。"
+      }
+    ],
+    "note": "Chee值衡量五行结构与历史周期的内部匹配，不是中奖概率。"
   }
 ]
