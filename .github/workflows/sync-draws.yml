@@ -22,12 +22,12 @@ permissions:
 
 concurrency:
   group: sync-curve-formula-backtest
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   sync-and-forecast:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
@@ -39,9 +39,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
-      - name: Install backtest dependency
-        run: python -m pip install --disable-pip-version-check numpy
 
       - name: Synchronize complete draw history
         run: python scripts/sync_draws.py
