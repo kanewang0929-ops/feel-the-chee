@@ -8,8 +8,10 @@ on:
     paths:
       - "scripts/sync_draws.py"
       - "scripts/curve_forecast.py"
+      - "scripts/ai_backtest.py"
       - "scripts/chee_formula.py"
       - "scripts/chee_backtest.py"
+      - "assets/ai-backtest.js"
       - "assets/chee-backtest.js"
       - ".github/workflows/sync-draws.yml"
   schedule:
@@ -21,13 +23,13 @@ permissions:
   contents: write
 
 concurrency:
-  group: sync-curve-formula-backtest
+  group: sync-curve-formula-backtests
   cancel-in-progress: true
 
 jobs:
   sync-and-forecast:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
 
     steps:
       - name: Checkout
@@ -49,6 +51,9 @@ jobs:
       - name: Calculate formula-only Feel the Chee results
         run: python scripts/chee_formula.py
 
+      - name: Backtest AI with strict walk-forward training
+        run: python scripts/ai_backtest.py
+
       - name: Backtest Feel the Chee across all stored draws
         run: python scripts/chee_backtest.py
 
@@ -62,6 +67,7 @@ jobs:
             data/forecast-history.json \
             data/learning-log.json \
             data/model-state.json \
+            data/ai-backtest.json \
             data/chee-forecast.json \
             data/chee-backtest.json
 
@@ -70,6 +76,6 @@ jobs:
             exit 0
           fi
 
-          git commit -m "data: sync draw and refresh curve, formula, and full backtest"
+          git commit -m "data: refresh draw, AI audit, and Chee audit"
           git pull --rebase origin main
           git push origin main
