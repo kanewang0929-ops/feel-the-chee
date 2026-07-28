@@ -1,572 +1,152 @@
 #!/usr/bin/env python3
-"""Walk-forward audit of the AI curve model across the stored draw archive.
-
-For every evaluated draw, the model is trained only on earlier draws. The actual
-numbers are revealed after prediction for scoring. The first 500 draws are a
-warm-up period and are never scored.
-"""
+"""Past-only walk-forward audit for the AI curve sampler."""
 from __future__ import annotations
-
-import json
-import math
-import statistics
-from collections import Counter, defaultdict
-from datetime import datetime, timezone
+import json,math,statistics
+from collections import Counter,defaultdict
+from datetime import datetime,timezone
 from pathlib import Path
-
 import curve_forecast as ai
 
-ROOT = Path(__file__).resolve().parents[1]
-OUTPUT_FILE = ROOT / "data" / "ai-backtest.json"
-BACKTEST_VERSION = "v1.0-walk-forward"
-WARMUP_DRAWS = 500
+ROOT=Path(__file__).resolve().parents[1]
+OUT=ROOT/"data/ai-backtest.json"
+VERSION="v1.1-walk-forward-bounded"
+WARMUP=500
+RECALIBRATE_EVERY=60
+FRONT_POOL=100
+BACK_POOL=25
 
+def write(x):
+    OUT.parent.mkdir(parents=True,exist_ok=True)
+    OUT.write_text(json.dumps(x,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 
-def write_json(path: Path, payload) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
+def fmt(x):return [f"{int(n):02d}" for n in x]
 
+def hyper(pop,winners,picks):
+    d=math.comb(pop,picks)
+    return {str(h):math.comb(winners,h)*math.comb(pop-winners,picks-h)/d for h in range(min(winners,picks)+1)}
 
-def fmt(values) -> list[str]:
-    return [f"{int(value):02d}" for value in values]
+def centers(values):return [{"center":float(v)} for v in values]
 
+def mean_centers(history,area,window=60):
+    q=history[-min(window,len(history)):];width=len(q[0][area])
+    return [{"center":statistics.fmean(x[area][i] for x in q)} for i in range(width)]
 
-def hypergeometric_distribution(
-    population: int,
-    winners: int,
-    picks: int,
-) -> dict[str, float]:
-    denominator = math.comb(population, picks)
+def ticket_distance(front,back,actual):
+    f=statistics.fmean(abs(a-b) for a,b in zip(front,actual["front"]))/35
+    r=statistics.fmean(abs(a-b) for a,b in zip(back,actual["back"]))/12
+    return .72*f+.28*r
+
+def audit_pool(rng,m,history,area,lo,hi,adj,target,attempts):
+    sh=ai.shape(history,area);out={}
+    for _ in range(attempts):
+        v=ai.sample(rng,m,lo,hi,adj)
+        if v:out[v]=max(out.get(v,0.),ai.score(v,m,sh))
+        if len(out)>=target:break
+    rows=sorted(out.items(),key=lambda x:x[1],reverse=True)
+    if len(rows)<25:raise RuntimeError(f"Candidate pool too small for {area}: {len(rows)}")
+    return rows
+
+def forecast(history,actual,state,previous,profile0,cal0):
+    p=dict(profile0);cal=dict(cal0);adj=float(state.get("temperatureAdjustment",0.))
+    p["temperature"]*=1+adj
+    fm=ai.model(history,"front",p,1,35);bm=ai.model(history,"back",p,1,12)
+    rng=ai.random.Random(ai.seed(ai.VERSION,actual["issue"],actual["date"],len(history)))
+    fp=audit_pool(rng,fm,history,"front",1,35,adj,FRONT_POOL,300)
+    bp=audit_pool(rng,bm,history,"back",1,12,adj,BACK_POOL,120)
+    chosen=ai.assemble(rng,fp,bp,previous)
+    out={
+      "targetIssue":actual["issue"],"targetDate":actual["date"],
+      "calibration":{**cal,"temperature":round(p["temperature"],4),"temperatureAdjustment":round(adj,4)},
+      "curveForecast":{"front":ai.summary(fm),"back":ai.summary(bm)},
+      "results":[{"rank":x["rank"],"label":x["label"],"front":fmt(x["front"]),"back":fmt(x["back"]),"fit":x["fit"]} for x in chosen]
+    }
+    return out,fm,bm
+
+def score(actual,pred,fm,bm,history):
+    af=set(actual["front"]);ab=set(actual["back"]);tickets=[]
+    for x in pred["results"]:
+        f=[int(n) for n in x["front"]];b=[int(n) for n in x["back"]]
+        fh=sorted(af&set(f));bh=sorted(ab&set(b))
+        tickets.append({
+          "rank":x["rank"],"label":x["label"],"front":x["front"],"back":x["back"],
+          "frontHits":fmt(fh),"backHits":fmt(bh),"frontHitCount":len(fh),"backHitCount":len(bh),
+          "curveDistance":round(ticket_distance(f,b,actual),6)
+        })
+    best=max(tickets,key=lambda x:(x["frontHitCount"]+x["backHitCount"],x["frontHitCount"],x["backHitCount"],-x["curveDistance"]))
+    ml=.72*ai.loss(actual["front"],fm,35)+.28*ai.loss(actual["back"],bm,12)
+    pl=.72*ai.loss(actual["front"],centers(history[-1]["front"]),35)+.28*ai.loss(actual["back"],centers(history[-1]["back"]),12)
+    mf=mean_centers(history,"front");mb=mean_centers(history,"back")
+    tl=.72*ai.loss(actual["front"],mf,35)+.28*ai.loss(actual["back"],mb,12)
     return {
-        str(hits): (
-            math.comb(winners, hits)
-            * math.comb(population - winners, picks - hits)
-            / denominator
-        )
-        for hits in range(min(winners, picks) + 1)
+      "issue":actual["issue"],"date":actual["date"],"trainingDraws":len(history),
+      "actual":{"front":fmt(actual["front"]),"back":fmt(actual["back"])},
+      "profile":{"name":pred["calibration"]["selectedProfile"],"label":pred["calibration"]["selectedLabel"],"temperature":pred["calibration"]["temperature"]},
+      "curveLoss":{"model":round(ml,6),"persistence":round(pl,6),"trailingMean60":round(tl,6)},
+      "tickets":tickets,
+      "bestTicket":{"rank":best["rank"],"frontHitCount":best["frontHitCount"],"backHitCount":best["backHitCount"],"curveDistance":best["curveDistance"]}
     }
 
-
-def center_model(values) -> list[dict]:
-    return [{"center": float(value)} for value in values]
-
-
-def trailing_centers(history: list[dict], area: str, window: int = 60) -> list[dict]:
-    sample = history[-min(window, len(history)) :]
-    width = len(sample[0][area])
-    return [
-        {
-            "center": statistics.fmean(draw[area][position] for draw in sample),
-        }
-        for position in range(width)
-    ]
-
-
-def curve_distance(front, back, actual_front, actual_back) -> float:
-    front_distance = statistics.fmean(
-        abs(left - right) for left, right in zip(front, actual_front)
-    ) / 35
-    back_distance = statistics.fmean(
-        abs(left - right) for left, right in zip(back, actual_back)
-    ) / 12
-    return 0.72 * front_distance + 0.28 * back_distance
-
-
-def forecast_for_history(
-    history: list[dict],
-    actual: dict,
-    state: dict,
-    previous: dict,
-) -> tuple[dict, dict, dict]:
-    profile, calibration = ai.choose(history, state)
-    adjustment = float(state.get("temperatureAdjustment", 0.0))
-    profile["temperature"] *= 1 + adjustment
-
-    front_model = ai.model(history, "front", profile, 1, 35)
-    back_model = ai.model(history, "back", profile, 1, 12)
-    rng = ai.random.Random(
-        ai.seed(
-            ai.VERSION,
-            actual["issue"],
-            actual["date"],
-            len(history),
-        )
-    )
-    front_pool = ai.pool(
-        rng,
-        front_model,
-        history,
-        "front",
-        1,
-        35,
-        adjustment,
-        1600,
-    )
-    back_pool = ai.pool(
-        rng,
-        back_model,
-        history,
-        "back",
-        1,
-        12,
-        adjustment,
-        120,
-    )
-    chosen = ai.assemble(rng, front_pool, back_pool, previous)
-
-    forecast = {
-        "targetIssue": actual["issue"],
-        "targetDate": actual["date"],
-        "calibration": {
-            **calibration,
-            "temperature": round(profile["temperature"], 4),
-            "temperatureAdjustment": round(adjustment, 4),
-        },
-        "curveForecast": {
-            "front": ai.summary(front_model),
-            "back": ai.summary(back_model),
-        },
-        "results": [
-            {
-                "rank": row["rank"],
-                "label": row["label"],
-                "front": fmt(row["front"]),
-                "back": fmt(row["back"]),
-                "fit": row["fit"],
-            }
-            for row in chosen
-        ],
-    }
-    return forecast, front_model, back_model
-
-
-def score_draw(
-    actual: dict,
-    forecast: dict,
-    front_model: list[dict],
-    back_model: list[dict],
-    history: list[dict],
-) -> dict:
-    actual_front = set(actual["front"])
-    actual_back = set(actual["back"])
-    tickets = []
-
-    for result in forecast["results"]:
-        predicted_front = [int(number) for number in result["front"]]
-        predicted_back = [int(number) for number in result["back"]]
-        front_hits = sorted(actual_front & set(predicted_front))
-        back_hits = sorted(actual_back & set(predicted_back))
-        tickets.append(
-            {
-                "rank": result["rank"],
-                "label": result["label"],
-                "front": result["front"],
-                "back": result["back"],
-                "frontHits": fmt(front_hits),
-                "backHits": fmt(back_hits),
-                "frontHitCount": len(front_hits),
-                "backHitCount": len(back_hits),
-                "curveDistance": round(
-                    curve_distance(
-                        predicted_front,
-                        predicted_back,
-                        actual["front"],
-                        actual["back"],
-                    ),
-                    6,
-                ),
-            }
-        )
-
-    best = max(
-        tickets,
-        key=lambda row: (
-            row["frontHitCount"] + row["backHitCount"],
-            row["frontHitCount"],
-            row["backHitCount"],
-            -row["curveDistance"],
-        ),
-    )
-
-    model_front_loss = ai.loss(actual["front"], front_model, 35)
-    model_back_loss = ai.loss(actual["back"], back_model, 12)
-    model_loss = 0.72 * model_front_loss + 0.28 * model_back_loss
-
-    persistence_front = center_model(history[-1]["front"])
-    persistence_back = center_model(history[-1]["back"])
-    persistence_loss = (
-        0.72 * ai.loss(actual["front"], persistence_front, 35)
-        + 0.28 * ai.loss(actual["back"], persistence_back, 12)
-    )
-
-    mean_front = trailing_centers(history, "front", 60)
-    mean_back = trailing_centers(history, "back", 60)
-    trailing_mean_loss = (
-        0.72 * ai.loss(actual["front"], mean_front, 35)
-        + 0.28 * ai.loss(actual["back"], mean_back, 12)
-    )
-
+def aggregate(rows):
+    tickets=[t for x in rows for t in x["tickets"]];n=len(tickets)
+    fd=Counter(t["frontHitCount"] for t in tickets);bd=Counter(t["backHitCount"] for t in tickets)
+    patterns=Counter(f'{t["frontHitCount"]}+{t["backHitCount"]}' for t in tickets)
+    bfd=Counter(x["bestTicket"]["frontHitCount"] for x in rows);bbd=Counter(x["bestTicket"]["backHitCount"] for x in rows)
+    af=statistics.fmean(t["frontHitCount"] for t in tickets);ab=statistics.fmean(t["backHitCount"] for t in tickets)
+    td=statistics.fmean(t["curveDistance"] for t in tickets)
+    ml=statistics.fmean(x["curveLoss"]["model"] for x in rows)
+    pl=statistics.fmean(x["curveLoss"]["persistence"] for x in rows)
+    tl=statistics.fmean(x["curveLoss"]["trailingMean60"] for x in rows)
+    fb=25/35;bb=4/12;fp=hyper(35,5,5);bp=hyper(12,2,2)
+    template=lambda:{"draws":0,"tickets":0,"front":0,"back":0,"loss":0.}
+    byyear=defaultdict(template);byprofile=defaultdict(template)
+    for x in rows:
+        for g in (byyear[x["date"][:4]],byprofile[x["profile"]["label"]]):
+            g["draws"]+=1;g["tickets"]+=len(x["tickets"]);g["front"]+=sum(t["frontHitCount"] for t in x["tickets"]);g["back"]+=sum(t["backHitCount"] for t in x["tickets"]);g["loss"]+=x["curveLoss"]["model"]
+    def finish(groups):
+        return {k:{"draws":v["draws"],"tickets":v["tickets"],"averageFrontHits":round(v["front"]/max(1,v["tickets"]),4),"averageBackHits":round(v["back"]/max(1,v["tickets"]),4),"averageModelCurveLoss":round(v["loss"]/max(1,v["draws"]),6)} for k,v in groups.items()}
+    examples=sorted(rows,key=lambda x:(x["bestTicket"]["frontHitCount"]+x["bestTicket"]["backHitCount"],x["bestTicket"]["frontHitCount"],x["bestTicket"]["backHitCount"],-x["bestTicket"]["curveDistance"]),reverse=True)[:20]
     return {
-        "issue": actual["issue"],
-        "date": actual["date"],
-        "trainingDraws": len(history),
-        "actual": {
-            "front": fmt(actual["front"]),
-            "back": fmt(actual["back"]),
-        },
-        "profile": {
-            "name": forecast["calibration"]["selectedProfile"],
-            "label": forecast["calibration"]["selectedLabel"],
-            "temperature": forecast["calibration"]["temperature"],
-        },
-        "curveCenters": forecast["curveForecast"],
-        "curveLoss": {
-            "model": round(model_loss, 6),
-            "persistence": round(persistence_loss, 6),
-            "trailingMean60": round(trailing_mean_loss, 6),
-        },
-        "tickets": tickets,
-        "bestTicket": {
-            "rank": best["rank"],
-            "frontHitCount": best["frontHitCount"],
-            "backHitCount": best["backHitCount"],
-            "curveDistance": best["curveDistance"],
-        },
+      "drawsEvaluated":len(rows),"warmupDraws":WARMUP,"ticketsEvaluated":n,
+      "dateRange":{"earliest":rows[0]["date"],"latest":rows[-1]["date"]},
+      "observed":{
+        "averageFrontHitsPerTicket":round(af,6),"averageBackHitsPerTicket":round(ab,6),"averageTotalHitsPerTicket":round(af+ab,6),"averageTicketCurveDistance":round(td,6),
+        "ticketsWithAnyFrontHit":sum(t["frontHitCount"]>=1 for t in tickets),"ticketsWithAnyBackHit":sum(t["backHitCount"]>=1 for t in tickets),
+        "ticketsWithFrontAndBackHit":sum(t["frontHitCount"]>=1 and t["backHitCount"]>=1 for t in tickets),
+        "frontHitDistribution":{str(h):fd[h] for h in range(6)},"backHitDistribution":{str(h):bd[h] for h in range(3)},
+        "hitPatternDistribution":dict(sorted(patterns.items())),"bestOfThreeFrontDistribution":{str(h):bfd[h] for h in range(6)},
+        "bestOfThreeBackDistribution":{str(h):bbd[h] for h in range(3)},"exactFivePlusTwo":patterns["5+2"]
+      },
+      "curveBenchmark":{"modelAverageLoss":round(ml,6),"persistenceAverageLoss":round(pl,6),"trailingMean60AverageLoss":round(tl,6),"improvementVsPersistence":round(pl-ml,6),"improvementVsTrailingMean60":round(tl-ml,6),"note":"Lower is better. Persistence uses the previous draw; trailingMean60 uses prior 60-draw positional means."},
+      "theoreticalFixedTicketBaseline":{
+        "averageFrontHitsPerTicket":round(fb,6),"averageBackHitsPerTicket":round(bb,6),"averageTotalHitsPerTicket":round(fb+bb,6),
+        "frontHitProbabilities":{k:round(v,10) for k,v in fp.items()},"backHitProbabilities":{k:round(v,10) for k,v in bp.items()},
+        "expectedFrontHitCounts":{k:round(v*n,3) for k,v in fp.items()},"expectedBackHitCounts":{k:round(v*n,3) for k,v in bp.items()},
+        "note":"Exact fair-draw expectation per ticket; best-of-three is reported descriptively because AI tickets are deliberately dependent."
+      },
+      "comparison":{"frontMeanDifference":round(af-fb,6),"backMeanDifference":round(ab-bb,6),"totalMeanDifference":round(af+ab-fb-bb,6),"frontMeanRatio":round(af/fb,6),"backMeanRatio":round(ab/bb,6)},
+      "byYear":finish(byyear),"byProfile":finish(byprofile),"bestExamples":examples
     }
 
-
-def update_simulated_state(
-    forecast: dict,
-    all_draws_to_actual: list[dict],
-    state: dict,
-) -> dict:
-    event = ai.evaluate(
-        forecast,
-        all_draws_to_actual,
-        state,
-        [],
-    )
-    if event is None:
-        raise RuntimeError(f'Could not evaluate issue {forecast["targetIssue"]}')
-    return event
-
-
-def aggregate(rows: list[dict]) -> dict:
-    tickets = [ticket for row in rows for ticket in row["tickets"]]
-    ticket_count = len(tickets)
-
-    front_distribution = Counter(ticket["frontHitCount"] for ticket in tickets)
-    back_distribution = Counter(ticket["backHitCount"] for ticket in tickets)
-    pattern_distribution = Counter(
-        f'{ticket["frontHitCount"]}+{ticket["backHitCount"]}'
-        for ticket in tickets
-    )
-    best_front_distribution = Counter(
-        row["bestTicket"]["frontHitCount"] for row in rows
-    )
-    best_back_distribution = Counter(
-        row["bestTicket"]["backHitCount"] for row in rows
-    )
-
-    average_front = statistics.fmean(
-        ticket["frontHitCount"] for ticket in tickets
-    )
-    average_back = statistics.fmean(
-        ticket["backHitCount"] for ticket in tickets
-    )
-    average_ticket_curve_distance = statistics.fmean(
-        ticket["curveDistance"] for ticket in tickets
-    )
-
-    model_curve_loss = statistics.fmean(
-        row["curveLoss"]["model"] for row in rows
-    )
-    persistence_curve_loss = statistics.fmean(
-        row["curveLoss"]["persistence"] for row in rows
-    )
-    trailing_mean_curve_loss = statistics.fmean(
-        row["curveLoss"]["trailingMean60"] for row in rows
-    )
-
-    front_baseline = 5 * 5 / 35
-    back_baseline = 2 * 2 / 12
-    front_probabilities = hypergeometric_distribution(35, 5, 5)
-    back_probabilities = hypergeometric_distribution(12, 2, 2)
-
-    group_template = lambda: {
-        "draws": 0,
-        "tickets": 0,
-        "frontHits": 0,
-        "backHits": 0,
-        "modelCurveLoss": 0.0,
+def main():
+    draws=ai.load()
+    if len(draws)<=WARMUP:raise RuntimeError(f"Need more than {WARMUP} draws")
+    state=ai.state0();previous={"results":[]};rows=[];p0=cal0=None
+    for i in range(WARMUP,len(draws)):
+        history=draws[:i];actual=draws[i]
+        if p0 is None or (i-WARMUP)%RECALIBRATE_EVERY==0:p0,cal0=ai.choose(history,state)
+        pred,fm,bm=forecast(history,actual,state,previous,p0,cal0)
+        row=score(actual,pred,fm,bm,history)
+        ev=ai.evaluate(pred,draws[:i+1],state,[])
+        if ev is None:raise RuntimeError(f"Could not evaluate {actual['issue']}")
+        row["learningUpdate"]=ev["learningUpdate"];rows.append(row);previous=pred
+        if len(rows)%100==0:print(f"Evaluated {len(rows)} / {len(draws)-WARMUP} draws",flush=True)
+    out={
+      "backtestVersion":VERSION,"modelVersion":ai.VERSION,"modelFamily":"curve-trajectory-generative-sampler",
+      "walkForward":True,"futureLeakage":False,"generatedAt":datetime.now(timezone.utc).isoformat(),
+      "method":{"warmupDraws":WARMUP,"trainingRule":"Every forecast uses only draws published before its target.","profileRecalibrationInterval":RECALIBRATE_EVERY,"curveRefitEveryDraw":True,"auditSamplingBudget":{"frontPool":FRONT_POOL,"backPool":BACK_POOL,"note":"The live model uses a larger candidate pool; the audit uses a fixed bounded pool for thousands of reproducible steps."}},
+      "summary":aggregate(rows),"draws":rows,
+      "note":"All valid combinations remain equally likely in a fair lottery. This audit measures historical behavior, not future winning probability."
     }
-    by_year = defaultdict(group_template)
-    by_profile = defaultdict(group_template)
+    write(out);print(json.dumps({"backtestVersion":VERSION,"modelVersion":ai.VERSION,"summary":out["summary"]},ensure_ascii=False,indent=2))
 
-    for row in rows:
-        for group in (
-            by_year[row["date"][:4]],
-            by_profile[row["profile"]["label"]],
-        ):
-            group["draws"] += 1
-            group["tickets"] += len(row["tickets"])
-            group["frontHits"] += sum(
-                ticket["frontHitCount"] for ticket in row["tickets"]
-            )
-            group["backHits"] += sum(
-                ticket["backHitCount"] for ticket in row["tickets"]
-            )
-            group["modelCurveLoss"] += row["curveLoss"]["model"]
-
-    def finish_groups(groups):
-        output = {}
-        for key, row in groups.items():
-            ticket_total = max(1, row["tickets"])
-            draw_total = max(1, row["draws"])
-            output[key] = {
-                "draws": row["draws"],
-                "tickets": row["tickets"],
-                "averageFrontHits": round(
-                    row["frontHits"] / ticket_total,
-                    4,
-                ),
-                "averageBackHits": round(
-                    row["backHits"] / ticket_total,
-                    4,
-                ),
-                "averageModelCurveLoss": round(
-                    row["modelCurveLoss"] / draw_total,
-                    6,
-                ),
-            }
-        return output
-
-    best_examples = sorted(
-        rows,
-        key=lambda row: (
-            row["bestTicket"]["frontHitCount"]
-            + row["bestTicket"]["backHitCount"],
-            row["bestTicket"]["frontHitCount"],
-            row["bestTicket"]["backHitCount"],
-            -row["bestTicket"]["curveDistance"],
-        ),
-        reverse=True,
-    )[:20]
-
-    return {
-        "drawsEvaluated": len(rows),
-        "warmupDraws": WARMUP_DRAWS,
-        "ticketsEvaluated": ticket_count,
-        "dateRange": {
-            "earliest": rows[0]["date"] if rows else None,
-            "latest": rows[-1]["date"] if rows else None,
-        },
-        "observed": {
-            "averageFrontHitsPerTicket": round(average_front, 6),
-            "averageBackHitsPerTicket": round(average_back, 6),
-            "averageTotalHitsPerTicket": round(
-                average_front + average_back,
-                6,
-            ),
-            "averageTicketCurveDistance": round(
-                average_ticket_curve_distance,
-                6,
-            ),
-            "ticketsWithAnyFrontHit": sum(
-                ticket["frontHitCount"] >= 1 for ticket in tickets
-            ),
-            "ticketsWithAnyBackHit": sum(
-                ticket["backHitCount"] >= 1 for ticket in tickets
-            ),
-            "ticketsWithFrontAndBackHit": sum(
-                ticket["frontHitCount"] >= 1
-                and ticket["backHitCount"] >= 1
-                for ticket in tickets
-            ),
-            "frontHitDistribution": {
-                str(hits): front_distribution[hits] for hits in range(6)
-            },
-            "backHitDistribution": {
-                str(hits): back_distribution[hits] for hits in range(3)
-            },
-            "hitPatternDistribution": dict(sorted(pattern_distribution.items())),
-            "bestOfThreeFrontDistribution": {
-                str(hits): best_front_distribution[hits] for hits in range(6)
-            },
-            "bestOfThreeBackDistribution": {
-                str(hits): best_back_distribution[hits] for hits in range(3)
-            },
-            "exactFivePlusTwo": pattern_distribution["5+2"],
-        },
-        "curveBenchmark": {
-            "modelAverageLoss": round(model_curve_loss, 6),
-            "persistenceAverageLoss": round(
-                persistence_curve_loss,
-                6,
-            ),
-            "trailingMean60AverageLoss": round(
-                trailing_mean_curve_loss,
-                6,
-            ),
-            "improvementVsPersistence": round(
-                persistence_curve_loss - model_curve_loss,
-                6,
-            ),
-            "improvementVsTrailingMean60": round(
-                trailing_mean_curve_loss - model_curve_loss,
-                6,
-            ),
-            "note": (
-                "Lower curve loss is better. Persistence predicts the previous "
-                "draw's sorted positions; trailingMean60 predicts the prior "
-                "60-draw positional mean."
-            ),
-        },
-        "theoreticalFixedTicketBaseline": {
-            "averageFrontHitsPerTicket": round(front_baseline, 6),
-            "averageBackHitsPerTicket": round(back_baseline, 6),
-            "averageTotalHitsPerTicket": round(
-                front_baseline + back_baseline,
-                6,
-            ),
-            "frontHitProbabilities": {
-                key: round(value, 10)
-                for key, value in front_probabilities.items()
-            },
-            "backHitProbabilities": {
-                key: round(value, 10)
-                for key, value in back_probabilities.items()
-            },
-            "expectedFrontHitCounts": {
-                key: round(value * ticket_count, 3)
-                for key, value in front_probabilities.items()
-            },
-            "expectedBackHitCounts": {
-                key: round(value * ticket_count, 3)
-                for key, value in back_probabilities.items()
-            },
-            "note": (
-                "Exact per-ticket expectation under a fair draw. The three AI "
-                "tickets are diversified, so this benchmark is used for "
-                "per-ticket means and distributions, not best-of-three odds."
-            ),
-        },
-        "comparison": {
-            "frontMeanDifference": round(
-                average_front - front_baseline,
-                6,
-            ),
-            "backMeanDifference": round(
-                average_back - back_baseline,
-                6,
-            ),
-            "totalMeanDifference": round(
-                average_front
-                + average_back
-                - front_baseline
-                - back_baseline,
-                6,
-            ),
-            "frontMeanRatio": round(
-                average_front / front_baseline,
-                6,
-            ),
-            "backMeanRatio": round(
-                average_back / back_baseline,
-                6,
-            ),
-        },
-        "byYear": finish_groups(by_year),
-        "byProfile": finish_groups(by_profile),
-        "bestExamples": best_examples,
-    }
-
-
-def main() -> None:
-    draws = ai.load()
-    if len(draws) <= WARMUP_DRAWS:
-        raise RuntimeError(
-            f"Need more than {WARMUP_DRAWS} draws, found {len(draws)}"
-        )
-
-    state = ai.state0()
-    previous = {"results": []}
-    results = []
-
-    for index in range(WARMUP_DRAWS, len(draws)):
-        history = draws[:index]
-        actual = draws[index]
-        forecast, front_model, back_model = forecast_for_history(
-            history,
-            actual,
-            state,
-            previous,
-        )
-        scored = score_draw(
-            actual,
-            forecast,
-            front_model,
-            back_model,
-            history,
-        )
-        event = update_simulated_state(
-            forecast,
-            draws[: index + 1],
-            state,
-        )
-        scored["learningUpdate"] = event["learningUpdate"]
-        results.append(scored)
-        previous = forecast
-
-        if len(results) % 100 == 0:
-            print(
-                f"Evaluated {len(results)} / {len(draws) - WARMUP_DRAWS} draws",
-                flush=True,
-            )
-
-    output = {
-        "backtestVersion": BACKTEST_VERSION,
-        "modelVersion": ai.VERSION,
-        "modelFamily": "curve-trajectory-generative-sampler",
-        "walkForward": True,
-        "futureLeakage": False,
-        "generatedAt": datetime.now(timezone.utc).isoformat(),
-        "method": {
-            "warmupDraws": WARMUP_DRAWS,
-            "trainingRule": (
-                "Each historical forecast uses only draws published before "
-                "the target draw."
-            ),
-            "profileRule": (
-                "Profile selection, curve fitting, temperature sampling, "
-                "cross-ticket diversity, and bounded state updates mirror "
-                "the live AI pipeline."
-            ),
-        },
-        "summary": aggregate(results),
-        "draws": results,
-        "note": (
-            "All valid lottery combinations remain equally likely in a fair "
-            "draw. This audit measures historical model behaviour and does "
-            "not establish future winning probability."
-        ),
-    }
-    write_json(OUTPUT_FILE, output)
-    print(
-        json.dumps(
-            {
-                "backtestVersion": BACKTEST_VERSION,
-                "modelVersion": ai.VERSION,
-                "summary": output["summary"],
-            },
-            ensure_ascii=False,
-            indent=2,
-        )
-    )
-
-
-if __name__ == "__main__":
-    main()
+if __name__=="__main__":main()
