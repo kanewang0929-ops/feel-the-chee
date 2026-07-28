@@ -1,27 +1,24 @@
 #!/usr/bin/env python3
-"""Backtest the formula-only Feel the Chee calculation against every stored draw.
+"""Audit formula-only Feel the Chee predictions against every stored draw.
 
-The formula receives only the historical draw's issue and date. Actual numbers are
-used after prediction solely for scoring. No historical result is fed into the
-formula and no parameter is learned from the backtest.
+For each historical draw, the formula receives only that draw's issue and date.
+The actual numbers are revealed afterward for comparison. No historical result
+feeds the prediction and the backtest never changes formula parameters.
 """
 from __future__ import annotations
 
-import itertools
 import json
 import math
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-import numpy as np
-
 import chee_formula as formula
 
 ROOT = Path(__file__).resolve().parents[1]
 DRAWS_FILE = ROOT / "data" / "draws.json"
 OUTPUT_FILE = ROOT / "data" / "chee-backtest.json"
-BACKTEST_VERSION = "v1.0-full-archive"
+BACKTEST_VERSION = "v1.1-full-archive"
 ELEMENTS = ["木", "火", "土", "金", "水"]
 
 
@@ -91,202 +88,26 @@ def element_similarity(left, right) -> float:
     return max(0.0, 1.0 - distance / (2 * total))
 
 
-def make_combo_table(max_number: int, pick: int) -> dict:
-    combos = np.asarray(
-        list(itertools.combinations(range(1, max_number + 1), pick)),
-        dtype=np.int16,
-    )
-    element_index = {name: index for index, name in enumerate(ELEMENTS)}
-    counts = np.zeros((len(combos), len(ELEMENTS)), dtype=np.int8)
-    for column in range(pick):
-        mapped = np.asarray(
-            [element_index[formula.elem(int(number))] for number in combos[:, column]],
-            dtype=np.int8,
-        )
-        for index in range(len(ELEMENTS)):
-            counts[:, index] += mapped == index
-
-    sums = combos.sum(axis=1)
-    sum_roots = np.where(sums % 9 == 0, 9, sums % 9).astype(np.int8)
-    odd_counts = (combos % 2).sum(axis=1).astype(np.int8)
-    spans = (combos[:, -1] - combos[:, 0]) / max_number
-
-    root_masks = np.zeros(len(combos), dtype=np.int16)
-    for column in range(pick):
-        roots = np.where(combos[:, column] % 9 == 0, 9, combos[:, column] % 9)
-        root_masks |= (1 << (roots - 1)).astype(np.int16)
-
-    return {
-        "maxNumber": max_number,
-        "pick": pick,
-        "combos": combos,
-        "elementCounts": counts,
-        "sumRoots": sum_roots,
-        "oddCounts": odd_counts,
-        "spans": spans,
-        "rootMasks": root_masks,
-    }
-
-
-def circular_distance_vector(values: np.ndarray, target: int) -> np.ndarray:
-    difference = np.abs(values.astype(np.int16) - int(target))
-    return np.minimum(difference, 9 - difference)
-
-
-def score_combo_table(table: dict, context: dict, variant: int) -> np.ndarray:
-    max_number = table["maxNumber"]
-    pick = table["pick"]
-    combos = table["combos"]
-
-    number_scores = np.zeros(max_number + 1, dtype=np.float64)
-    for number in range(1, max_number + 1):
-        number_scores[number] = formula.nscore(number, context, variant)
-    number_component = number_scores[combos].mean(axis=1)
-
-    target_pattern = formula.pattern(context, pick, variant)
-    target_vector = np.asarray(
-        [target_pattern[name] for name in ELEMENTS],
-        dtype=np.float64,
-    )
-    balance = np.maximum(
-        0.0,
-        1.0
-        - np.abs(table["elementCounts"] - target_vector).sum(axis=1) / (2 * pick),
-    )
-
-    gua_distance = circular_distance_vector(table["sumRoots"], context["guaNumber"])
-    gua_match = np.where(
-        table["sumRoots"] == context["guaNumber"],
-        1.0,
-        np.maximum(0.0, 1.0 - gua_distance / 4.5),
-    )
-
-    desired_odd = min(pick, 3 if context["yinYang"] == "阳" else 2)
-    odd_match = np.exp(
-        -np.abs(table["oddCounts"].astype(np.float64) - desired_odd) / max(1, pick)
-    )
-
-    context_mask = 0
-    for root_value in {
-        context["heavenNumber"],
-        context["earthNumber"],
-        context["humanNumber"],
-        context["guaNumber"],
-    }:
-        context_mask |= 1 << (int(root_value) - 1)
-    coverage = np.fromiter(
-        (
-            (int(mask) & context_mask).bit_count() / 4
-            for mask in table["rootMasks"]
-        ),
-        dtype=np.float64,
-        count=len(table["rootMasks"]),
-    )
-
-    target_span = 0.64 if pick == 5 else 0.48
-    spacing = np.exp(-np.abs(table["spans"] - target_span) / 0.30)
-
+def formula_signature(calculation: dict) -> tuple:
+    """Values that completely determine the current formula's scored output."""
     return (
-        0.48 * number_component
-        + 0.24 * balance
-        + 0.10 * gua_match
-        + 0.07 * odd_match
-        + 0.06 * coverage
-        + 0.05 * spacing
+        calculation["heavenNumber"],
+        calculation["earthNumber"],
+        calculation["humanNumber"],
+        calculation["movingLine"],
+        calculation["guaNumber"],
+        calculation["primaryDigit"],
+        calculation["issueTailDigit"],
+        calculation["dateTailDigit"],
+        calculation["yinYang"],
+        calculation["primaryElement"],
+        calculation["supportElement"],
+        calculation["balanceElement"],
+        calculation["controlElement"],
     )
 
 
-def top_indices(scores: np.ndarray, count: int) -> np.ndarray:
-    count = min(count, len(scores))
-    if count == len(scores):
-        indices = np.arange(len(scores))
-    else:
-        indices = np.argpartition(scores, -count)[-count:]
-    return indices[np.argsort(scores[indices])[::-1]]
-
-
-def select_candidate(
-    front_table: dict,
-    back_table: dict,
-    context: dict,
-    variant: int,
-    old: dict | None,
-) -> dict:
-    front_scores = score_combo_table(front_table, context, variant)
-    back_scores = score_combo_table(back_table, context, variant)
-    front_indices = top_indices(front_scores, 800)
-    back_indices = top_indices(back_scores, 50)
-
-    old_front = set(old["front"]) if old else set()
-    old_back = set(old["back"]) if old else set()
-
-    for front_index in front_indices:
-        front = tuple(int(number) for number in front_table["combos"][front_index])
-        if old and len(set(front) & old_front) > 2:
-            continue
-        for back_index in back_indices:
-            back = tuple(int(number) for number in back_table["combos"][back_index])
-            if old and len(set(back) & old_back) > 1:
-                continue
-            return {
-                "front": front,
-                "back": back,
-                "raw": float(
-                    0.79 * front_scores[front_index]
-                    + 0.21 * back_scores[back_index]
-                ),
-                "variant": variant,
-            }
-
-    front_index = int(front_indices[0])
-    back_index = int(back_indices[0])
-    return {
-        "front": tuple(
-            int(number) for number in front_table["combos"][front_index]
-        ),
-        "back": tuple(
-            int(number) for number in back_table["combos"][back_index]
-        ),
-        "raw": float(
-            0.79 * front_scores[front_index] + 0.21 * back_scores[back_index]
-        ),
-        "variant": variant,
-    }
-
-
-def generate_formula_results(
-    issue: str,
-    draw_date: str,
-    front_table: dict,
-    back_table: dict,
-) -> tuple[dict, list[dict]]:
-    context = formula.context(issue, draw_date)
-    first = select_candidate(front_table, back_table, context, 1, None)
-    second = select_candidate(front_table, back_table, context, 2, first)
-    labels = ["五行主衡", "生化对冲"]
-    rows = []
-    best = max(first["raw"], second["raw"])
-    worst = min(first["raw"], second["raw"])
-    span = best - worst or 1.0
-
-    for index, candidate in enumerate([first, second]):
-        chee_value = round(
-            80 + (candidate["raw"] - worst) / span * 6 - index * 0.4,
-            1,
-        )
-        rows.append(
-            {
-                "rank": index + 1,
-                "label": labels[index],
-                "front": list(candidate["front"]),
-                "back": list(candidate["back"]),
-                "cheeValue": chee_value,
-            }
-        )
-    return context, rows
-
-
-def score_draw(draw: dict, context: dict, predictions: list[dict]) -> dict:
+def score_draw(draw: dict, calculation: dict, predictions: list[dict]) -> dict:
     actual_front = set(draw["front"])
     actual_back = set(draw["back"])
     actual_all = [*draw["front"], *draw["back"]]
@@ -336,15 +157,15 @@ def score_draw(draw: dict, context: dict, predictions: list[dict]) -> dict:
             "back": [f"{number:02d}" for number in draw["back"]],
         },
         "formulaContext": {
-            "heavenNumber": context["heavenNumber"],
-            "earthNumber": context["earthNumber"],
-            "humanNumber": context["humanNumber"],
-            "movingLine": context["movingLine"],
-            "guaNumber": context["guaNumber"],
-            "yinYang": context["yinYang"],
-            "primaryElement": context["primaryElement"],
-            "supportElement": context["supportElement"],
-            "balanceElement": context["balanceElement"],
+            "heavenNumber": calculation["heavenNumber"],
+            "earthNumber": calculation["earthNumber"],
+            "humanNumber": calculation["humanNumber"],
+            "movingLine": calculation["movingLine"],
+            "guaNumber": calculation["guaNumber"],
+            "yinYang": calculation["yinYang"],
+            "primaryElement": calculation["primaryElement"],
+            "supportElement": calculation["supportElement"],
+            "balanceElement": calculation["balanceElement"],
         },
         "tickets": ticket_rows,
         "bestTicket": {
@@ -364,50 +185,39 @@ def hypergeometric_distribution(
     denominator = math.comb(population, picks)
     result = {}
     for hits in range(min(winners, picks) + 1):
-        if picks - hits > population - winners:
-            probability = 0.0
-        else:
-            probability = (
-                math.comb(winners, hits)
-                * math.comb(population - winners, picks - hits)
-                / denominator
-            )
+        probability = (
+            math.comb(winners, hits)
+            * math.comb(population - winners, picks - hits)
+            / denominator
+        )
         result[str(hits)] = probability
     return result
 
 
 def aggregate(draw_results: list[dict]) -> dict:
-    ticket_rows = [
-        ticket
-        for draw in draw_results
-        for ticket in draw["tickets"]
-    ]
+    tickets = [ticket for draw in draw_results for ticket in draw["tickets"]]
     draw_count = len(draw_results)
-    ticket_count = len(ticket_rows)
+    ticket_count = len(tickets)
 
-    front_distribution = Counter(
-        ticket["frontHitCount"] for ticket in ticket_rows
-    )
-    back_distribution = Counter(
-        ticket["backHitCount"] for ticket in ticket_rows
-    )
+    front_distribution = Counter(ticket["frontHitCount"] for ticket in tickets)
+    back_distribution = Counter(ticket["backHitCount"] for ticket in tickets)
     pattern_distribution = Counter(
         f'{ticket["frontHitCount"]}+{ticket["backHitCount"]}'
-        for ticket in ticket_rows
+        for ticket in tickets
     )
 
     average_front = (
-        sum(ticket["frontHitCount"] for ticket in ticket_rows) / ticket_count
+        sum(ticket["frontHitCount"] for ticket in tickets) / ticket_count
         if ticket_count
         else 0.0
     )
     average_back = (
-        sum(ticket["backHitCount"] for ticket in ticket_rows) / ticket_count
+        sum(ticket["backHitCount"] for ticket in tickets) / ticket_count
         if ticket_count
         else 0.0
     )
     average_similarity = (
-        sum(ticket["elementSimilarity"] for ticket in ticket_rows) / ticket_count
+        sum(ticket["elementSimilarity"] for ticket in tickets) / ticket_count
         if ticket_count
         else 0.0
     )
@@ -424,58 +234,50 @@ def aggregate(draw_results: list[dict]) -> dict:
         draw["bestTicket"]["backHitCount"] for draw in draw_results
     )
 
-    by_year_accumulator = defaultdict(
-        lambda: {
-            "draws": 0,
-            "tickets": 0,
-            "frontHits": 0,
-            "backHits": 0,
-            "elementSimilarity": 0.0,
-        }
-    )
-    by_element_accumulator = defaultdict(
-        lambda: {
-            "draws": 0,
-            "tickets": 0,
-            "frontHits": 0,
-            "backHits": 0,
-            "elementSimilarity": 0.0,
-        }
-    )
+    group_template = lambda: {
+        "draws": 0,
+        "tickets": 0,
+        "frontHits": 0,
+        "backHits": 0,
+        "elementSimilarity": 0.0,
+    }
+    by_year = defaultdict(group_template)
+    by_element = defaultdict(group_template)
 
     for draw in draw_results:
-        year = draw["date"][:4]
-        primary = draw["formulaContext"]["primaryElement"]
-        for accumulator in [by_year_accumulator[year], by_element_accumulator[primary]]:
-            accumulator["draws"] += 1
-            accumulator["tickets"] += len(draw["tickets"])
-            accumulator["frontHits"] += sum(
+        for group in (
+            by_year[draw["date"][:4]],
+            by_element[draw["formulaContext"]["primaryElement"]],
+        ):
+            group["draws"] += 1
+            group["tickets"] += len(draw["tickets"])
+            group["frontHits"] += sum(
                 ticket["frontHitCount"] for ticket in draw["tickets"]
             )
-            accumulator["backHits"] += sum(
+            group["backHits"] += sum(
                 ticket["backHitCount"] for ticket in draw["tickets"]
             )
-            accumulator["elementSimilarity"] += sum(
+            group["elementSimilarity"] += sum(
                 ticket["elementSimilarity"] for ticket in draw["tickets"]
             )
 
     def finish_groups(groups):
         output = {}
         for key, row in groups.items():
-            tickets = max(1, row["tickets"])
+            count = max(1, row["tickets"])
             output[key] = {
                 "draws": row["draws"],
                 "tickets": row["tickets"],
-                "averageFrontHits": round(row["frontHits"] / tickets, 4),
-                "averageBackHits": round(row["backHits"] / tickets, 4),
+                "averageFrontHits": round(row["frontHits"] / count, 4),
+                "averageBackHits": round(row["backHits"] / count, 4),
                 "averageElementSimilarity": round(
-                    row["elementSimilarity"] / tickets,
+                    row["elementSimilarity"] / count,
                     4,
                 ),
             }
         return output
 
-    sorted_examples = sorted(
+    ranked_examples = sorted(
         draw_results,
         key=lambda row: (
             row["bestTicket"]["frontHitCount"]
@@ -500,15 +302,15 @@ def aggregate(draw_results: list[dict]) -> dict:
             "averageTotalHitsPerTicket": round(average_front + average_back, 6),
             "averageElementSimilarity": round(average_similarity, 6),
             "ticketsWithAnyFrontHit": sum(
-                ticket["frontHitCount"] >= 1 for ticket in ticket_rows
+                ticket["frontHitCount"] >= 1 for ticket in tickets
             ),
             "ticketsWithAnyBackHit": sum(
-                ticket["backHitCount"] >= 1 for ticket in ticket_rows
+                ticket["backHitCount"] >= 1 for ticket in tickets
             ),
             "ticketsWithFrontAndBackHit": sum(
                 ticket["frontHitCount"] >= 1
                 and ticket["backHitCount"] >= 1
-                for ticket in ticket_rows
+                for ticket in tickets
             ),
             "frontHitDistribution": {
                 str(hits): front_distribution[hits] for hits in range(6)
@@ -516,9 +318,7 @@ def aggregate(draw_results: list[dict]) -> dict:
             "backHitDistribution": {
                 str(hits): back_distribution[hits] for hits in range(3)
             },
-            "hitPatternDistribution": dict(
-                sorted(pattern_distribution.items())
-            ),
+            "hitPatternDistribution": dict(sorted(pattern_distribution.items())),
             "bestOfTwoFrontDistribution": {
                 str(hits): best_front_distribution[hits] for hits in range(6)
             },
@@ -551,9 +351,9 @@ def aggregate(draw_results: list[dict]) -> dict:
                 for key, value in back_probabilities.items()
             },
             "note": (
-                "This is the exact expectation for any fixed five-front/two-back "
-                "ticket under a fair draw. It is a benchmark, not a claim that "
-                "historical draws are independent in every operational detail."
+                "Exact fixed-ticket expectation under a fair draw. It is a "
+                "benchmark, not a promise of independence in every operational "
+                "detail."
             ),
         },
         "comparison": {
@@ -572,9 +372,9 @@ def aggregate(draw_results: list[dict]) -> dict:
                 6,
             ),
         },
-        "byYear": finish_groups(by_year_accumulator),
-        "byPrimaryElement": finish_groups(by_element_accumulator),
-        "bestExamples": sorted_examples[:20],
+        "byYear": finish_groups(by_year),
+        "byPrimaryElement": finish_groups(by_element),
+        "bestExamples": ranked_examples[:20],
         "recentExamples": draw_results[-20:][::-1],
     }
 
@@ -592,26 +392,34 @@ def main() -> None:
         str(row.get("issue")): row
         for row in existing_rows
         if row.get("issue")
+        and previous.get("formulaVersion") == formula.FORMULA
     }
 
-    front_table = make_combo_table(35, 5)
-    back_table = make_combo_table(12, 2)
-
+    calculation_cache: dict[tuple, list[dict]] = {}
     rows = []
+    cache_hits = 0
+
     for position, draw in enumerate(draws, start=1):
         existing = existing_by_issue.get(draw["issue"])
         if existing:
             rows.append(existing)
             continue
-        context, predictions = generate_formula_results(
-            draw["issue"],
-            draw["date"],
-            front_table,
-            back_table,
-        )
-        rows.append(score_draw(draw, context, predictions))
+
+        calculation = formula.context(draw["issue"], draw["date"])
+        signature = formula_signature(calculation)
+        if signature in calculation_cache:
+            predictions = calculation_cache[signature]
+            cache_hits += 1
+        else:
+            _, predictions = formula.calculate(draw["issue"], draw["date"])
+            calculation_cache[signature] = predictions
+
+        rows.append(score_draw(draw, calculation, predictions))
         if position % 100 == 0 or position == len(draws):
-            print(f"Backtested {position}/{len(draws)} draws")
+            print(
+                f"Backtested {position}/{len(draws)} draws "
+                f"({len(calculation_cache)} unique formula contexts)"
+            )
 
     rows.sort(key=lambda row: (row["date"], int(row["issue"])))
     summary = aggregate(rows)
@@ -625,22 +433,29 @@ def main() -> None:
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "summary": summary,
         "drawResults": rows,
+        "performance": {
+            "uniqueFormulaContexts": len(calculation_cache),
+            "cacheHits": cache_hits,
+            "frontCandidatePool": formula.FRONT_POOL_SIZE,
+            "backCandidatePool": formula.BACK_POOL_SIZE,
+        },
         "methodology": {
             "predictionInputs": ["target issue", "target draw date"],
             "actualResultUsage": "comparison only after prediction",
             "formula": (
-                "The same He Tu / Luo Shu date-and-issue scoring functions used "
-                "by the live formula-only Feel the Chee generator."
+                "The same He Tu / Luo Shu date-and-issue calculation used by "
+                "the live formula-only Feel the Chee generator."
             ),
             "selection": (
-                "Exact enumeration of all valid front and back combinations, "
-                "then the same two-ticket diversity rule used by the live model."
+                f"The live formula ranks a {formula.FRONT_POOL_SIZE}-number "
+                f"front shortlist and a {formula.BACK_POOL_SIZE}-number back "
+                "shortlist, then scores every valid combination within those "
+                "formula-only pools."
             ),
         },
         "warning": (
-            "A historical backtest can describe past alignment but cannot make "
-            "a fair random draw predictable. All valid combinations retain the "
-            "same theoretical probability."
+            "Historical alignment does not make a fair random draw predictable. "
+            "All valid combinations retain the same theoretical probability."
         ),
     }
     write_json(OUTPUT_FILE, payload)
