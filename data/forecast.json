@@ -1,6 +1,7 @@
 {
-  "modelVersion": "v2.1-adaptive",
-  "generatedAt": "2026-07-27T20:11:29.839971+00:00",
+  "modelVersion": "v3.0-curve-sampler",
+  "modelFamily": "curve-trajectory-generative-sampler",
+  "generatedAt": "2026-07-28T01:06:57.706334+00:00",
   "targetIssue": "26085",
   "targetDate": "2026-07-29",
   "historyCount": 2902,
@@ -25,123 +26,127 @@
   },
   "lastEvaluation": null,
   "calibration": {
+    "selectedProfile": "wide-band",
+    "selectedLabel": "宽带采样",
+    "tests": 50,
+    "frontCurveLoss": 0.1464,
+    "backCurveLoss": 0.1978,
+    "historicalObjective": 0.1608,
+    "adjustedObjective": 0.1608,
+    "liveEvaluations": 0,
+    "liveCurveDistance": null,
+    "temperature": 1.52,
+    "temperatureAdjustment": 0.0,
+    "note": "Forecasts sorted-position curves and samples their uncertainty band; it does not reuse a fixed hot-number list."
+  },
+  "curveForecast": {
     "front": {
-      "tests": 90,
-      "averageMainHits": 0.7,
-      "averageWiderHits": 1.356,
-      "historicalObjective": 3.456,
-      "adaptiveBonus": 0.0193,
-      "objective": 3.475,
-      "selectedProfile": "stable-history",
-      "liveEvaluations": 1,
-      "liveEmaHitRate": 0.2
+      "centers": [
+        10.59,
+        19.94,
+        24.94,
+        28.4,
+        31.6
+      ],
+      "sigmas": [
+        9.26,
+        10.38,
+        9.12,
+        8.02,
+        8.49
+      ],
+      "slopes": [
+        0.868,
+        0.855,
+        0.174,
+        0.163,
+        0.015
+      ],
+      "cycleLags": [
+        16,
+        16,
+        16,
+        16,
+        15
+      ]
     },
     "back": {
-      "tests": 90,
-      "averageMainHits": 0.4,
-      "averageWiderHits": 0.844,
-      "historicalObjective": 2.044,
-      "adaptiveBonus": 0.0,
-      "objective": 2.044,
-      "selectedProfile": "transition-led",
-      "liveEvaluations": 1,
-      "liveEmaHitRate": 0.1667
-    },
-    "frontWeights": {
-      "long": 0.16,
-      "r10": 0.07,
-      "r30": 0.12,
-      "r100": 0.2,
-      "r300": 0.14,
-      "gap": 0.11,
-      "momentum": 0.08,
-      "transition": 0.12
-    },
-    "backWeights": {
-      "long": 0.06,
-      "r10": 0.1,
-      "r30": 0.14,
-      "r100": 0.16,
-      "r300": 0.08,
-      "gap": 0.11,
-      "momentum": 0.1,
-      "transition": 0.25
-    },
-    "note": "匹配度是模型内部结构评分，不是中奖概率。实时反馈仅小幅修正，历史滚动回测仍占主导。"
+      "centers": [
+        4.66,
+        6.45
+      ],
+      "sigmas": [
+        4.55,
+        5.04
+      ],
+      "slopes": [
+        0.189,
+        -0.116
+      ],
+      "cycleLags": [
+        3,
+        11
+      ]
+    }
+  },
+  "diversity": {
+    "maximumFrontOverlapBetweenResults": 2,
+    "maximumBackOverlapBetweenResults": 1,
+    "maximumFrontOverlapWithPreviousForecast": 3,
+    "selection": "temperature-weighted sampling from the high-fit curve band"
   },
   "results": [
     {
       "rank": 1,
-      "label": "主路径",
+      "label": "曲线主样本",
       "front": [
-        "03",
-        "13",
-        "22",
-        "26",
-        "29"
+        "10",
+        "17",
+        "23",
+        "30",
+        "34"
       ],
       "back": [
-        "02",
-        "07"
+        "05",
+        "06"
       ],
-      "fit": 85.0,
-      "reason": "全历史先验与近期节奏共同评分；前区和值93、跨度26、奇偶3:2、低高区2:3，并保留不同的号码迁移路径。"
+      "fit": 84.0,
+      "reason": "从五个排序位置的预测中心 [10.6 / 19.9 / 24.9 / 28.4 / 31.6] 及波动带中抽样；本组和值114、跨度24，并执行跨期与组间多样性约束。"
     },
     {
       "rank": 2,
-      "label": "周期修正",
+      "label": "波动延伸",
       "front": [
-        "05",
-        "13",
+        "12",
+        "21",
         "23",
-        "26",
-        "29"
+        "30",
+        "31"
       ],
       "back": [
-        "02",
-        "10"
+        "05",
+        "08"
       ],
-      "fit": 79.6,
-      "reason": "全历史先验与近期节奏共同评分；前区和值96、跨度24、奇偶4:1、低高区2:3，并保留不同的号码迁移路径。"
+      "fit": 81.8,
+      "reason": "从五个排序位置的预测中心 [10.6 / 19.9 / 24.9 / 28.4 / 31.6] 及波动带中抽样；本组和值117、跨度19，并执行跨期与组间多样性约束。"
     },
     {
       "rank": 3,
-      "label": "结构对冲",
+      "label": "随机带对冲",
       "front": [
-        "06",
-        "10",
-        "13",
+        "07",
+        "18",
         "26",
+        "28",
         "29"
       ],
       "back": [
-        "02",
-        "12"
+        "01",
+        "04"
       ],
-      "fit": 77.1,
-      "reason": "全历史先验与近期节奏共同评分；前区和值84、跨度23、奇偶2:3、低高区3:2，并保留不同的号码迁移路径。"
+      "fit": 79.6,
+      "reason": "从五个排序位置的预测中心 [10.6 / 19.9 / 24.9 / 28.4 / 31.6] 及波动带中抽样；本组和值108、跨度22，并执行跨期与组间多样性约束。"
     }
   ],
-  "signals": {
-    "frontTop10": [
-      "26",
-      "13",
-      "29",
-      "22",
-      "21",
-      "23",
-      "03",
-      "10",
-      "06",
-      "34"
-    ],
-    "backTop6": [
-      "02",
-      "10",
-      "07",
-      "12",
-      "11",
-      "08"
-    ]
-  }
+  "note": "All valid combinations remain equally likely in a fair lottery. Curve fit is not a winning probability."
 }
