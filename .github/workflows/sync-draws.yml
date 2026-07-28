@@ -9,6 +9,8 @@ on:
       - "scripts/sync_draws.py"
       - "scripts/curve_forecast.py"
       - "scripts/chee_formula.py"
+      - "scripts/chee_backtest.py"
+      - "assets/chee-backtest.js"
       - ".github/workflows/sync-draws.yml"
   schedule:
     # 北京时间周一、周三、周六 22:10、22:35、23:00。
@@ -19,13 +21,13 @@ permissions:
   contents: write
 
 concurrency:
-  group: sync-curve-and-formula
+  group: sync-curve-formula-backtest
   cancel-in-progress: false
 
 jobs:
   sync-and-forecast:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
 
     steps:
       - name: Checkout
@@ -38,6 +40,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install backtest dependency
+        run: python -m pip install --disable-pip-version-check numpy
+
       - name: Synchronize complete draw history
         run: python scripts/sync_draws.py
 
@@ -47,7 +52,10 @@ jobs:
       - name: Calculate formula-only Feel the Chee results
         run: python scripts/chee_formula.py
 
-      - name: Commit draw, curve learning, and formula results
+      - name: Backtest Feel the Chee across all stored draws
+        run: python scripts/chee_backtest.py
+
+      - name: Commit draw, forecast, formula, and backtest updates
         run: |
           git config user.name "feel-the-chee-learning-bot"
           git config user.email "actions@users.noreply.github.com"
@@ -57,13 +65,14 @@ jobs:
             data/forecast-history.json \
             data/learning-log.json \
             data/model-state.json \
-            data/chee-forecast.json
+            data/chee-forecast.json \
+            data/chee-backtest.json
 
           if git diff --cached --quiet; then
-            echo "No draw or forecast changes detected."
+            echo "No draw, forecast, formula, or backtest changes detected."
             exit 0
           fi
 
-          git commit -m "data: sync draw, sample curve forecast, and calculate Chee formula"
+          git commit -m "data: sync draw and refresh curve, formula, and full backtest"
           git pull --rebase origin main
           git push origin main
