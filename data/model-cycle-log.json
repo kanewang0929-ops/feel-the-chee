@@ -1,0 +1,140 @@
+[
+  {
+    "runId": "2026-07-29T032519.263787+0000",
+    "generatedAt": "2026-07-29T03:25:19.263787+00:00",
+    "cadence": "daily-24h plus draw-night retries",
+    "models": {
+      "ai": {
+        "runId": "2026-07-29T032519.263787+0000",
+        "generatedAt": "2026-07-29T03:25:19.263787+00:00",
+        "model": "AI curve sampler",
+        "modelVersion": "v3.0-curve-sampler",
+        "backtestVersion": "v1.1-walk-forward-bounded",
+        "drawsEvaluated": 2402,
+        "ticketsEvaluated": 7206,
+        "averageFrontHits": 0.722176,
+        "averageBackHits": 0.329031,
+        "profilePerformance": [
+          {
+            "name": "wide-band",
+            "label": "宽带采样",
+            "draws": 1742,
+            "averageCurveLoss": 0.166036
+          },
+          {
+            "name": "adaptive-wave",
+            "label": "自适应波形",
+            "draws": 660,
+            "averageCurveLoss": 0.167807
+          }
+        ],
+        "curveBenchmark": {
+          "modelAverageLoss": 0.166522,
+          "persistenceAverageLoss": 0.193018,
+          "trailingMean60AverageLoss": 0.142687,
+          "excessVsTrailingMean60": 0.023835
+        },
+        "stateBefore": {
+          "temperatureAdjustment": null,
+          "selectedProfile": "wide-band"
+        },
+        "stateAfter": {
+          "temperatureAdjustment": -0.025,
+          "selectedProfile": "wide-band",
+          "simulationRuns": 1
+        }
+      },
+      "chee": {
+        "runId": "2026-07-29T032519.263787+0000",
+        "generatedAt": "2026-07-29T03:25:19.263787+00:00",
+        "model": "Feel the Chee formula",
+        "modelVersion": "v2.1-formula-only",
+        "formulaVersion": "hetu-luoshu-date-issue-v2",
+        "backtestVersion": "v1.1-full-archive",
+        "drawsEvaluated": 2902,
+        "ticketsEvaluated": 5804,
+        "averageFrontHits": 0.720882,
+        "averageBackHits": 0.328567,
+        "averageElementSimilarity": 0.516785,
+        "formulaOnly": true,
+        "learningEnabled": false,
+        "strategyAdjustment": "none",
+        "simulationRuns": 1
+      },
+      "hybrid": {
+        "runId": "2026-07-29T032519.263787+0000",
+        "generatedAt": "2026-07-29T03:25:19.263787+00:00",
+        "model": "Fusion Agent",
+        "modelVersion": "v1.0-adaptive-fusion-agent",
+        "backtestVersion": "v1.0-sequential-fusion-audit",
+        "drawsEvaluated": 2402,
+        "ticketsEvaluated": 4804,
+        "averageFrontHits": 0.729392,
+        "averageBackHits": 0.339301,
+        "weightsBefore": {
+          "source": {
+            "front": {
+              "ai": 0.535433,
+              "chee": 0.464567
+            },
+            "back": {
+              "ai": 0.362313,
+              "chee": 0.637687
+            }
+          },
+          "strategy": {
+            "front": {
+              "both": 0.997915,
+              "aiOnly": 1.100077,
+              "cheeOnly": 0.902008
+            },
+            "back": {
+              "both": 0.882599,
+              "aiOnly": 0.953741,
+              "cheeOnly": 1.16366
+            }
+          }
+        },
+        "weightsAfter": {
+          "source": {
+            "front": {
+              "ai": 0.535433,
+              "chee": 0.464567
+            },
+            "back": {
+              "ai": 0.362313,
+              "chee": 0.637687
+            }
+          },
+          "strategy": {
+            "front": {
+              "both": 0.997915,
+              "aiOnly": 1.100077,
+              "cheeOnly": 0.902008
+            },
+            "back": {
+              "both": 0.882599,
+              "aiOnly": 0.953741,
+              "cheeOnly": 1.16366
+            }
+          }
+        },
+        "simulationRuns": 1
+      }
+    },
+    "archived": {
+      "aiLearningEvents": 2,
+      "hybridLearningEvents": 0,
+      "aiForecastSnapshots": 3,
+      "hybridForecastSnapshots": 0
+    },
+    "storage": {
+      "aiSimulationLog": "data/ai-simulation-log.json",
+      "cheeSimulationLog": "data/chee-simulation-log.json",
+      "hybridSimulationLog": "data/hybrid-simulation-log.json",
+      "aiMasterLearningLog": "data/ai-master-learning-log.json",
+      "hybridMasterLearningLog": "data/hybrid-master-learning-log.json",
+      "cycleLog": "data/model-cycle-log.json"
+    }
+  }
+]

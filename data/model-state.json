@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-29T00:43:58.955538+00:00",
+  "updatedAt": "2026-07-29T03:25:20.289347+00:00",
   "profiles": {
     "front": {
       "stable-history": {
@@ -25,7 +25,59 @@
         "lastHitRate": 0.333333,
         "emaHitRate": 0.333333
       }
+    },
+    "wide-band": {
+      "evaluations": 8,
+      "emaCurveDistance": 0.166036,
+      "simulationCurveDistance": 0.166036,
+      "simulationDraws": 1742,
+      "simulationUpdatedAt": "2026-07-29T03:25:19.263787+00:00"
+    },
+    "adaptive-wave": {
+      "evaluations": 8,
+      "emaCurveDistance": 0.167807,
+      "simulationCurveDistance": 0.167807,
+      "simulationDraws": 660,
+      "simulationUpdatedAt": "2026-07-29T03:25:19.263787+00:00"
     }
   },
-  "selectedProfile": "wide-band"
+  "selectedProfile": "wide-band",
+  "temperatureAdjustment": -0.025,
+  "simulationLearning": {
+    "runs": 1,
+    "lastRunId": "2026-07-29T032519.263787+0000",
+    "updatedAt": "2026-07-29T03:25:19.263787+00:00",
+    "drawsEvaluated": 2402,
+    "ticketsEvaluated": 7206,
+    "bestProfile": {
+      "name": "wide-band",
+      "label": "宽带采样",
+      "draws": 1742,
+      "averageCurveLoss": 0.166036
+    },
+    "profilePerformance": [
+      {
+        "name": "wide-band",
+        "label": "宽带采样",
+        "draws": 1742,
+        "averageCurveLoss": 0.166036
+      },
+      {
+        "name": "adaptive-wave",
+        "label": "自适应波形",
+        "draws": 660,
+        "averageCurveLoss": 0.167807
+      }
+    ],
+    "curveBenchmark": {
+      "modelAverageLoss": 0.166522,
+      "persistenceAverageLoss": 0.193018,
+      "trailingMean60AverageLoss": 0.142687,
+      "excessVsTrailingMean60": 0.023835
+    },
+    "strategyAdjustment": {
+      "temperatureAdjustment": -0.025,
+      "rule": "Historical simulation profile losses update profile EMAs. The model narrows its sampling band when it underperforms the 60-draw positional-mean benchmark."
+    }
+  }
 }
