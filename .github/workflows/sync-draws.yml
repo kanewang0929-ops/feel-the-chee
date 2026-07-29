@@ -11,8 +11,11 @@ on:
       - "scripts/ai_backtest.py"
       - "scripts/chee_formula.py"
       - "scripts/chee_backtest.py"
+      - "scripts/hybrid_agent.py"
+      - "scripts/hybrid_backtest.py"
       - "assets/ai-backtest.js"
       - "assets/chee-backtest.js"
+      - "assets/hybrid-agent.js"
       - ".github/workflows/sync-draws.yml"
   schedule:
     # 北京时间周一、周三、周六 22:10、22:35、23:00。
@@ -23,13 +26,13 @@ permissions:
   contents: write
 
 concurrency:
-  group: sync-curve-formula-backtests
+  group: sync-curve-formula-fusion-backtests
   cancel-in-progress: true
 
 jobs:
   sync-and-forecast:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 120
 
     steps:
       - name: Checkout
@@ -57,7 +60,13 @@ jobs:
       - name: Backtest Feel the Chee across all stored draws
         run: python scripts/chee_backtest.py
 
-      - name: Commit draw, forecast, formula, and backtest updates
+      - name: Simulate the adaptive fusion agent through aligned history
+        run: python scripts/hybrid_backtest.py
+
+      - name: Generate the next two fusion-agent results
+        run: python scripts/hybrid_agent.py
+
+      - name: Commit draw, forecasts, audits, and learning logs
         run: |
           git config user.name "feel-the-chee-learning-bot"
           git config user.email "actions@users.noreply.github.com"
@@ -69,13 +78,18 @@ jobs:
             data/model-state.json \
             data/ai-backtest.json \
             data/chee-forecast.json \
-            data/chee-backtest.json
+            data/chee-backtest.json \
+            data/hybrid-forecast.json \
+            data/hybrid-history.json \
+            data/hybrid-learning-log.json \
+            data/hybrid-model-state.json \
+            data/hybrid-backtest.json
 
           if git diff --cached --quiet; then
-            echo "No draw, forecast, formula, or backtest changes detected."
+            echo "No draw, forecast, audit, or learning changes detected."
             exit 0
           fi
 
-          git commit -m "data: refresh draw, AI audit, and Chee audit"
+          git commit -m "data: refresh draw, source audits, and fusion-agent learning"
           git pull --rebase origin main
           git push origin main
