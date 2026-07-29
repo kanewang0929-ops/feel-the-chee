@@ -152,5 +152,68 @@
       },
       "rule": "Live feedback is an exponential moving average with a bounded influence on walk-forward selection."
     }
+  },
+  {
+    "issue": "26085",
+    "date": "2026-07-29",
+    "modelFamily": "curve-sampler",
+    "evaluatedAt": "2026-07-29T18:21:09.678183+00:00",
+    "actual": {
+      "front": [
+        "03",
+        "04",
+        "14",
+        "28",
+        "31"
+      ],
+      "back": [
+        "05",
+        "07"
+      ]
+    },
+    "results": [
+      {
+        "rank": 1,
+        "label": "曲线主样本",
+        "frontHits": [],
+        "backHits": [],
+        "frontHitCount": 0,
+        "backHitCount": 0,
+        "curveDistance": 0.2305
+      },
+      {
+        "rank": 2,
+        "label": "波动延伸",
+        "frontHits": [],
+        "backHits": [
+          "05"
+        ],
+        "frontHitCount": 0,
+        "backHitCount": 1,
+        "curveDistance": 0.1762
+      },
+      {
+        "rank": 3,
+        "label": "随机带对冲",
+        "frontHits": [
+          "28"
+        ],
+        "backHits": [],
+        "frontHitCount": 1,
+        "backHitCount": 0,
+        "curveDistance": 0.2106
+      }
+    ],
+    "summary": {
+      "averageFrontHits": 0.333,
+      "averageBackHits": 0.333,
+      "bestCurveDistance": 0.1762
+    },
+    "learningUpdate": {
+      "profile": "wide-band",
+      "emaCurveDistance": 0.1687,
+      "temperatureAdjustment": 0.1146,
+      "rule": "Prediction error changes only the sampling-band width; recent winning numbers are not fixed favourites."
+    }
   }
 ]
