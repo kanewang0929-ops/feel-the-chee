@@ -13,10 +13,16 @@ on:
       - "scripts/chee_backtest.py"
       - "scripts/hybrid_agent.py"
       - "scripts/hybrid_backtest.py"
+      - "scripts/intuitive_agent.py"
+      - "scripts/intuitive_agent_runtime.py"
+      - "scripts/intuitive_backtest.py"
+      - "scripts/intuitive_backtest_runner.py"
+      - "scripts/intuitive_simulation_learning.py"
       - "scripts/daily_simulation_learning.py"
       - "assets/ai-backtest.js"
       - "assets/chee-backtest.js"
       - "assets/hybrid-agent.js"
+      - "assets/agent-instinct.js"
       - "index.html"
       - ".github/workflows/sync-draws.yml"
   schedule:
@@ -30,7 +36,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: sync-curve-formula-fusion-backtests
+  group: sync-curve-formula-instinct-backtests
   cancel-in-progress: true
 
 jobs:
@@ -58,11 +64,14 @@ jobs:
       - name: Backtest Feel the Chee across all stored draws
         run: python scripts/chee_backtest.py
 
-      - name: Simulate the adaptive fusion agent through aligned history
-        run: python scripts/hybrid_backtest.py
+      - name: Simulate AI, Chee, and independent Agent Instinct
+        run: python scripts/intuitive_backtest_runner.py
 
       - name: Apply simulation learning and archive permanent model logs
         run: python scripts/daily_simulation_learning.py
+
+      - name: Apply three-source Agent Instinct learning
+        run: python scripts/intuitive_simulation_learning.py
 
       - name: Learn draw curves and sample the next AI forecast
         run: python scripts/curve_forecast.py
@@ -70,8 +79,8 @@ jobs:
       - name: Calculate formula-only Feel the Chee results
         run: python scripts/chee_formula.py
 
-      - name: Generate the next two fusion-agent results
-        run: python scripts/hybrid_agent.py
+      - name: Generate the next two Agent Instinct results
+        run: python scripts/intuitive_agent_runtime.py
 
       - name: Commit draw, forecasts, audits, states, and permanent logs
         run: |
@@ -106,6 +115,6 @@ jobs:
             exit 0
           fi
 
-          git commit -m "data: refresh daily three-model simulations and learning logs"
+          git commit -m "data: refresh daily AI, Chee, and Agent Instinct learning"
           git pull --rebase origin main
           git push origin main
