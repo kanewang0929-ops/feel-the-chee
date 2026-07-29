@@ -1,1 +1,295 @@
-[]
+[
+  {
+    "modelVersion": "v1.0-adaptive-fusion-agent",
+    "modelFamily": "adaptive-source-fusion-agent",
+    "generatedAt": "2026-07-29T00:45:15.048736+00:00",
+    "targetIssue": "26085",
+    "targetDate": "2026-07-29",
+    "sourceModels": {
+      "ai": "v3.0-curve-sampler",
+      "chee": "v2.1-formula-only"
+    },
+    "sourceWeights": {
+      "front": {
+        "ai": 0.535433,
+        "chee": 0.464567
+      },
+      "back": {
+        "ai": 0.362313,
+        "chee": 0.637687
+      }
+    },
+    "strategyWeights": {
+      "front": {
+        "both": 0.997915,
+        "aiOnly": 1.100077,
+        "cheeOnly": 0.902008
+      },
+      "back": {
+        "both": 0.882599,
+        "aiOnly": 0.953741,
+        "cheeOnly": 1.16366
+      }
+    },
+    "observations": 2402,
+    "lastEvaluation": null,
+    "sourceAuditSummary": {
+      "ai": {
+        "draws": 2402,
+        "averageFrontHits": 0.722176,
+        "averageBackHits": 0.329031
+      },
+      "chee": {
+        "draws": 2902,
+        "averageFrontHits": 0.720882,
+        "averageBackHits": 0.328567
+      },
+      "hybrid": {
+        "draws": 2402,
+        "averageFrontHits": 0.729392,
+        "averageBackHits": 0.339301
+      }
+    },
+    "sourceInputs": {
+      "ai": {
+        "modelVersion": "v3.0-curve-sampler",
+        "results": [
+          {
+            "rank": 1,
+            "label": "曲线主样本",
+            "front": [
+              "10",
+              "17",
+              "23",
+              "30",
+              "34"
+            ],
+            "back": [
+              "05",
+              "06"
+            ],
+            "fit": 84.0,
+            "reason": "从五个排序位置的预测中心 [10.6 / 19.9 / 24.9 / 28.4 / 31.6] 及波动带中抽样；本组和值114、跨度24，并执行跨期与组间多样性约束。"
+          },
+          {
+            "rank": 2,
+            "label": "波动延伸",
+            "front": [
+              "12",
+              "21",
+              "23",
+              "30",
+              "31"
+            ],
+            "back": [
+              "05",
+              "08"
+            ],
+            "fit": 81.8,
+            "reason": "从五个排序位置的预测中心 [10.6 / 19.9 / 24.9 / 28.4 / 31.6] 及波动带中抽样；本组和值117、跨度19，并执行跨期与组间多样性约束。"
+          },
+          {
+            "rank": 3,
+            "label": "随机带对冲",
+            "front": [
+              "07",
+              "18",
+              "26",
+              "28",
+              "29"
+            ],
+            "back": [
+              "01",
+              "04"
+            ],
+            "fit": 79.6,
+            "reason": "从五个排序位置的预测中心 [10.6 / 19.9 / 24.9 / 28.4 / 31.6] 及波动带中抽样；本组和值108、跨度22，并执行跨期与组间多样性约束。"
+          }
+        ]
+      },
+      "chee": {
+        "modelVersion": "v2.1-formula-only",
+        "results": [
+          {
+            "rank": 1,
+            "label": "五行主衡",
+            "front": [
+              "03",
+              "06",
+              "11",
+              "28",
+              "30"
+            ],
+            "back": [
+              "03",
+              "11"
+            ],
+            "cheeValue": 86.0,
+            "elements": {
+              "木": 3,
+              "火": 0,
+              "土": 1,
+              "金": 0,
+              "水": 3
+            },
+            "reason": "公式输入第26085期与2026-07-29；天数1、地数3、人数6、动爻5。按水→木→火生化路径及河图洛书数位共振选取，不读取历史开奖。"
+          },
+          {
+            "rank": 2,
+            "label": "生化对冲",
+            "front": [
+              "06",
+              "08",
+              "15",
+              "21",
+              "28"
+            ],
+            "back": [
+              "06",
+              "08"
+            ],
+            "cheeValue": 79.6,
+            "elements": {
+              "木": 3,
+              "火": 0,
+              "土": 1,
+              "金": 0,
+              "水": 3
+            },
+            "reason": "公式输入第26085期与2026-07-29；天数1、地数3、人数6、动爻5。按水→木→火生化路径及河图洛书数位共振选取，不读取历史开奖。"
+          }
+        ]
+      }
+    },
+    "results": [
+      {
+        "rank": 1,
+        "label": "融合主策",
+        "front": [
+          "06",
+          "21",
+          "23",
+          "28",
+          "30"
+        ],
+        "back": [
+          "03",
+          "06"
+        ],
+        "agentScore": 86.0,
+        "sourceMix": {
+          "front": {
+            "aiOnly": 1,
+            "cheeOnly": 1,
+            "both": 3
+          },
+          "back": {
+            "aiOnly": 0,
+            "cheeOnly": 1,
+            "both": 1
+          }
+        },
+        "numberSources": {
+          "front": {
+            "06": [
+              "chee"
+            ],
+            "21": [
+              "ai",
+              "chee"
+            ],
+            "23": [
+              "ai"
+            ],
+            "28": [
+              "ai",
+              "chee"
+            ],
+            "30": [
+              "ai",
+              "chee"
+            ]
+          },
+          "back": {
+            "03": [
+              "chee"
+            ],
+            "06": [
+              "ai",
+              "chee"
+            ]
+          }
+        },
+        "reason": "前区来源 AI独有1、风水独有1、双方共识3；后区来源 AI独有0、风水独有1、双方共识1。代理按历史来源权重、号码支持强度、AI曲线吻合度和两组间分散度联合选择。"
+      },
+      {
+        "rank": 2,
+        "label": "交叉对冲",
+        "front": [
+          "07",
+          "17",
+          "23",
+          "28",
+          "30"
+        ],
+        "back": [
+          "03",
+          "08"
+        ],
+        "agentScore": 78.4,
+        "sourceMix": {
+          "front": {
+            "aiOnly": 3,
+            "cheeOnly": 0,
+            "both": 2
+          },
+          "back": {
+            "aiOnly": 0,
+            "cheeOnly": 1,
+            "both": 1
+          }
+        },
+        "numberSources": {
+          "front": {
+            "07": [
+              "ai"
+            ],
+            "17": [
+              "ai"
+            ],
+            "23": [
+              "ai"
+            ],
+            "28": [
+              "ai",
+              "chee"
+            ],
+            "30": [
+              "ai",
+              "chee"
+            ]
+          },
+          "back": {
+            "03": [
+              "chee"
+            ],
+            "08": [
+              "ai",
+              "chee"
+            ]
+          }
+        },
+        "reason": "前区来源 AI独有3、风水独有0、双方共识2；后区来源 AI独有0、风水独有1、双方共识1。代理按历史来源权重、号码支持强度、AI曲线吻合度和两组间分散度联合选择。"
+      }
+    ],
+    "storage": {
+      "forecast": "data/hybrid-forecast.json",
+      "history": "data/hybrid-history.json",
+      "learningLog": "data/hybrid-learning-log.json",
+      "modelState": "data/hybrid-model-state.json",
+      "historicalBacktest": "data/hybrid-backtest.json"
+    },
+    "note": "The agent only recombines numbers proposed by the AI and Chee models. Agent score is an internal fusion score, not a winning probability.",
+    "evaluation": null
+  }
+]
