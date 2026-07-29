@@ -13,12 +13,16 @@ on:
       - "scripts/chee_backtest.py"
       - "scripts/hybrid_agent.py"
       - "scripts/hybrid_backtest.py"
+      - "scripts/daily_simulation_learning.py"
       - "assets/ai-backtest.js"
       - "assets/chee-backtest.js"
       - "assets/hybrid-agent.js"
+      - "index.html"
       - ".github/workflows/sync-draws.yml"
   schedule:
-    # 北京时间周一、周三、周六 22:10、22:35、23:00。
+    # 每天北京时间09:15运行三模型完整模拟与学习闭环。
+    - cron: "15 1 * * *"
+    # 保留开奖日晚间重试：北京时间周一、周三、周六22:10、22:35、23:00。
     - cron: "10,35 14 * * 1,3,6"
     - cron: "0 15 * * 1,3,6"
 
@@ -48,12 +52,6 @@ jobs:
       - name: Synchronize complete draw history
         run: python scripts/sync_draws.py
 
-      - name: Learn draw curves and sample the next AI forecast
-        run: python scripts/curve_forecast.py
-
-      - name: Calculate formula-only Feel the Chee results
-        run: python scripts/chee_formula.py
-
       - name: Backtest AI with strict walk-forward training
         run: python scripts/ai_backtest.py
 
@@ -63,10 +61,19 @@ jobs:
       - name: Simulate the adaptive fusion agent through aligned history
         run: python scripts/hybrid_backtest.py
 
+      - name: Apply simulation learning and archive permanent model logs
+        run: python scripts/daily_simulation_learning.py
+
+      - name: Learn draw curves and sample the next AI forecast
+        run: python scripts/curve_forecast.py
+
+      - name: Calculate formula-only Feel the Chee results
+        run: python scripts/chee_formula.py
+
       - name: Generate the next two fusion-agent results
         run: python scripts/hybrid_agent.py
 
-      - name: Commit draw, forecasts, audits, and learning logs
+      - name: Commit draw, forecasts, audits, states, and permanent logs
         run: |
           git config user.name "feel-the-chee-learning-bot"
           git config user.email "actions@users.noreply.github.com"
@@ -77,19 +84,28 @@ jobs:
             data/learning-log.json \
             data/model-state.json \
             data/ai-backtest.json \
+            data/ai-simulation-log.json \
+            data/ai-master-learning-log.json \
+            data/ai-forecast-master-history.json \
             data/chee-forecast.json \
             data/chee-backtest.json \
+            data/chee-model-state.json \
+            data/chee-simulation-log.json \
             data/hybrid-forecast.json \
             data/hybrid-history.json \
             data/hybrid-learning-log.json \
             data/hybrid-model-state.json \
-            data/hybrid-backtest.json
+            data/hybrid-backtest.json \
+            data/hybrid-simulation-log.json \
+            data/hybrid-master-learning-log.json \
+            data/hybrid-forecast-master-history.json \
+            data/model-cycle-log.json
 
           if git diff --cached --quiet; then
-            echo "No draw, forecast, audit, or learning changes detected."
+            echo "No draw, forecast, audit, state, or learning-log changes detected."
             exit 0
           fi
 
-          git commit -m "data: refresh draw, source audits, and fusion-agent learning"
+          git commit -m "data: refresh daily three-model simulations and learning logs"
           git pull --rebase origin main
           git push origin main
