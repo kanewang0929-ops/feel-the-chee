@@ -34,33 +34,33 @@
               <h2>融合 Agent · 下期精选</h2>
               <div class="muted">AI、风水与Agent直觉共同参与。直觉号码可以来自两个模型之外。</div>
             </div>
-            <span class="badge gold">Agent Instinct</span>
+            <span class="badge gold">2组结果 · Agent Instinct</span>
           </div>
           <div class="forecast-list">
             <div class="forecast"><div class="muted">正在读取Agent直觉...</div></div>
           </div>
         </div>
 
-        <div class="card">
+        <div id="aiPredictionCard" class="card">
           <div class="section-head">
             <div>
               <h2>AI 曲线预测结果</h2>
               <div class="muted">正在读取完整历史数据库与下一期开奖曲线...</div>
             </div>
-            <span class="badge blue">3 组结果</span>
+            <span class="badge blue">3组结果</span>
           </div>
           <div class="forecast-list">
             <div class="forecast"><div class="muted">正在生成曲线候选结果...</div></div>
           </div>
         </div>
 
-        <div class="card">
+        <div id="cheePredictionCard" class="card">
           <div class="section-head">
             <div>
               <h2>Feel the Chee</h2>
               <div class="muted">只按河图洛书、目标期号与开奖日期计算，不使用历史开奖学习。</div>
             </div>
-            <span class="badge gold">公式计算</span>
+            <span class="badge gold">2组结果 · 公式计算</span>
           </div>
           <div class="chee-bars">
             <div class="chee-row"><span>金</span><div class="bar"><div class="fill" style="width:0%"></div></div><span>0</span></div>
@@ -110,7 +110,7 @@
     </section>
 
     <section id="learning" class="page">
-      <div class="card">
+      <div id="aiLearningSummary" class="card">
         <div class="section-head">
           <div>
             <h2>AI 曲线学习</h2>
@@ -126,7 +126,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div id="aiLearningLogs" class="card">
         <h3>AI 曲线学习日志</h3>
         <div class="log-list">
           <div class="log">
@@ -159,7 +159,6 @@
 </div>
 
 <script src="./assets/app.js"></script>
-<script src="./assets/model-v3.js"></script>
 <script src="./assets/chee-backtest.js"></script>
 <script src="./assets/ai-backtest.js"></script>
 <script src="./assets/agent-instinct.js"></script>
