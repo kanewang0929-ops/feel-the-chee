@@ -1,7 +1,7 @@
 {
   "modelVersion": "v2.0-intuitive-fusion-agent",
   "modelFamily": "adaptive-three-source-intuitive-agent",
-  "generatedAt": "2026-08-06T11:03:04.878191+00:00",
+  "generatedAt": "2026-08-07T06:02:43.331624+00:00",
   "targetIssue": "26089",
   "targetDate": "2026-08-08",
   "sourceModels": {
@@ -11,34 +11,34 @@
   },
   "sourceWeights": {
     "front": {
-      "ai": 0.336948,
-      "chee": 0.315762,
-      "instinct": 0.34729
+      "ai": 0.334528,
+      "chee": 0.316533,
+      "instinct": 0.348939
     },
     "back": {
-      "ai": 0.309646,
-      "chee": 0.338974,
-      "instinct": 0.35138
+      "ai": 0.308893,
+      "chee": 0.339436,
+      "instinct": 0.351671
     }
   },
   "strategyWeights": {
     "front": {
       "allThree": 0.65,
-      "aiChee": 1.007494,
-      "aiInstinct": 1.214619,
-      "cheeInstinct": 0.762221,
-      "aiOnly": 1.238383,
-      "cheeOnly": 0.921401,
-      "instinctOnly": 1.212311
+      "aiChee": 1.011847,
+      "aiInstinct": 1.203217,
+      "cheeInstinct": 0.763438,
+      "aiOnly": 1.23016,
+      "cheeOnly": 0.923686,
+      "instinctOnly": 1.22232
     },
     "back": {
-      "allThree": 0.760897,
-      "aiChee": 0.904527,
-      "aiInstinct": 1.260572,
-      "cheeInstinct": 0.936952,
-      "aiOnly": 1.066549,
-      "cheeOnly": 1.198052,
-      "instinctOnly": 0.872452
+      "allThree": 0.763505,
+      "aiChee": 0.9047,
+      "aiInstinct": 1.25989,
+      "cheeInstinct": 0.934937,
+      "aiOnly": 1.060645,
+      "cheeOnly": 1.200546,
+      "instinctOnly": 0.875777
     }
   },
   "observations": 2407,
@@ -68,52 +68,52 @@
           "rank": 1,
           "label": "曲线主样本",
           "front": [
-            "08",
-            "09",
-            "13",
-            "21",
-            "30"
+            "03",
+            "07",
+            "18",
+            "23",
+            "26"
           ],
           "back": [
-            "06",
-            "10"
+            "04",
+            "11"
           ],
           "fit": 84.0,
-          "reason": "从五个排序位置的预测中心 [4.4 / 10.2 / 12.6 / 24.3 / 27.6] 及波动带中抽样；本组和值81、跨度22，并执行跨期与组间多样性约束。"
+          "reason": "从五个排序位置的预测中心 [4.4 / 10.2 / 12.6 / 24.3 / 27.6] 及波动带中抽样；本组和值77、跨度23，并执行跨期与组间多样性约束。"
         },
         {
           "rank": 2,
           "label": "波动延伸",
           "front": [
-            "08",
+            "05",
             "11",
-            "16",
-            "24",
-            "27"
+            "13",
+            "22",
+            "26"
           ],
           "back": [
-            "04",
-            "09"
+            "02",
+            "11"
           ],
           "fit": 81.8,
-          "reason": "从五个排序位置的预测中心 [4.4 / 10.2 / 12.6 / 24.3 / 27.6] 及波动带中抽样；本组和值86、跨度19，并执行跨期与组间多样性约束。"
+          "reason": "从五个排序位置的预测中心 [4.4 / 10.2 / 12.6 / 24.3 / 27.6] 及波动带中抽样；本组和值77、跨度21，并执行跨期与组间多样性约束。"
         },
         {
           "rank": 3,
           "label": "随机带对冲",
           "front": [
-            "04",
-            "11",
-            "14",
-            "21",
-            "25"
+            "07",
+            "08",
+            "15",
+            "24",
+            "32"
           ],
           "back": [
-            "03",
+            "01",
             "08"
           ],
           "fit": 79.6,
-          "reason": "从五个排序位置的预测中心 [4.4 / 10.2 / 12.6 / 24.3 / 27.6] 及波动带中抽样；本组和值75、跨度21，并执行跨期与组间多样性约束。"
+          "reason": "从五个排序位置的预测中心 [4.4 / 10.2 / 12.6 / 24.3 / 27.6] 及波动带中抽样；本组和值86、跨度25，并执行跨期与组间多样性约束。"
         }
       ]
     },
@@ -179,15 +179,15 @@
           "rank": 1,
           "label": "直觉落子",
           "front": [
-            "10",
-            "13",
-            "15",
-            "24",
-            "30"
+            "04",
+            "08",
+            "21",
+            "25",
+            "29"
           ],
           "back": [
-            "04",
-            "10"
+            "01",
+            "08"
           ],
           "instinctValue": 84.0
         },
@@ -195,15 +195,15 @@
           "rank": 2,
           "label": "直觉回声",
           "front": [
-            "08",
-            "23",
-            "32",
-            "34",
-            "35"
+            "04",
+            "16",
+            "18",
+            "19",
+            "21"
           ],
           "back": [
-            "10",
-            "12"
+            "03",
+            "10"
           ],
           "instinctValue": 79.5
         }
@@ -217,31 +217,31 @@
       "rank": 1,
       "label": "直觉主选",
       "front": [
+        "04",
         "08",
-        "10",
-        "13",
-        "24",
-        "30"
+        "18",
+        "21",
+        "26"
       ],
       "back": [
-        "04",
-        "10"
+        "01",
+        "08"
       ],
       "agentScore": 86.0,
       "sourceMix": {
         "front": {
-          "allThree": 2,
+          "allThree": 1,
           "aiChee": 0,
-          "aiInstinct": 2,
-          "cheeInstinct": 0,
-          "aiOnly": 0,
+          "aiInstinct": 1,
+          "cheeInstinct": 1,
+          "aiOnly": 1,
           "cheeOnly": 0,
           "instinctOnly": 1
         },
         "back": {
-          "allThree": 2,
+          "allThree": 0,
           "aiChee": 0,
-          "aiInstinct": 0,
+          "aiInstinct": 2,
           "cheeInstinct": 0,
           "aiOnly": 0,
           "cheeOnly": 0,
@@ -250,37 +250,33 @@
       },
       "numberSources": {
         "front": {
+          "04": [
+            "chee",
+            "instinct"
+          ],
           "08": [
             "ai",
             "chee",
             "instinct"
           ],
-          "10": [
-            "instinct"
-          ],
-          "13": [
+          "18": [
             "ai",
             "instinct"
           ],
-          "24": [
-            "ai",
-            "chee",
+          "21": [
             "instinct"
           ],
-          "30": [
-            "ai",
-            "instinct"
+          "26": [
+            "ai"
           ]
         },
         "back": {
-          "04": [
+          "01": [
             "ai",
-            "chee",
             "instinct"
           ],
-          "10": [
+          "08": [
             "ai",
-            "chee",
             "instinct"
           ]
         }
@@ -291,65 +287,66 @@
       "rank": 2,
       "label": "自由对冲",
       "front": [
+        "05",
         "08",
-        "13",
-        "15",
-        "23",
-        "30"
+        "18",
+        "21",
+        "25"
       ],
       "back": [
-        "05",
+        "01",
         "10"
       ],
-      "agentScore": 79.0,
+      "agentScore": 81.4,
       "sourceMix": {
         "front": {
           "allThree": 1,
-          "aiChee": 0,
-          "aiInstinct": 2,
-          "cheeInstinct": 0,
+          "aiChee": 1,
+          "aiInstinct": 1,
+          "cheeInstinct": 1,
           "aiOnly": 0,
           "cheeOnly": 0,
-          "instinctOnly": 2
+          "instinctOnly": 1
         },
         "back": {
-          "allThree": 1,
+          "allThree": 0,
           "aiChee": 0,
-          "aiInstinct": 0,
-          "cheeInstinct": 0,
+          "aiInstinct": 1,
+          "cheeInstinct": 1,
           "aiOnly": 0,
-          "cheeOnly": 1,
+          "cheeOnly": 0,
           "instinctOnly": 0
         }
       },
       "numberSources": {
         "front": {
+          "05": [
+            "ai",
+            "chee"
+          ],
           "08": [
             "ai",
             "chee",
             "instinct"
           ],
-          "13": [
+          "18": [
             "ai",
             "instinct"
           ],
-          "15": [
+          "21": [
             "instinct"
           ],
-          "23": [
-            "instinct"
-          ],
-          "30": [
-            "ai",
+          "25": [
+            "chee",
             "instinct"
           ]
         },
         "back": {
-          "05": [
-            "chee"
+          "01": [
+            "ai",
+            "instinct"
           ],
           "10": [
-            "ai",
             "chee",
             "instinct"
           ]
