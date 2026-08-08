@@ -422,5 +422,70 @@
       "temperatureAdjustment": 0.0638,
       "rule": "Prediction error changes only the sampling-band width; recent winning numbers are not fixed favourites."
     }
+  },
+  {
+    "issue": "26089",
+    "date": "2026-08-08",
+    "modelFamily": "curve-sampler",
+    "evaluatedAt": "2026-08-08T15:17:37.108349+00:00",
+    "actual": {
+      "front": [
+        "03",
+        "07",
+        "12",
+        "14",
+        "26"
+      ],
+      "back": [
+        "05",
+        "11"
+      ]
+    },
+    "results": [
+      {
+        "rank": 1,
+        "label": "曲线主样本",
+        "frontHits": [
+          "14"
+        ],
+        "backHits": [],
+        "frontHitCount": 1,
+        "backHitCount": 0,
+        "curveDistance": 0.1296
+      },
+      {
+        "rank": 2,
+        "label": "波动延伸",
+        "frontHits": [],
+        "backHits": [],
+        "frontHitCount": 0,
+        "backHitCount": 0,
+        "curveDistance": 0.1097
+      },
+      {
+        "rank": 3,
+        "label": "随机带对冲",
+        "frontHits": [
+          "07",
+          "12",
+          "14"
+        ],
+        "backHits": [],
+        "frontHitCount": 3,
+        "backHitCount": 0,
+        "curveDistance": 0.1619
+      }
+    ],
+    "summary": {
+      "averageFrontHits": 1.333,
+      "averageBackHits": 0.0,
+      "bestCurveDistance": 0.1097
+    },
+    "learningUpdate": {
+      "profile": "wide-band",
+      "emaCurveDistance": 0.1476,
+      "temperatureAdjustment": 0.0768,
+      "rule": "Prediction error changes only the sampling-band width; recent winning numbers are not fixed favourites."
+    }
   }
 ]
