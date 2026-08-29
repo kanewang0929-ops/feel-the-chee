@@ -1,96 +1,96 @@
 {
   "version": 2,
   "modelVersion": "v2.0-intuitive-fusion-agent",
-  "observations": 2416,
+  "observations": 2417,
   "sourceEma": {
     "front": {
-      "ai": 1.0432460202882625,
-      "chee": 1.12964645557866,
-      "instinct": 1.1342819130314903
+      "ai": 1.1141431692421193,
+      "chee": 1.1469136682275023,
+      "instinct": 1.091086048673048
     },
     "back": {
-      "ai": 0.9673661487869295,
-      "chee": 1.186911644098236,
-      "instinct": 1.2249336875862855
+      "ai": 0.9689027488593079,
+      "chee": 1.2049503081953157,
+      "instinct": 1.2444660636380966
     }
   },
   "sourceWeights": {
     "front": {
-      "ai": 0.312322,
-      "chee": 0.342941,
-      "instinct": 0.344738
+      "ai": 0.331958,
+      "chee": 0.344284,
+      "instinct": 0.323758
     },
     "back": {
-      "ai": 0.280173,
-      "chee": 0.351936,
-      "instinct": 0.367891
+      "ai": 0.27677,
+      "chee": 0.353257,
+      "instinct": 0.369973
     }
   },
   "strategyEma": {
     "front": {
-      "allThree": 0.5397905919206379,
-      "aiChee": 0.8965809721904237,
-      "aiInstinct": 1.0791026550064098,
-      "cheeInstinct": 0.8536887343935192,
-      "aiOnly": 1.0467995633543745,
-      "cheeOnly": 0.8560645337002483,
-      "instinctOnly": 1.0747954831147517
+      "allThree": 0.5279507175629997,
+      "aiChee": 0.9745047752751634,
+      "aiInstinct": 1.0377564161917134,
+      "cheeInstinct": 0.8228582644957876,
+      "aiOnly": 1.121231421956275,
+      "cheeOnly": 0.819637422872043,
+      "instinctOnly": 1.0426534115327049
     },
     "back": {
-      "allThree": 0.7140459264056611,
-      "aiChee": 0.6590081160954349,
-      "aiInstinct": 0.9979079704567537,
-      "cheeInstinct": 0.7621839802657853,
-      "aiOnly": 0.7948633605809412,
-      "cheeOnly": 1.0540110449687736,
-      "instinctOnly": 0.8255750302659224
+      "allThree": 0.7110049397735863,
+      "aiChee": 0.630492972047815,
+      "aiInstinct": 0.9735477672674789,
+      "cheeInstinct": 0.8436394929738464,
+      "aiOnly": 0.8409032631686851,
+      "cheeOnly": 1.0386053892729585,
+      "instinctOnly": 0.8018499994558315
     }
   },
   "strategyWeights": {
     "front": {
       "allThree": 0.65,
-      "aiChee": 0.988852,
-      "aiInstinct": 1.190158,
-      "cheeInstinct": 0.941545,
-      "aiOnly": 1.15453,
-      "cheeOnly": 0.944166,
-      "instinctOnly": 1.185407
+      "aiChee": 1.074834,
+      "aiInstinct": 1.144598,
+      "cheeInstinct": 0.907575,
+      "aiOnly": 1.236667,
+      "cheeOnly": 0.904022,
+      "instinctOnly": 1.149999
     },
     "back": {
-      "allThree": 0.860652,
-      "aiChee": 0.794314,
-      "aiInstinct": 1.202797,
-      "cheeInstinct": 0.918674,
-      "aiOnly": 0.958063,
-      "cheeOnly": 1.270419,
-      "instinctOnly": 0.995081
+      "allThree": 0.852226,
+      "aiChee": 0.755722,
+      "aiInstinct": 1.166915,
+      "cheeInstinct": 1.011204,
+      "aiOnly": 1.007924,
+      "cheeOnly": 1.244894,
+      "instinctOnly": 0.961114
     }
   },
   "cumulative": {
-    "tickets": 4830.0,
-    "frontHits": 3538.0,
-    "backHits": 1621.0,
-    "draws": 2415.0
+    "tickets": 4834.0,
+    "frontHits": 3540.0,
+    "backHits": 1624.0,
+    "draws": 2417.0
   },
-  "updatedAt": "2026-08-29T07:56:31.843103+00:00",
+  "updatedAt": "2026-08-29T17:44:57.531975+00:00",
   "simulationLearning": {
-    "runs": 63,
-    "lastRunId": "2026-08-29T075629.099824+0000",
-    "updatedAt": "2026-08-29T07:56:29.099824+00:00",
-    "drawsEvaluated": 2415,
-    "ticketsEvaluated": 4830,
-    "averageFrontHits": 0.732505,
-    "averageBackHits": 0.335611,
+    "runs": 64,
+    "lastRunId": "2026-08-29T174454.781000+0000",
+    "updatedAt": "2026-08-29T17:44:54.781000+00:00",
+    "drawsEvaluated": 2416,
+    "ticketsEvaluated": 4832,
+    "averageFrontHits": 0.732616,
+    "averageBackHits": 0.335886,
     "rule": "The live source and category EMAs are blended with the final state of the sequential historical fusion simulation."
   },
   "instinctSimulationLearning": {
-    "runs": 63,
-    "updatedAt": "2026-08-29T07:56:30.221220+00:00",
+    "runs": 64,
+    "updatedAt": "2026-08-29T17:44:55.897988+00:00",
     "backtestVersion": "v2.0-sequential-intuitive-audit",
-    "drawsEvaluated": 2415,
-    "ticketsEvaluated": 4830,
-    "averageFrontHits": 0.732505,
-    "averageBackHits": 0.335611,
+    "drawsEvaluated": 2416,
+    "ticketsEvaluated": 4832,
+    "averageFrontHits": 0.732616,
+    "averageBackHits": 0.335886,
     "rule": "Agent Instinct is an independent stochastic source. Its influence rises or falls only after historical or live results are revealed."
   }
 }
