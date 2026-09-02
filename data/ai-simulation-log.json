@@ -2878,5 +2878,45 @@
       "selectedProfile": "wide-band",
       "simulationRuns": 72
     }
+  },
+  {
+    "runId": "2026-09-02T175458.613135+0000",
+    "generatedAt": "2026-09-02T17:54:58.613135+00:00",
+    "model": "AI curve sampler",
+    "modelVersion": "v3.0-curve-sampler",
+    "backtestVersion": "v1.1-walk-forward-bounded",
+    "drawsEvaluated": 2418,
+    "ticketsEvaluated": 7254,
+    "averageFrontHits": 0.721395,
+    "averageBackHits": 0.328784,
+    "profilePerformance": [
+      {
+        "name": "wide-band",
+        "label": "宽带采样",
+        "draws": 1758,
+        "averageCurveLoss": 0.16584
+      },
+      {
+        "name": "adaptive-wave",
+        "label": "自适应波形",
+        "draws": 660,
+        "averageCurveLoss": 0.167807
+      }
+    ],
+    "curveBenchmark": {
+      "modelAverageLoss": 0.166377,
+      "persistenceAverageLoss": 0.192872,
+      "trailingMean60AverageLoss": 0.142633,
+      "excessVsTrailingMean60": 0.023744
+    },
+    "stateBefore": {
+      "temperatureAdjustment": -0.0198,
+      "selectedProfile": "wide-band"
+    },
+    "stateAfter": {
+      "temperatureAdjustment": -0.0378,
+      "selectedProfile": "wide-band",
+      "simulationRuns": 73
+    }
   }
 ]
