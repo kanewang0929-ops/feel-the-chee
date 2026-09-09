@@ -4,7 +4,7 @@
   "modelFamily": "curve-trajectory-generative-sampler",
   "walkForward": true,
   "futureLeakage": false,
-  "generatedAt": "2026-09-09T06:00:50.909971+00:00",
+  "generatedAt": "2026-09-09T17:48:37.078000+00:00",
   "method": {
     "warmupDraws": 500,
     "trainingRule": "Every forecast uses only draws published before its target.",
@@ -17,23 +17,23 @@
     }
   },
   "summary": {
-    "drawsEvaluated": 2420,
+    "drawsEvaluated": 2421,
     "warmupDraws": 500,
-    "ticketsEvaluated": 7260,
+    "ticketsEvaluated": 7263,
     "dateRange": {
       "earliest": "2010-08-30",
-      "latest": "2026-09-07"
+      "latest": "2026-09-09"
     },
     "observed": {
-      "averageFrontHitsPerTicket": 0.72135,
-      "averageBackHitsPerTicket": 0.32865,
-      "averageTotalHitsPerTicket": 1.05,
-      "averageTicketCurveDistance": 0.180643,
+      "averageFrontHitsPerTicket": 0.721052,
+      "averageBackHitsPerTicket": 0.328514,
+      "averageTotalHitsPerTicket": 1.049566,
+      "averageTicketCurveDistance": 0.180657,
       "ticketsWithAnyFrontHit": 4117,
       "ticketsWithAnyBackHit": 2279,
       "ticketsWithFrontAndBackHit": 1297,
       "frontHitDistribution": {
-        "0": 3143,
+        "0": 3146,
         "1": 3113,
         "2": 893,
         "3": 106,
@@ -41,12 +41,12 @@
         "5": 0
       },
       "backHitDistribution": {
-        "0": 4981,
+        "0": 4984,
         "1": 2172,
         "2": 107
       },
       "hitPatternDistribution": {
-        "0+0": 2161,
+        "0+0": 2164,
         "0+1": 942,
         "0+2": 40,
         "1+0": 2142,
@@ -60,7 +60,7 @@
         "4+0": 5
       },
       "bestOfThreeFrontDistribution": {
-        "0": 220,
+        "0": 221,
         "1": 1320,
         "2": 769,
         "3": 106,
@@ -68,18 +68,18 @@
         "5": 0
       },
       "bestOfThreeBackDistribution": {
-        "0": 1357,
+        "0": 1358,
         "1": 982,
         "2": 81
       },
       "exactFivePlusTwo": 0
     },
     "curveBenchmark": {
-      "modelAverageLoss": 0.166379,
-      "persistenceAverageLoss": 0.192871,
-      "trailingMean60AverageLoss": 0.142629,
-      "improvementVsPersistence": 0.026492,
-      "improvementVsTrailingMean60": -0.02375,
+      "modelAverageLoss": 0.166399,
+      "persistenceAverageLoss": 0.192893,
+      "trailingMean60AverageLoss": 0.142635,
+      "improvementVsPersistence": 0.026494,
+      "improvementVsTrailingMean60": -0.023764,
       "note": "Lower is better. Persistence uses the previous draw; trailingMean60 uses prior 60-draw positional means."
     },
     "theoreticalFixedTicketBaseline": {
@@ -100,26 +100,26 @@
         "2": 0.0151515152
       },
       "expectedFrontHitCounts": {
-        "0": 3186.973,
-        "1": 3064.398,
-        "2": 907.97,
-        "3": 97.282,
-        "4": 3.355,
+        "0": 3188.29,
+        "1": 3065.664,
+        "2": 908.345,
+        "3": 97.323,
+        "4": 3.356,
         "5": 0.022
       },
       "expectedBackHitCounts": {
-        "0": 4950.0,
-        "1": 2200.0,
-        "2": 110.0
+        "0": 4952.045,
+        "1": 2200.909,
+        "2": 110.045
       },
       "note": "Exact fair-draw expectation per ticket; best-of-three is reported descriptively because AI tickets are deliberately dependent."
     },
     "comparison": {
-      "frontMeanDifference": 0.007064,
-      "backMeanDifference": -0.004683,
-      "totalMeanDifference": 0.002381,
-      "frontMeanRatio": 1.00989,
-      "backMeanRatio": 0.98595
+      "frontMeanDifference": 0.006766,
+      "backMeanDifference": -0.004819,
+      "totalMeanDifference": 0.001947,
+      "frontMeanRatio": 1.009473,
+      "backMeanRatio": 0.985543
     },
     "byYear": {
       "2010": {
@@ -235,20 +235,20 @@
         "averageModelCurveLoss": 0.166596
       },
       "2026": {
-        "draws": 102,
-        "tickets": 306,
-        "averageFrontHits": 0.719,
-        "averageBackHits": 0.3105,
-        "averageModelCurveLoss": 0.160276
+        "draws": 103,
+        "tickets": 309,
+        "averageFrontHits": 0.712,
+        "averageBackHits": 0.3074,
+        "averageModelCurveLoss": 0.160805
       }
     },
     "byProfile": {
       "宽带采样": {
-        "draws": 1760,
-        "tickets": 5280,
-        "averageFrontHits": 0.7206,
-        "averageBackHits": 0.3244,
-        "averageModelCurveLoss": 0.165843
+        "draws": 1761,
+        "tickets": 5283,
+        "averageFrontHits": 0.7202,
+        "averageBackHits": 0.3242,
+        "averageModelCurveLoss": 0.165871
       },
       "自适应波形": {
         "draws": 660,
@@ -263345,6 +263345,108 @@
         "profile": "wide-band",
         "emaCurveDistance": 0.1154,
         "temperatureAdjustment": 0.0187,
+        "rule": "Prediction error changes only the sampling-band width; recent winning numbers are not fixed favourites."
+      }
+    },
+    {
+      "issue": "26103",
+      "date": "2026-09-09",
+      "trainingDraws": 2920,
+      "actual": {
+        "front": [
+          "03",
+          "16",
+          "17",
+          "32",
+          "35"
+        ],
+        "back": [
+          "02",
+          "12"
+        ]
+      },
+      "profile": {
+        "name": "wide-band",
+        "label": "宽带采样",
+        "temperature": 1.5484
+      },
+      "curveLoss": {
+        "model": 0.214753,
+        "persistence": 0.245237,
+        "trailingMean60": 0.158363
+      },
+      "tickets": [
+        {
+          "rank": 1,
+          "label": "曲线主样本",
+          "front": [
+            "04",
+            "08",
+            "09",
+            "25",
+            "28"
+          ],
+          "back": [
+            "06",
+            "07"
+          ],
+          "frontHits": [],
+          "backHits": [],
+          "frontHitCount": 0,
+          "backHitCount": 0,
+          "curveDistance": 0.232543
+        },
+        {
+          "rank": 2,
+          "label": "波动延伸",
+          "front": [
+            "05",
+            "06",
+            "11",
+            "15",
+            "28"
+          ],
+          "back": [
+            "06",
+            "11"
+          ],
+          "frontHits": [],
+          "backHits": [],
+          "frontHitCount": 0,
+          "backHitCount": 0,
+          "curveDistance": 0.231133
+        },
+        {
+          "rank": 3,
+          "label": "随机带对冲",
+          "front": [
+            "02",
+            "18",
+            "20",
+            "24",
+            "28"
+          ],
+          "back": [
+            "03",
+            "05"
+          ],
+          "frontHits": [],
+          "backHits": [],
+          "frontHitCount": 0,
+          "backHitCount": 0,
+          "curveDistance": 0.179733
+        }
+      ],
+      "bestTicket": {
+        "rank": 3,
+        "frontHitCount": 0,
+        "backHitCount": 0,
+        "curveDistance": 0.179733
+      },
+      "learningUpdate": {
+        "profile": "wide-band",
+        "emaCurveDistance": 0.1321,
+        "temperatureAdjustment": 0.0488,
         "rule": "Prediction error changes only the sampling-band width; recent winning numbers are not fixed favourites."
       }
     }
