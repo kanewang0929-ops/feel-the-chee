@@ -15842,5 +15842,709 @@
     },
     "note": "Agent Instinct may introduce any legal number. It is stochastic exploration, not human intuition or a winning probability.",
     "evaluation": null
+  },
+  {
+    "modelVersion": "v2.0-intuitive-fusion-agent",
+    "modelFamily": "adaptive-three-source-intuitive-agent",
+    "generatedAt": "2026-09-19T17:17:27.488149+00:00",
+    "targetIssue": "26108",
+    "targetDate": "2026-09-21",
+    "sourceModels": {
+      "ai": "v3.0-curve-sampler",
+      "chee": "v2.1-formula-only",
+      "instinct": "v1.0-seeded-instinct"
+    },
+    "sourceWeights": {
+      "front": {
+        "ai": 0.341113,
+        "chee": 0.336111,
+        "instinct": 0.322776
+      },
+      "back": {
+        "ai": 0.3175,
+        "chee": 0.329546,
+        "instinct": 0.352954
+      }
+    },
+    "strategyWeights": {
+      "front": {
+        "allThree": 0.65,
+        "aiChee": 1.046819,
+        "aiInstinct": 1.109792,
+        "cheeInstinct": 0.95553,
+        "aiOnly": 1.271791,
+        "cheeOnly": 0.921889,
+        "instinctOnly": 1.180178
+      },
+      "back": {
+        "allThree": 0.78903,
+        "aiChee": 0.678072,
+        "aiInstinct": 1.162176,
+        "cheeInstinct": 0.896423,
+        "aiOnly": 1.263165,
+        "cheeOnly": 1.259547,
+        "instinctOnly": 0.951587
+      }
+    },
+    "observations": 2426,
+    "lastEvaluation": {
+      "actual": {
+        "front": [
+          "02",
+          "05",
+          "07",
+          "14",
+          "22"
+        ],
+        "back": [
+          "04",
+          "10"
+        ]
+      },
+      "results": [
+        {
+          "rank": 1,
+          "label": "直觉主选",
+          "front": [
+            "07",
+            "10",
+            "26",
+            "27",
+            "28"
+          ],
+          "back": [
+            "07",
+            "08"
+          ],
+          "frontHits": [
+            "07"
+          ],
+          "backHits": [],
+          "frontHitCount": 1,
+          "backHitCount": 0,
+          "sourceMix": {
+            "front": {
+              "allThree": 1,
+              "aiChee": 1,
+              "aiInstinct": 2,
+              "cheeInstinct": 0,
+              "aiOnly": 1,
+              "cheeOnly": 0,
+              "instinctOnly": 0
+            },
+            "back": {
+              "allThree": 0,
+              "aiChee": 0,
+              "aiInstinct": 2,
+              "cheeInstinct": 0,
+              "aiOnly": 0,
+              "cheeOnly": 0,
+              "instinctOnly": 0
+            }
+          },
+          "numberSources": {
+            "front": {
+              "07": [
+                "ai",
+                "instinct"
+              ],
+              "10": [
+                "ai",
+                "chee",
+                "instinct"
+              ],
+              "26": [
+                "ai",
+                "chee"
+              ],
+              "27": [
+                "ai",
+                "instinct"
+              ],
+              "28": [
+                "ai"
+              ]
+            },
+            "back": {
+              "07": [
+                "ai",
+                "instinct"
+              ],
+              "08": [
+                "ai",
+                "instinct"
+              ]
+            }
+          }
+        },
+        {
+          "rank": 2,
+          "label": "自由对冲",
+          "front": [
+            "10",
+            "11",
+            "17",
+            "26",
+            "27"
+          ],
+          "back": [
+            "05",
+            "08"
+          ],
+          "frontHits": [],
+          "backHits": [],
+          "frontHitCount": 0,
+          "backHitCount": 0,
+          "sourceMix": {
+            "front": {
+              "allThree": 1,
+              "aiChee": 1,
+              "aiInstinct": 2,
+              "cheeInstinct": 1,
+              "aiOnly": 0,
+              "cheeOnly": 0,
+              "instinctOnly": 0
+            },
+            "back": {
+              "allThree": 0,
+              "aiChee": 0,
+              "aiInstinct": 1,
+              "cheeInstinct": 0,
+              "aiOnly": 1,
+              "cheeOnly": 0,
+              "instinctOnly": 0
+            }
+          },
+          "numberSources": {
+            "front": {
+              "10": [
+                "ai",
+                "chee",
+                "instinct"
+              ],
+              "11": [
+                "chee",
+                "instinct"
+              ],
+              "17": [
+                "ai",
+                "instinct"
+              ],
+              "26": [
+                "ai",
+                "chee"
+              ],
+              "27": [
+                "ai",
+                "instinct"
+              ]
+            },
+            "back": {
+              "05": [
+                "ai"
+              ],
+              "08": [
+                "ai",
+                "instinct"
+              ]
+            }
+          }
+        }
+      ],
+      "summary": {
+        "averageFrontHits": 0.5,
+        "averageBackHits": 0.0,
+        "bestTotalHits": 1
+      },
+      "sourcePerformance": {
+        "front": {
+          "ai": {
+            "averageHits": 1.0,
+            "rewardRatio": 1.4
+          },
+          "chee": {
+            "averageHits": 0.0,
+            "rewardRatio": 0.25
+          },
+          "instinct": {
+            "averageHits": 0.5,
+            "rewardRatio": 0.7
+          }
+        },
+        "back": {
+          "ai": {
+            "averageHits": 0.3333,
+            "rewardRatio": 1.0
+          },
+          "chee": {
+            "averageHits": 0.0,
+            "rewardRatio": 0.25
+          },
+          "instinct": {
+            "averageHits": 0.0,
+            "rewardRatio": 0.25
+          }
+        }
+      },
+      "strategyPerformance": {
+        "front": {
+          "allThree": {
+            "candidateCount": 1,
+            "hitCount": 0,
+            "rewardRatio": 0.25
+          },
+          "aiChee": {
+            "candidateCount": 2,
+            "hitCount": 0,
+            "rewardRatio": 0.25
+          },
+          "aiInstinct": {
+            "candidateCount": 3,
+            "hitCount": 1,
+            "rewardRatio": 2.3333
+          },
+          "cheeInstinct": {
+            "candidateCount": 1,
+            "hitCount": 0,
+            "rewardRatio": 0.25
+          },
+          "aiOnly": {
+            "candidateCount": 8,
+            "hitCount": 2,
+            "rewardRatio": 1.75
+          },
+          "cheeOnly": {
+            "candidateCount": 4,
+            "hitCount": 0,
+            "rewardRatio": 0.25
+          },
+          "instinctOnly": {
+            "candidateCount": 3,
+            "hitCount": 0,
+            "rewardRatio": 0.25
+          }
+        },
+        "back": {
+          "aiChee": {
+            "candidateCount": 1,
+            "hitCount": 0,
+            "rewardRatio": 0.25
+          },
+          "aiInstinct": {
+            "candidateCount": 2,
+            "hitCount": 0,
+            "rewardRatio": 0.25
+          },
+          "aiOnly": {
+            "candidateCount": 3,
+            "hitCount": 1,
+            "rewardRatio": 2.0
+          },
+          "cheeOnly": {
+            "candidateCount": 2,
+            "hitCount": 0,
+            "rewardRatio": 0.25
+          },
+          "instinctOnly": {
+            "candidateCount": 1,
+            "hitCount": 0,
+            "rewardRatio": 0.25
+          }
+        }
+      },
+      "weightsBefore": {
+        "source": {
+          "front": {
+            "ai": 0.33062,
+            "chee": 0.345782,
+            "instinct": 0.323598
+          },
+          "back": {
+            "ai": 0.308665,
+            "chee": 0.333131,
+            "instinct": 0.358204
+          }
+        },
+        "strategy": {
+          "front": {
+            "allThree": 0.65,
+            "aiChee": 1.075361,
+            "aiInstinct": 1.032241,
+            "cheeInstinct": 0.980447,
+            "aiOnly": 1.23108,
+            "cheeOnly": 0.94547,
+            "instinctOnly": 1.214017
+          },
+          "back": {
+            "allThree": 0.780818,
+            "aiChee": 0.688053,
+            "aiInstinct": 1.189692,
+            "cheeInstinct": 0.887092,
+            "aiOnly": 1.19228,
+            "cheeOnly": 1.29059,
+            "instinctOnly": 0.971475
+          }
+        }
+      },
+      "weightsAfter": {
+        "source": {
+          "front": {
+            "ai": 0.341113,
+            "chee": 0.336111,
+            "instinct": 0.322776
+          },
+          "back": {
+            "ai": 0.3175,
+            "chee": 0.329546,
+            "instinct": 0.352954
+          }
+        },
+        "strategy": {
+          "front": {
+            "allThree": 0.65,
+            "aiChee": 1.046819,
+            "aiInstinct": 1.109792,
+            "cheeInstinct": 0.95553,
+            "aiOnly": 1.271791,
+            "cheeOnly": 0.921889,
+            "instinctOnly": 1.180178
+          },
+          "back": {
+            "allThree": 0.78903,
+            "aiChee": 0.678072,
+            "aiInstinct": 1.162176,
+            "cheeInstinct": 0.896423,
+            "aiOnly": 1.263165,
+            "cheeOnly": 1.259547,
+            "instinctOnly": 0.951587
+          }
+        }
+      },
+      "learningRule": "AI, 风水 and Agent Instinct use bounded EMAs. Each source retains at least 15% influence.",
+      "issue": "26107",
+      "date": "2026-09-19",
+      "evaluatedAt": "2026-09-19T17:17:27.434888+00:00",
+      "modelVersion": "v2.0-intuitive-fusion-agent"
+    },
+    "sourceAuditSummary": {
+      "ai": {
+        "draws": 2425,
+        "averageFrontHits": 0.721375,
+        "averageBackHits": 0.32866
+      },
+      "chee": {
+        "draws": 2925,
+        "averageFrontHits": 0.721026,
+        "averageBackHits": 0.328034
+      },
+      "agent": {
+        "draws": 2425,
+        "averageFrontHits": 0.731959,
+        "averageBackHits": 0.334845
+      }
+    },
+    "sourceInputs": {
+      "ai": {
+        "modelVersion": "v3.0-curve-sampler",
+        "results": [
+          {
+            "rank": 1,
+            "label": "曲线主样本",
+            "front": [
+              "02",
+              "05",
+              "16",
+              "17",
+              "24"
+            ],
+            "back": [
+              "08",
+              "12"
+            ],
+            "fit": 84.0,
+            "reason": "从五个排序位置的预测中心 [3.3 / 8.1 / 11.4 / 17.2 / 25.2] 及波动带中抽样；本组和值64、跨度22，并执行跨期与组间多样性约束。"
+          },
+          {
+            "rank": 2,
+            "label": "波动延伸",
+            "front": [
+              "02",
+              "10",
+              "11",
+              "25",
+              "27"
+            ],
+            "back": [
+              "01",
+              "12"
+            ],
+            "fit": 81.8,
+            "reason": "从五个排序位置的预测中心 [3.3 / 8.1 / 11.4 / 17.2 / 25.2] 及波动带中抽样；本组和值75、跨度25，并执行跨期与组间多样性约束。"
+          },
+          {
+            "rank": 3,
+            "label": "随机带对冲",
+            "front": [
+              "07",
+              "08",
+              "14",
+              "18",
+              "25"
+            ],
+            "back": [
+              "04",
+              "09"
+            ],
+            "fit": 79.6,
+            "reason": "从五个排序位置的预测中心 [3.3 / 8.1 / 11.4 / 17.2 / 25.2] 及波动带中抽样；本组和值72、跨度18，并执行跨期与组间多样性约束。"
+          }
+        ]
+      },
+      "chee": {
+        "modelVersion": "v2.1-formula-only",
+        "results": [
+          {
+            "rank": 1,
+            "label": "五行主衡",
+            "front": [
+              "04",
+              "15",
+              "19",
+              "25",
+              "28"
+            ],
+            "back": [
+              "09",
+              "10"
+            ],
+            "cheeValue": 86.0,
+            "elements": {
+              "木": 1,
+              "火": 0,
+              "土": 3,
+              "金": 3,
+              "水": 0
+            },
+            "reason": "公式输入第26108期与2026-09-21；天数4、地数8、人数6、动爻1。按土→金→水生化路径及河图洛书数位共振选取，不读取历史开奖。"
+          },
+          {
+            "rank": 2,
+            "label": "生化对冲",
+            "front": [
+              "15",
+              "19",
+              "24",
+              "34",
+              "35"
+            ],
+            "back": [
+              "01",
+              "09"
+            ],
+            "cheeValue": 79.6,
+            "elements": {
+              "木": 0,
+              "火": 0,
+              "土": 2,
+              "金": 4,
+              "水": 1
+            },
+            "reason": "公式输入第26108期与2026-09-21；天数4、地数8、人数6、动爻1。按土→金→水生化路径及河图洛书数位共振选取，不读取历史开奖。"
+          }
+        ]
+      },
+      "instinct": {
+        "modelVersion": "v1.0-seeded-instinct",
+        "targetIssue": "26108",
+        "targetDate": "2026-09-21",
+        "results": [
+          {
+            "rank": 1,
+            "label": "直觉落子",
+            "front": [
+              "03",
+              "08",
+              "09",
+              "19",
+              "29"
+            ],
+            "back": [
+              "04",
+              "10"
+            ],
+            "instinctValue": 84.0
+          },
+          {
+            "rank": 2,
+            "label": "直觉回声",
+            "front": [
+              "14",
+              "19",
+              "22",
+              "23",
+              "35"
+            ],
+            "back": [
+              "02",
+              "03"
+            ],
+            "instinctValue": 79.5
+          }
+        ],
+        "method": "seeded-stochastic-exploration",
+        "explanationPolicy": "no-reasoning-narrative"
+      }
+    },
+    "results": [
+      {
+        "rank": 1,
+        "label": "直觉主选",
+        "front": [
+          "02",
+          "08",
+          "14",
+          "19",
+          "25"
+        ],
+        "back": [
+          "04",
+          "10"
+        ],
+        "agentScore": 86.0,
+        "sourceMix": {
+          "front": {
+            "allThree": 0,
+            "aiChee": 1,
+            "aiInstinct": 2,
+            "cheeInstinct": 1,
+            "aiOnly": 1,
+            "cheeOnly": 0,
+            "instinctOnly": 0
+          },
+          "back": {
+            "allThree": 0,
+            "aiChee": 0,
+            "aiInstinct": 1,
+            "cheeInstinct": 1,
+            "aiOnly": 0,
+            "cheeOnly": 0,
+            "instinctOnly": 0
+          }
+        },
+        "numberSources": {
+          "front": {
+            "02": [
+              "ai"
+            ],
+            "08": [
+              "ai",
+              "instinct"
+            ],
+            "14": [
+              "ai",
+              "instinct"
+            ],
+            "19": [
+              "chee",
+              "instinct"
+            ],
+            "25": [
+              "ai",
+              "chee"
+            ]
+          },
+          "back": {
+            "04": [
+              "ai",
+              "instinct"
+            ],
+            "10": [
+              "chee",
+              "instinct"
+            ]
+          }
+        },
+        "instinctStatement": "Agent 直觉落子，不展开推理。"
+      },
+      {
+        "rank": 2,
+        "label": "自由对冲",
+        "front": [
+          "03",
+          "08",
+          "19",
+          "24",
+          "25"
+        ],
+        "back": [
+          "04",
+          "09"
+        ],
+        "agentScore": 78.7,
+        "sourceMix": {
+          "front": {
+            "allThree": 0,
+            "aiChee": 2,
+            "aiInstinct": 1,
+            "cheeInstinct": 1,
+            "aiOnly": 0,
+            "cheeOnly": 0,
+            "instinctOnly": 1
+          },
+          "back": {
+            "allThree": 0,
+            "aiChee": 1,
+            "aiInstinct": 1,
+            "cheeInstinct": 0,
+            "aiOnly": 0,
+            "cheeOnly": 0,
+            "instinctOnly": 0
+          }
+        },
+        "numberSources": {
+          "front": {
+            "03": [
+              "instinct"
+            ],
+            "08": [
+              "ai",
+              "instinct"
+            ],
+            "19": [
+              "chee",
+              "instinct"
+            ],
+            "24": [
+              "ai",
+              "chee"
+            ],
+            "25": [
+              "ai",
+              "chee"
+            ]
+          },
+          "back": {
+            "04": [
+              "ai",
+              "instinct"
+            ],
+            "09": [
+              "ai",
+              "chee"
+            ]
+          }
+        },
+        "instinctStatement": "Agent 直觉落子，不展开推理。"
+      }
+    ],
+    "storage": {
+      "forecast": "data/hybrid-forecast.json",
+      "history": "data/hybrid-history.json",
+      "learningLog": "data/hybrid-learning-log.json",
+      "modelState": "data/hybrid-model-state.json",
+      "historicalBacktest": "data/hybrid-backtest.json"
+    },
+    "note": "Agent Instinct may introduce any legal number. It is stochastic exploration, not human intuition or a winning probability.",
+    "evaluation": null
   }
 ]
