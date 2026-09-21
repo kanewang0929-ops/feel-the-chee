@@ -13588,5 +13588,379 @@
     },
     "simulationRuns": 107,
     "explanationPolicy": "Agent Instinct selections are logged but do not expose a reasoning narrative."
+  },
+  {
+    "actual": {
+      "front": [
+        "01",
+        "05",
+        "07",
+        "21",
+        "35"
+      ],
+      "back": [
+        "01",
+        "04"
+      ]
+    },
+    "results": [
+      {
+        "rank": 1,
+        "label": "直觉主选",
+        "front": [
+          "04",
+          "15",
+          "19",
+          "22",
+          "24"
+        ],
+        "back": [
+          "05",
+          "08"
+        ],
+        "frontHits": [],
+        "backHits": [],
+        "frontHitCount": 0,
+        "backHitCount": 0,
+        "sourceMix": {
+          "front": {
+            "allThree": 2,
+            "aiChee": 1,
+            "aiInstinct": 0,
+            "cheeInstinct": 1,
+            "aiOnly": 0,
+            "cheeOnly": 0,
+            "instinctOnly": 1
+          },
+          "back": {
+            "allThree": 0,
+            "aiChee": 0,
+            "aiInstinct": 0,
+            "cheeInstinct": 0,
+            "aiOnly": 0,
+            "cheeOnly": 0,
+            "instinctOnly": 2
+          }
+        },
+        "numberSources": {
+          "front": {
+            "04": [
+              "ai",
+              "chee"
+            ],
+            "15": [
+              "ai",
+              "chee",
+              "instinct"
+            ],
+            "19": [
+              "ai",
+              "chee",
+              "instinct"
+            ],
+            "22": [
+              "instinct"
+            ],
+            "24": [
+              "chee",
+              "instinct"
+            ]
+          },
+          "back": {
+            "05": [
+              "instinct"
+            ],
+            "08": [
+              "instinct"
+            ]
+          }
+        }
+      },
+      {
+        "rank": 2,
+        "label": "自由对冲",
+        "front": [
+          "04",
+          "11",
+          "15",
+          "19",
+          "26"
+        ],
+        "back": [
+          "05",
+          "10"
+        ],
+        "frontHits": [],
+        "backHits": [],
+        "frontHitCount": 0,
+        "backHitCount": 0,
+        "sourceMix": {
+          "front": {
+            "allThree": 2,
+            "aiChee": 1,
+            "aiInstinct": 0,
+            "cheeInstinct": 0,
+            "aiOnly": 2,
+            "cheeOnly": 0,
+            "instinctOnly": 0
+          },
+          "back": {
+            "allThree": 0,
+            "aiChee": 1,
+            "aiInstinct": 0,
+            "cheeInstinct": 0,
+            "aiOnly": 0,
+            "cheeOnly": 0,
+            "instinctOnly": 1
+          }
+        },
+        "numberSources": {
+          "front": {
+            "04": [
+              "ai",
+              "chee"
+            ],
+            "11": [
+              "ai"
+            ],
+            "15": [
+              "ai",
+              "chee",
+              "instinct"
+            ],
+            "19": [
+              "ai",
+              "chee",
+              "instinct"
+            ],
+            "26": [
+              "ai"
+            ]
+          },
+          "back": {
+            "05": [
+              "instinct"
+            ],
+            "10": [
+              "ai",
+              "chee"
+            ]
+          }
+        }
+      }
+    ],
+    "summary": {
+      "averageFrontHits": 0.0,
+      "averageBackHits": 0.0,
+      "bestTotalHits": 0
+    },
+    "sourcePerformance": {
+      "front": {
+        "ai": {
+          "averageHits": 0.3333,
+          "rewardRatio": 0.4667
+        },
+        "chee": {
+          "averageHits": 0.5,
+          "rewardRatio": 0.7
+        },
+        "instinct": {
+          "averageHits": 0.0,
+          "rewardRatio": 0.25
+        }
+      },
+      "back": {
+        "ai": {
+          "averageHits": 0.3333,
+          "rewardRatio": 1.0
+        },
+        "chee": {
+          "averageHits": 0.5,
+          "rewardRatio": 1.5
+        },
+        "instinct": {
+          "averageHits": 0.0,
+          "rewardRatio": 0.25
+        }
+      }
+    },
+    "strategyPerformance": {
+      "front": {
+        "allThree": {
+          "candidateCount": 2,
+          "hitCount": 0,
+          "rewardRatio": 0.25
+        },
+        "aiChee": {
+          "candidateCount": 1,
+          "hitCount": 0,
+          "rewardRatio": 0.25
+        },
+        "cheeInstinct": {
+          "candidateCount": 2,
+          "hitCount": 0,
+          "rewardRatio": 0.25
+        },
+        "aiOnly": {
+          "candidateCount": 8,
+          "hitCount": 1,
+          "rewardRatio": 0.875
+        },
+        "cheeOnly": {
+          "candidateCount": 3,
+          "hitCount": 1,
+          "rewardRatio": 2.3333
+        },
+        "instinctOnly": {
+          "candidateCount": 4,
+          "hitCount": 0,
+          "rewardRatio": 0.25
+        }
+      },
+      "back": {
+        "aiChee": {
+          "candidateCount": 3,
+          "hitCount": 1,
+          "rewardRatio": 2.0
+        },
+        "aiOnly": {
+          "candidateCount": 1,
+          "hitCount": 0,
+          "rewardRatio": 0.25
+        },
+        "instinctOnly": {
+          "candidateCount": 4,
+          "hitCount": 0,
+          "rewardRatio": 0.25
+        }
+      }
+    },
+    "weightsBefore": {
+      "source": {
+        "front": {
+          "ai": 0.337203,
+          "chee": 0.341376,
+          "instinct": 0.321421
+        },
+        "back": {
+          "ai": 0.309803,
+          "chee": 0.336544,
+          "instinct": 0.353653
+        }
+      },
+      "strategy": {
+        "front": {
+          "allThree": 0.65,
+          "aiChee": 1.055693,
+          "aiInstinct": 1.080902,
+          "cheeInstinct": 0.975602,
+          "aiOnly": 1.264975,
+          "cheeOnly": 0.938465,
+          "instinctOnly": 1.173169
+        },
+        "back": {
+          "allThree": 0.781627,
+          "aiChee": 0.67624,
+          "aiInstinct": 1.144741,
+          "cheeInstinct": 0.878777,
+          "aiOnly": 1.209011,
+          "cheeOnly": 1.322665,
+          "instinctOnly": 0.98694
+        }
+      }
+    },
+    "weightsAfter": {
+      "source": {
+        "front": {
+          "ai": 0.336787,
+          "chee": 0.34481,
+          "instinct": 0.318403
+        },
+        "back": {
+          "ai": 0.3122,
+          "chee": 0.346682,
+          "instinct": 0.341118
+        }
+      },
+      "strategy": {
+        "front": {
+          "allThree": 0.65,
+          "aiChee": 1.028942,
+          "aiInstinct": 1.089667,
+          "cheeInstinct": 0.951835,
+          "aiOnly": 1.261876,
+          "cheeOnly": 1.020911,
+          "instinctOnly": 1.142041
+        },
+        "back": {
+          "allThree": 0.780468,
+          "aiChee": 0.756404,
+          "aiInstinct": 1.143043,
+          "cheeInstinct": 0.877473,
+          "aiOnly": 1.166836,
+          "cheeOnly": 1.320703,
+          "instinctOnly": 0.955074
+        }
+      }
+    },
+    "learningRule": "AI, 风水 and Agent Instinct use bounded EMAs. Each source retains at least 15% influence.",
+    "issue": "26108",
+    "date": "2026-09-21",
+    "evaluatedAt": "2026-09-21T19:23:25.989613+00:00",
+    "modelVersion": "v2.0-intuitive-fusion-agent"
+  },
+  {
+    "eventType": "agent-instinct-simulation-learning",
+    "generatedAt": "2026-09-21T19:55:24.685749+00:00",
+    "modelVersion": "v2.0-intuitive-fusion-agent",
+    "backtestVersion": "v2.0-sequential-intuitive-audit",
+    "drawsEvaluated": 2426,
+    "ticketsEvaluated": 4852,
+    "averageFrontHits": 0.731657,
+    "averageBackHits": 0.334707,
+    "weightsBefore": {
+      "front": {
+        "ai": 0.490335,
+        "chee": 0.509665
+      },
+      "back": {
+        "ai": 0.446526,
+        "chee": 0.553474
+      }
+    },
+    "weightsAfter": {
+      "front": {
+        "ai": 0.338352,
+        "chee": 0.344122,
+        "instinct": 0.317526
+      },
+      "back": {
+        "ai": 0.309518,
+        "chee": 0.344242,
+        "instinct": 0.34624
+      }
+    },
+    "strategyWeightsAfter": {
+      "front": {
+        "allThree": 0.65,
+        "aiChee": 1.035451,
+        "aiInstinct": 1.082332,
+        "cheeInstinct": 0.963283,
+        "aiOnly": 1.276277,
+        "cheeOnly": 0.988656,
+        "instinctOnly": 1.147771
+      },
+      "back": {
+        "allThree": 0.777917,
+        "aiChee": 0.729515,
+        "aiInstinct": 1.133564,
+        "cheeInstinct": 0.873657,
+        "aiOnly": 1.173613,
+        "cheeOnly": 1.333939,
+        "instinctOnly": 0.977795
+      }
+    },
+    "simulationRuns": 108,
+    "explanationPolicy": "Agent Instinct selections are logged but do not expose a reasoning narrative."
   }
 ]
