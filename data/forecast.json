@@ -1,7 +1,7 @@
 {
   "modelVersion": "v3.0-curve-sampler",
   "modelFamily": "curve-trajectory-generative-sampler",
-  "generatedAt": "2026-09-28T06:57:54.183401+00:00",
+  "generatedAt": "2026-09-28T20:34:05.881996+00:00",
   "targetIssue": "26111",
   "targetDate": "2026-09-28",
   "historyCount": 2928,
@@ -34,9 +34,9 @@
     "historicalObjective": 0.1657,
     "adjustedObjective": 0.1656,
     "liveEvaluations": 34,
-    "liveCurveDistance": 0.1654,
-    "temperature": 1.527,
-    "temperatureAdjustment": 0.0043,
+    "liveCurveDistance": 0.1655,
+    "temperature": 1.486,
+    "temperatureAdjustment": -0.0222,
     "note": "Forecasts sorted-position curves and samples their uncertainty band; it does not reuse a fixed hot-number list."
   },
   "curveForecast": {
@@ -49,11 +49,11 @@
         32.98
       ],
       "sigmas": [
-        7.76,
-        10.34,
-        10.64,
-        10.05,
-        8.62
+        7.56,
+        10.07,
+        10.36,
+        9.79,
+        8.39
       ],
       "slopes": [
         0.211,
@@ -76,8 +76,8 @@
         9.13
       ],
       "sigmas": [
-        4.46,
-        5.06
+        4.35,
+        4.93
       ],
       "slopes": [
         0.013,
@@ -102,50 +102,50 @@
       "front": [
         "06",
         "13",
-        "19",
+        "16",
         "26",
-        "30"
+        "33"
       ],
       "back": [
-        "03",
-        "12"
+        "07",
+        "09"
       ],
       "fit": 84.0,
-      "reason": "从五个排序位置的预测中心 [4.6 / 19.4 / 20.2 / 24.2 / 33.0] 及波动带中抽样；本组和值94、跨度24，并执行跨期与组间多样性约束。"
+      "reason": "从五个排序位置的预测中心 [4.6 / 19.4 / 20.2 / 24.2 / 33.0] 及波动带中抽样；本组和值94、跨度27，并执行跨期与组间多样性约束。"
     },
     {
       "rank": 2,
       "label": "波动延伸",
       "front": [
-        "06",
-        "14",
-        "21",
+        "07",
+        "12",
+        "19",
         "25",
-        "29"
+        "33"
       ],
       "back": [
-        "04",
-        "11"
+        "05",
+        "12"
       ],
       "fit": 81.8,
-      "reason": "从五个排序位置的预测中心 [4.6 / 19.4 / 20.2 / 24.2 / 33.0] 及波动带中抽样；本组和值95、跨度23，并执行跨期与组间多样性约束。"
+      "reason": "从五个排序位置的预测中心 [4.6 / 19.4 / 20.2 / 24.2 / 33.0] 及波动带中抽样；本组和值96、跨度26，并执行跨期与组间多样性约束。"
     },
     {
       "rank": 3,
       "label": "随机带对冲",
       "front": [
-        "04",
+        "03",
         "18",
-        "22",
-        "29",
-        "31"
+        "19",
+        "26",
+        "30"
       ],
       "back": [
-        "03",
-        "06"
+        "10",
+        "12"
       ],
       "fit": 79.6,
-      "reason": "从五个排序位置的预测中心 [4.6 / 19.4 / 20.2 / 24.2 / 33.0] 及波动带中抽样；本组和值104、跨度27，并执行跨期与组间多样性约束。"
+      "reason": "从五个排序位置的预测中心 [4.6 / 19.4 / 20.2 / 24.2 / 33.0] 及波动带中抽样；本组和值96、跨度27，并执行跨期与组间多样性约束。"
     }
   ],
   "note": "All valid combinations remain equally likely in a fair lottery. Curve fit is not a winning probability."
