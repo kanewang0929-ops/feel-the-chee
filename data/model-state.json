@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-28T21:08:43.930068+00:00",
+  "updatedAt": "2026-09-29T06:57:27.543244+00:00",
   "profiles": {
     "front": {
       "stable-history": {
@@ -29,22 +29,25 @@
     "wide-band": {
       "evaluations": 35,
       "lastCurveDistance": 0.185257,
-      "emaCurveDistance": 0.170764
+      "emaCurveDistance": 0.169434,
+      "simulationCurveDistance": 0.166013,
+      "simulationDraws": 1769,
+      "simulationUpdatedAt": "2026-09-29T06:57:25.703665+00:00"
     },
     "adaptive-wave": {
       "evaluations": 8,
       "emaCurveDistance": 0.167807,
       "simulationCurveDistance": 0.167807,
       "simulationDraws": 660,
-      "simulationUpdatedAt": "2026-09-28T21:08:41.707513+00:00"
+      "simulationUpdatedAt": "2026-09-29T06:57:25.703665+00:00"
     }
   },
   "selectedProfile": "wide-band",
-  "temperatureAdjustment": 0.1184,
+  "temperatureAdjustment": 0.052,
   "simulationLearning": {
-    "runs": 122,
-    "lastRunId": "2026-09-28T210841.707513+0000",
-    "updatedAt": "2026-09-28T21:08:41.707513+00:00",
+    "runs": 123,
+    "lastRunId": "2026-09-29T065725.703665+0000",
+    "updatedAt": "2026-09-29T06:57:25.703665+00:00",
     "drawsEvaluated": 2429,
     "ticketsEvaluated": 7287,
     "bestProfile": {
@@ -74,7 +77,7 @@
       "excessVsTrailingMean60": 0.023817
     },
     "strategyAdjustment": {
-      "temperatureAdjustment": -0.0394,
+      "temperatureAdjustment": 0.052,
       "rule": "Historical simulation profile losses update profile EMAs. The model narrows its sampling band when it underperforms the 60-draw positional-mean benchmark."
     }
   }
