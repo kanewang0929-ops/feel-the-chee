@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-07T07:18:00.308774+00:00",
+  "updatedAt": "2026-10-07T19:59:27.820985+00:00",
   "profiles": {
     "front": {
       "stable-history": {
@@ -27,41 +27,38 @@
       }
     },
     "wide-band": {
-      "evaluations": 37,
-      "lastCurveDistance": 0.164629,
-      "emaCurveDistance": 0.166171,
-      "simulationCurveDistance": 0.166051,
-      "simulationDraws": 1771,
-      "simulationUpdatedAt": "2026-10-07T07:17:58.046744+00:00"
+      "evaluations": 38,
+      "lastCurveDistance": 0.272333,
+      "emaCurveDistance": 0.193762
     },
     "adaptive-wave": {
       "evaluations": 8,
       "emaCurveDistance": 0.167807,
       "simulationCurveDistance": 0.167807,
       "simulationDraws": 660,
-      "simulationUpdatedAt": "2026-10-07T07:17:58.046744+00:00"
+      "simulationUpdatedAt": "2026-10-07T19:59:25.625821+00:00"
     }
   },
-  "selectedProfile": "wide-band",
-  "temperatureAdjustment": -0.0214,
+  "selectedProfile": "adaptive-wave",
+  "temperatureAdjustment": 0.1598,
   "simulationLearning": {
-    "runs": 137,
-    "lastRunId": "2026-10-07T071758.046744+0000",
-    "updatedAt": "2026-10-07T07:17:58.046744+00:00",
-    "drawsEvaluated": 2431,
-    "ticketsEvaluated": 7293,
+    "runs": 138,
+    "lastRunId": "2026-10-07T195925.625821+0000",
+    "updatedAt": "2026-10-07T19:59:25.625821+00:00",
+    "drawsEvaluated": 2432,
+    "ticketsEvaluated": 7296,
     "bestProfile": {
       "name": "wide-band",
       "label": "宽带采样",
-      "draws": 1771,
-      "averageCurveLoss": 0.166051
+      "draws": 1772,
+      "averageCurveLoss": 0.166118
     },
     "profilePerformance": [
       {
         "name": "wide-band",
         "label": "宽带采样",
-        "draws": 1771,
-        "averageCurveLoss": 0.166051
+        "draws": 1772,
+        "averageCurveLoss": 0.166118
       },
       {
         "name": "adaptive-wave",
@@ -71,13 +68,13 @@
       }
     ],
     "curveBenchmark": {
-      "modelAverageLoss": 0.166528,
-      "persistenceAverageLoss": 0.193047,
-      "trailingMean60AverageLoss": 0.142763,
-      "excessVsTrailingMean60": 0.023765
+      "modelAverageLoss": 0.166576,
+      "persistenceAverageLoss": 0.193121,
+      "trailingMean60AverageLoss": 0.142755,
+      "excessVsTrailingMean60": 0.023821
     },
     "strategyAdjustment": {
-      "temperatureAdjustment": -0.0214,
+      "temperatureAdjustment": -0.0389,
       "rule": "Historical simulation profile losses update profile EMAs. The model narrows its sampling band when it underperforms the 60-draw positional-mean benchmark."
     }
   }
