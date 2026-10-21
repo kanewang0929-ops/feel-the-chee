@@ -8284,5 +8284,224 @@
     ],
     "note": "All valid combinations remain equally likely in a fair lottery. Curve fit is not a winning probability.",
     "evaluation": null
+  },
+  {
+    "modelVersion": "v3.0-curve-sampler",
+    "modelFamily": "curve-trajectory-generative-sampler",
+    "generatedAt": "2026-10-21T18:37:08.148157+00:00",
+    "targetIssue": "26121",
+    "targetDate": "2026-10-24",
+    "historyCount": 2938,
+    "historyRange": {
+      "earliestIssue": "07001",
+      "earliestDate": "2007-05-30",
+      "latestIssue": "26120",
+      "latestDate": "2026-10-21"
+    },
+    "latestDraw": {
+      "front": [
+        "01",
+        "06",
+        "10",
+        "15",
+        "32"
+      ],
+      "back": [
+        "03",
+        "04"
+      ]
+    },
+    "lastEvaluation": {
+      "issue": "26120",
+      "date": "2026-10-21",
+      "modelFamily": "curve-sampler",
+      "evaluatedAt": "2026-10-21T18:37:07.436467+00:00",
+      "actual": {
+        "front": [
+          "01",
+          "06",
+          "10",
+          "15",
+          "32"
+        ],
+        "back": [
+          "03",
+          "04"
+        ]
+      },
+      "results": [
+        {
+          "rank": 1,
+          "label": "曲线主样本",
+          "frontHits": [
+            "06"
+          ],
+          "backHits": [
+            "04"
+          ],
+          "frontHitCount": 1,
+          "backHitCount": 1,
+          "curveDistance": 0.2133
+        },
+        {
+          "rank": 2,
+          "label": "波动延伸",
+          "frontHits": [],
+          "backHits": [],
+          "frontHitCount": 0,
+          "backHitCount": 0,
+          "curveDistance": 0.2236
+        },
+        {
+          "rank": 3,
+          "label": "随机带对冲",
+          "frontHits": [
+            "10"
+          ],
+          "backHits": [
+            "03"
+          ],
+          "frontHitCount": 1,
+          "backHitCount": 1,
+          "curveDistance": 0.1413
+        }
+      ],
+      "summary": {
+        "averageFrontHits": 0.667,
+        "averageBackHits": 0.667,
+        "bestCurveDistance": 0.1413
+      },
+      "learningUpdate": {
+        "profile": "wide-band",
+        "emaCurveDistance": 0.1539,
+        "temperatureAdjustment": 0.088,
+        "rule": "Prediction error changes only the sampling-band width; recent winning numbers are not fixed favourites."
+      }
+    },
+    "calibration": {
+      "selectedProfile": "wide-band",
+      "selectedLabel": "宽带采样",
+      "tests": 50,
+      "frontCurveLoss": 0.1427,
+      "backCurveLoss": 0.2005,
+      "historicalObjective": 0.1589,
+      "adjustedObjective": 0.1571,
+      "liveEvaluations": 44,
+      "liveCurveDistance": 0.1539,
+      "temperature": 1.654,
+      "temperatureAdjustment": 0.088,
+      "note": "Forecasts sorted-position curves and samples their uncertainty band; it does not reuse a fixed hot-number list."
+    },
+    "curveForecast": {
+      "front": {
+        "centers": [
+          2.0,
+          8.66,
+          11.99,
+          17.87,
+          30.37
+        ],
+        "sigmas": [
+          8.05,
+          11.31,
+          12.19,
+          12.26,
+          10.24
+        ],
+        "slopes": [
+          -0.088,
+          -0.009,
+          0.659,
+          0.31,
+          0.305
+        ],
+        "cycleLags": [
+          10,
+          17,
+          6,
+          16,
+          15
+        ]
+      },
+      "back": {
+        "centers": [
+          3.54,
+          5.23
+        ],
+        "sigmas": [
+          4.91,
+          5.42
+        ],
+        "slopes": [
+          0.044,
+          0.095
+        ],
+        "cycleLags": [
+          5,
+          11
+        ]
+      }
+    },
+    "diversity": {
+      "maximumFrontOverlapBetweenResults": 2,
+      "maximumBackOverlapBetweenResults": 1,
+      "maximumFrontOverlapWithPreviousForecast": 3,
+      "selection": "temperature-weighted sampling from the high-fit curve band"
+    },
+    "results": [
+      {
+        "rank": 1,
+        "label": "曲线主样本",
+        "front": [
+          "01",
+          "09",
+          "15",
+          "20",
+          "27"
+        ],
+        "back": [
+          "03",
+          "11"
+        ],
+        "fit": 84.0,
+        "reason": "从五个排序位置的预测中心 [2.0 / 8.7 / 12.0 / 17.9 / 30.4] 及波动带中抽样；本组和值72、跨度26，并执行跨期与组间多样性约束。"
+      },
+      {
+        "rank": 2,
+        "label": "波动延伸",
+        "front": [
+          "06",
+          "13",
+          "15",
+          "16",
+          "30"
+        ],
+        "back": [
+          "05",
+          "07"
+        ],
+        "fit": 81.8,
+        "reason": "从五个排序位置的预测中心 [2.0 / 8.7 / 12.0 / 17.9 / 30.4] 及波动带中抽样；本组和值80、跨度24，并执行跨期与组间多样性约束。"
+      },
+      {
+        "rank": 3,
+        "label": "随机带对冲",
+        "front": [
+          "02",
+          "09",
+          "14",
+          "22",
+          "26"
+        ],
+        "back": [
+          "02",
+          "10"
+        ],
+        "fit": 79.6,
+        "reason": "从五个排序位置的预测中心 [2.0 / 8.7 / 12.0 / 17.9 / 30.4] 及波动带中抽样；本组和值73、跨度24，并执行跨期与组间多样性约束。"
+      }
+    ],
+    "note": "All valid combinations remain equally likely in a fair lottery. Curve fit is not a winning probability.",
+    "evaluation": null
   }
 ]
