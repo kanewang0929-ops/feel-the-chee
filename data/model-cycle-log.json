@@ -33254,5 +33254,207 @@
       "simulationRuns": 164,
       "explanationPolicy": "Agent Instinct selections are logged but do not expose a reasoning narrative."
     }
+  },
+  {
+    "runId": "2026-10-22T060923.443061+0000",
+    "generatedAt": "2026-10-22T06:09:23.443061+00:00",
+    "cadence": "daily-24h plus draw-night retries",
+    "models": {
+      "ai": {
+        "runId": "2026-10-22T060923.443061+0000",
+        "generatedAt": "2026-10-22T06:09:23.443061+00:00",
+        "model": "AI curve sampler",
+        "modelVersion": "v3.0-curve-sampler",
+        "backtestVersion": "v1.1-walk-forward-bounded",
+        "drawsEvaluated": 2438,
+        "ticketsEvaluated": 7314,
+        "averageFrontHits": 0.719989,
+        "averageBackHits": 0.328685,
+        "profilePerformance": [
+          {
+            "name": "wide-band",
+            "label": "宽带采样",
+            "draws": 1778,
+            "averageCurveLoss": 0.165987
+          },
+          {
+            "name": "adaptive-wave",
+            "label": "自适应波形",
+            "draws": 660,
+            "averageCurveLoss": 0.167807
+          }
+        ],
+        "curveBenchmark": {
+          "modelAverageLoss": 0.166479,
+          "persistenceAverageLoss": 0.192993,
+          "trailingMean60AverageLoss": 0.142759,
+          "excessVsTrailingMean60": 0.02372
+        },
+        "stateBefore": {
+          "temperatureAdjustment": 0.0323,
+          "selectedProfile": "wide-band"
+        },
+        "stateAfter": {
+          "temperatureAdjustment": -0.0039,
+          "selectedProfile": "wide-band",
+          "simulationRuns": 166
+        }
+      },
+      "chee": {
+        "runId": "2026-10-22T060923.443061+0000",
+        "generatedAt": "2026-10-22T06:09:23.443061+00:00",
+        "model": "Feel the Chee formula",
+        "modelVersion": "v2.1-formula-only",
+        "formulaVersion": "hetu-luoshu-date-issue-v2",
+        "backtestVersion": "v1.1-full-archive",
+        "drawsEvaluated": 2938,
+        "ticketsEvaluated": 5876,
+        "averageFrontHits": 0.720388,
+        "averageBackHits": 0.327434,
+        "averageElementSimilarity": 0.516336,
+        "formulaOnly": true,
+        "learningEnabled": false,
+        "strategyAdjustment": "none",
+        "simulationRuns": 166
+      },
+      "hybrid": {
+        "runId": "2026-10-22T060923.443061+0000",
+        "generatedAt": "2026-10-22T06:09:23.443061+00:00",
+        "model": "Fusion Agent",
+        "modelVersion": "v2.0-intuitive-fusion-agent",
+        "backtestVersion": "v2.0-sequential-intuitive-audit",
+        "drawsEvaluated": 2438,
+        "ticketsEvaluated": 4876,
+        "averageFrontHits": 0.731542,
+        "averageBackHits": 0.335111,
+        "weightsBefore": {
+          "source": {
+            "front": {
+              "ai": 0.29825,
+              "chee": 0.321744,
+              "instinct": 0.380006
+            },
+            "back": {
+              "ai": 0.319048,
+              "chee": 0.281697,
+              "instinct": 0.399255
+            }
+          },
+          "strategy": {
+            "front": {
+              "allThree": 0.65,
+              "aiChee": 0.842685,
+              "aiInstinct": 1.064268,
+              "cheeInstinct": 1.028599,
+              "aiOnly": 1.171887,
+              "cheeOnly": 0.948757,
+              "instinctOnly": 1.35
+            },
+            "back": {
+              "allThree": 0.709924,
+              "aiChee": 0.65,
+              "aiInstinct": 1.35,
+              "cheeInstinct": 0.765965,
+              "aiOnly": 1.210954,
+              "cheeOnly": 1.213223,
+              "instinctOnly": 1.11936
+            }
+          }
+        },
+        "weightsAfter": {
+          "source": {
+            "front": {
+              "ai": 0.458145,
+              "chee": 0.541855
+            },
+            "back": {
+              "ai": 0.562335,
+              "chee": 0.437665
+            }
+          },
+          "strategy": {
+            "front": {
+              "both": 1.035974,
+              "aiOnly": 1.079358,
+              "cheeOnly": 0.884669
+            },
+            "back": {
+              "both": 1.010444,
+              "aiOnly": 0.993792,
+              "cheeOnly": 0.995764
+            }
+          }
+        },
+        "simulationRuns": 165
+      }
+    },
+    "archived": {
+      "aiLearningEvents": 0,
+      "hybridLearningEvents": 0,
+      "aiForecastSnapshots": 1,
+      "hybridForecastSnapshots": 1
+    },
+    "storage": {
+      "aiSimulationLog": "data/ai-simulation-log.json",
+      "cheeSimulationLog": "data/chee-simulation-log.json",
+      "hybridSimulationLog": "data/hybrid-simulation-log.json",
+      "aiMasterLearningLog": "data/ai-master-learning-log.json",
+      "hybridMasterLearningLog": "data/hybrid-master-learning-log.json",
+      "cycleLog": "data/model-cycle-log.json"
+    },
+    "agentInstinct": {
+      "eventType": "agent-instinct-simulation-learning",
+      "generatedAt": "2026-10-22T06:09:24.346488+00:00",
+      "modelVersion": "v2.0-intuitive-fusion-agent",
+      "backtestVersion": "v2.0-sequential-intuitive-audit",
+      "drawsEvaluated": 2438,
+      "ticketsEvaluated": 4876,
+      "averageFrontHits": 0.731542,
+      "averageBackHits": 0.335111,
+      "weightsBefore": {
+        "front": {
+          "ai": 0.458145,
+          "chee": 0.541855
+        },
+        "back": {
+          "ai": 0.562335,
+          "chee": 0.437665
+        }
+      },
+      "weightsAfter": {
+        "front": {
+          "ai": 0.2979,
+          "chee": 0.322953,
+          "instinct": 0.379147
+        },
+        "back": {
+          "ai": 0.317205,
+          "chee": 0.285242,
+          "instinct": 0.397553
+        }
+      },
+      "strategyWeightsAfter": {
+        "front": {
+          "allThree": 0.65,
+          "aiChee": 0.844306,
+          "aiInstinct": 1.080182,
+          "cheeInstinct": 1.009865,
+          "aiOnly": 1.162671,
+          "cheeOnly": 0.961416,
+          "instinctOnly": 1.35
+        },
+        "back": {
+          "allThree": 0.70275,
+          "aiChee": 0.65,
+          "aiInstinct": 1.35,
+          "cheeInstinct": 0.764111,
+          "aiOnly": 1.216839,
+          "cheeOnly": 1.21935,
+          "instinctOnly": 1.130805
+        }
+      },
+      "simulationRuns": 165,
+      "explanationPolicy": "Agent Instinct selections are logged but do not expose a reasoning narrative."
+    }
   }
 ]

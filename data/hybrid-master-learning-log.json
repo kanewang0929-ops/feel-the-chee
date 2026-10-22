@@ -21055,5 +21055,59 @@
     },
     "simulationRuns": 164,
     "explanationPolicy": "Agent Instinct selections are logged but do not expose a reasoning narrative."
+  },
+  {
+    "eventType": "agent-instinct-simulation-learning",
+    "generatedAt": "2026-10-22T06:09:24.346488+00:00",
+    "modelVersion": "v2.0-intuitive-fusion-agent",
+    "backtestVersion": "v2.0-sequential-intuitive-audit",
+    "drawsEvaluated": 2438,
+    "ticketsEvaluated": 4876,
+    "averageFrontHits": 0.731542,
+    "averageBackHits": 0.335111,
+    "weightsBefore": {
+      "front": {
+        "ai": 0.458145,
+        "chee": 0.541855
+      },
+      "back": {
+        "ai": 0.562335,
+        "chee": 0.437665
+      }
+    },
+    "weightsAfter": {
+      "front": {
+        "ai": 0.2979,
+        "chee": 0.322953,
+        "instinct": 0.379147
+      },
+      "back": {
+        "ai": 0.317205,
+        "chee": 0.285242,
+        "instinct": 0.397553
+      }
+    },
+    "strategyWeightsAfter": {
+      "front": {
+        "allThree": 0.65,
+        "aiChee": 0.844306,
+        "aiInstinct": 1.080182,
+        "cheeInstinct": 1.009865,
+        "aiOnly": 1.162671,
+        "cheeOnly": 0.961416,
+        "instinctOnly": 1.35
+      },
+      "back": {
+        "allThree": 0.70275,
+        "aiChee": 0.65,
+        "aiInstinct": 1.35,
+        "cheeInstinct": 0.764111,
+        "aiOnly": 1.216839,
+        "cheeOnly": 1.21935,
+        "instinctOnly": 1.130805
+      }
+    },
+    "simulationRuns": 165,
+    "explanationPolicy": "Agent Instinct selections are logged but do not expose a reasoning narrative."
   }
 ]
