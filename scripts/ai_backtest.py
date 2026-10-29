@@ -9,7 +9,7 @@ import curve_forecast as ai
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/"data/ai-backtest.json"
-VERSION="v1.2-walk-forward-million-trained"
+VERSION="v1.2-walk-forward-base-curve"
 WARMUP=500
 RECALIBRATE_EVERY=60
 FRONT_POOL=100
@@ -50,10 +50,6 @@ def forecast(history,actual,state,previous,profile0,cal0):
     p=dict(profile0);cal=dict(cal0);adj=float(state.get("temperatureAdjustment",0.))
     p["temperature"]*=1+adj
     fm=ai.model(history,"front",p,1,35);bm=ai.model(history,"back",p,1,12)
-    million=state.get("millionSimulationTraining",{}) if isinstance(state.get("millionSimulationTraining"),dict) else {}
-    anchor=float(million.get("meanAnchorBlend",0.0) or 0.0)
-    fm=ai.apply_mean_anchor(fm,history,"front",anchor)
-    bm=ai.apply_mean_anchor(bm,history,"back",anchor)
     rng=ai.random.Random(ai.seed(ai.VERSION,actual["issue"],actual["date"],len(history)))
     fp=audit_pool(rng,fm,history,"front",1,35,adj,FRONT_POOL,300)
     bp=audit_pool(rng,bm,history,"back",1,12,adj,BACK_POOL,120)
