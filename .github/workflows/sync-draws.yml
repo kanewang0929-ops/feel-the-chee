@@ -19,6 +19,7 @@ on:
       - "scripts/intuitive_backtest_runner.py"
       - "scripts/intuitive_simulation_learning.py"
       - "scripts/daily_simulation_learning.py"
+      - "scripts/million_simulation_training.py"
       - "assets/ai-backtest.js"
       - "assets/chee-backtest.js"
       - "assets/hybrid-agent.js"
@@ -42,7 +43,7 @@ concurrency:
 jobs:
   sync-and-forecast:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 240
 
     steps:
       - name: Checkout
@@ -72,6 +73,12 @@ jobs:
 
       - name: Apply three-source Agent Instinct learning
         run: python scripts/intuitive_simulation_learning.py
+
+      - name: Run one million simulations per model and accept only validation improvements
+        env:
+          SIM_ITERATIONS: "1000000"
+          MIN_HOURS_BETWEEN_RUNS: "20"
+        run: python scripts/million_simulation_training.py
 
       - name: Learn draw curves and sample the next AI forecast
         run: python scripts/curve_forecast.py
@@ -108,7 +115,8 @@ jobs:
             data/hybrid-simulation-log.json \
             data/hybrid-master-learning-log.json \
             data/hybrid-forecast-master-history.json \
-            data/model-cycle-log.json
+            data/model-cycle-log.json \
+            data/million-simulation-log.json
 
           if git diff --cached --quiet; then
             echo "No draw, forecast, audit, state, or learning-log changes detected."
