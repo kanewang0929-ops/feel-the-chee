@@ -1,14 +1,14 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-29T07:08:10.901159+00:00",
+  "updatedAt": "2026-10-29T15:32:11.772992+00:00",
   "modelVersion": "v2.1-formula-only",
   "formulaVersion": "hetu-luoshu-date-issue-v2",
   "formulaOnly": true,
   "learningEnabled": false,
   "strategyAdjustment": "none",
-  "simulationRuns": 179,
-  "lastSimulationRunId": "2026-10-29T070810.901159+0000",
-  "lastSimulationAt": "2026-10-29T07:08:10.901159+00:00",
+  "simulationRuns": 180,
+  "lastSimulationRunId": "2026-10-29T153210.309642+0000",
+  "lastSimulationAt": "2026-10-29T15:32:10.309642+00:00",
   "lastSimulationSummary": {
     "drawsEvaluated": 2941,
     "ticketsEvaluated": 5882,
@@ -16,5 +16,18 @@
     "averageBackHits": 0.32744,
     "averageElementSimilarity": 0.516271
   },
-  "immutableRule": "Feel the Chee is audited every day but never trained on historical draw outcomes. Its issue/date He Tu and Luo Shu formula stays fixed."
+  "immutableRule": "Feel the Chee is audited every day but never trained on historical draw outcomes. Its issue/date He Tu and Luo Shu formula stays fixed.",
+  "millionSimulationAudit": {
+    "version": 1,
+    "iterationsPerRun": 1000000,
+    "totalIterations": 1000000,
+    "runs": 1,
+    "sampledAverageFrontHits": 0.720545,
+    "sampledAverageBackHits": 0.328277,
+    "sampledAverageElementSimilarity": 0.516237,
+    "auditScore": 50.0265,
+    "formulaOnly": true,
+    "learningEnabled": false,
+    "rule": "Million-run bootstrap audit only. No historical outcome changes the Chee formula."
+  }
 }

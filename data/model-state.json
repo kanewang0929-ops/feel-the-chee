@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-29T07:08:12.476024+00:00",
+  "updatedAt": "2026-10-29T15:32:20.795399+00:00",
   "profiles": {
     "front": {
       "stable-history": {
@@ -29,56 +29,69 @@
     "wide-band": {
       "evaluations": 47,
       "lastCurveDistance": 0.148171,
-      "emaCurveDistance": 0.162622,
-      "simulationCurveDistance": 0.165946,
-      "simulationDraws": 1781,
-      "simulationUpdatedAt": "2026-10-29T07:08:10.901159+00:00"
+      "emaCurveDistance": 0.163403,
+      "simulationCurveDistance": 0.165413,
+      "simulationDraws": 2141,
+      "simulationUpdatedAt": "2026-10-29T15:32:10.309642+00:00"
     },
     "adaptive-wave": {
       "evaluations": 8,
-      "emaCurveDistance": 0.167807,
-      "simulationCurveDistance": 0.167807,
-      "simulationDraws": 660,
-      "simulationUpdatedAt": "2026-10-29T07:08:10.901159+00:00"
+      "emaCurveDistance": 0.167274,
+      "simulationCurveDistance": 0.165905,
+      "simulationDraws": 300,
+      "simulationUpdatedAt": "2026-10-29T15:32:10.309642+00:00"
     }
   },
   "selectedProfile": "wide-band",
-  "temperatureAdjustment": 0.0004,
+  "temperatureAdjustment": -0.0313,
   "simulationLearning": {
-    "runs": 179,
-    "lastRunId": "2026-10-29T070810.901159+0000",
-    "updatedAt": "2026-10-29T07:08:10.901159+00:00",
+    "runs": 180,
+    "lastRunId": "2026-10-29T153210.309642+0000",
+    "updatedAt": "2026-10-29T15:32:10.309642+00:00",
     "drawsEvaluated": 2441,
     "ticketsEvaluated": 7323,
     "bestProfile": {
       "name": "wide-band",
       "label": "宽带采样",
-      "draws": 1781,
-      "averageCurveLoss": 0.165946
+      "draws": 2141,
+      "averageCurveLoss": 0.165413
     },
     "profilePerformance": [
       {
         "name": "wide-band",
         "label": "宽带采样",
-        "draws": 1781,
-        "averageCurveLoss": 0.165946
+        "draws": 2141,
+        "averageCurveLoss": 0.165413
       },
       {
         "name": "adaptive-wave",
         "label": "自适应波形",
-        "draws": 660,
-        "averageCurveLoss": 0.167807
+        "draws": 300,
+        "averageCurveLoss": 0.165905
       }
     ],
     "curveBenchmark": {
-      "modelAverageLoss": 0.166449,
+      "modelAverageLoss": 0.165473,
       "persistenceAverageLoss": 0.192964,
       "trailingMean60AverageLoss": 0.142733,
-      "excessVsTrailingMean60": 0.023716
+      "excessVsTrailingMean60": 0.02274
     },
     "strategyAdjustment": {
-      "temperatureAdjustment": 0.0004,
+      "temperatureAdjustment": -0.0236,
       "rule": "Historical simulation profile losses update profile EMAs. The model narrows its sampling band when it underperforms the 60-draw positional-mean benchmark."
     }
+  },
+  "millionSimulationTraining": {
+    "version": 1,
+    "iterationsPerRun": 1000000,
+    "totalIterations": 1000000,
+    "runs": 1,
+    "meanAnchorBlend": 0.868182,
+    "validationLoss": 0.14502769,
+    "validationScore": 55.9836,
+    "accepted": true,
+    "acceptedTrialMoves": 250958,
+    "validationRows": 538,
+    "rule": "Challengers replace live AI calibration only when chronological held-out curve loss falls. Score is validation, not winning probability."
   }
 }
