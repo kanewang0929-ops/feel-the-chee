@@ -89,5 +89,96 @@
       "agent": "adaptive; held-out validation gate"
     },
     "disclaimer": "Validation score can improve while future lottery accuracy does not. All legal combinations remain equally likely in a fair draw."
+  },
+  {
+    "runId": "20261031T070152.458970Z",
+    "generatedAt": "2026-10-31T07:01:52.458970+00:00",
+    "iterationsPerModel": 1000000,
+    "totalIterations": 3000000,
+    "cadence": "once per 24h; draw-night retries skip when a recent million-run exists",
+    "ai": {
+      "iterations": 1000000,
+      "trainingRows": 1903,
+      "validationRows": 538,
+      "anchorBefore": 0.868182,
+      "anchorAfter": 0.868182,
+      "validationLossBefore": 0.1450277,
+      "validationLossAfter": 0.1450277,
+      "validationScoreBefore": 55.9836,
+      "validationScoreAfter": 55.9836,
+      "accepted": false,
+      "acceptedTrialMoves": 337191,
+      "temperatureBefore": -0.0526,
+      "temperatureAfter": -0.0526
+    },
+    "chee": {
+      "iterations": 1000000,
+      "historicalTicketPool": 5882,
+      "sampledAverageFrontHits": 0.720835,
+      "sampledAverageBackHits": 0.327213,
+      "sampledAverageElementSimilarity": 0.516241,
+      "auditScore": 50.0094,
+      "formulaChanged": false
+    },
+    "agent": {
+      "iterations": 1000000,
+      "trainingRows": 1903,
+      "validationRows": 538,
+      "validationRawBefore": 1.012731,
+      "validationRawAfter": 1.012731,
+      "validationScoreBefore": 50.2292,
+      "validationScoreAfter": 50.2292,
+      "accepted": false,
+      "sourceWeightsBefore": {
+        "front": {
+          "ai": 0.330769,
+          "chee": 0.31073,
+          "instinct": 0.358501
+        },
+        "back": {
+          "ai": 0.371825,
+          "chee": 0.308976,
+          "instinct": 0.319199
+        }
+      },
+      "sourceWeightsAfter": {
+        "front": {
+          "ai": 0.330769,
+          "chee": 0.31073,
+          "instinct": 0.358501
+        },
+        "back": {
+          "ai": 0.371825,
+          "chee": 0.308976,
+          "instinct": 0.319199
+        }
+      },
+      "strategyWeightsAfter": {
+        "front": {
+          "allThree": 0.65,
+          "aiChee": 1.004624,
+          "aiInstinct": 1.087521,
+          "cheeInstinct": 0.891663,
+          "aiOnly": 1.185616,
+          "cheeOnly": 0.979913,
+          "instinctOnly": 1.263958
+        },
+        "back": {
+          "allThree": 0.954379,
+          "aiChee": 0.874142,
+          "aiInstinct": 1.059855,
+          "cheeInstinct": 0.820135,
+          "aiOnly": 1.35,
+          "cheeOnly": 0.96923,
+          "instinctOnly": 0.936233
+        }
+      }
+    },
+    "policy": {
+      "ai": "adaptive; held-out validation gate",
+      "chee": "formula-only audit; no historical learning",
+      "agent": "adaptive; held-out validation gate"
+    },
+    "disclaimer": "Validation score can improve while future lottery accuracy does not. All legal combinations remain equally likely in a fair draw."
   }
 ]

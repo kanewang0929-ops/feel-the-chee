@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-30T07:09:16.113754+00:00",
+  "updatedAt": "2026-10-31T07:01:58.937684+00:00",
   "profiles": {
     "front": {
       "stable-history": {
@@ -29,25 +29,25 @@
     "wide-band": {
       "evaluations": 47,
       "lastCurveDistance": 0.148171,
-      "emaCurveDistance": 0.163966,
+      "emaCurveDistance": 0.164371,
       "simulationCurveDistance": 0.165413,
       "simulationDraws": 2141,
-      "simulationUpdatedAt": "2026-10-30T07:09:14.255161+00:00"
+      "simulationUpdatedAt": "2026-10-31T07:01:51.252379+00:00"
     },
     "adaptive-wave": {
       "evaluations": 8,
-      "emaCurveDistance": 0.166891,
+      "emaCurveDistance": 0.166615,
       "simulationCurveDistance": 0.165905,
       "simulationDraws": 300,
-      "simulationUpdatedAt": "2026-10-30T07:09:14.255161+00:00"
+      "simulationUpdatedAt": "2026-10-31T07:01:51.252379+00:00"
     }
   },
   "selectedProfile": "wide-band",
-  "temperatureAdjustment": -0.0442,
+  "temperatureAdjustment": -0.0526,
   "simulationLearning": {
-    "runs": 181,
-    "lastRunId": "2026-10-30T070914.255161+0000",
-    "updatedAt": "2026-10-30T07:09:14.255161+00:00",
+    "runs": 182,
+    "lastRunId": "2026-10-31T070151.252379+0000",
+    "updatedAt": "2026-10-31T07:01:51.252379+00:00",
     "drawsEvaluated": 2441,
     "ticketsEvaluated": 7323,
     "bestProfile": {
@@ -77,20 +77,20 @@
       "excessVsTrailingMean60": 0.02274
     },
     "strategyAdjustment": {
-      "temperatureAdjustment": -0.0442,
+      "temperatureAdjustment": -0.0526,
       "rule": "Historical simulation profile losses update profile EMAs. The model narrows its sampling band when it underperforms the 60-draw positional-mean benchmark."
     }
   },
   "millionSimulationTraining": {
     "version": 1,
     "iterationsPerRun": 1000000,
-    "totalIterations": 1000000,
-    "runs": 1,
+    "totalIterations": 2000000,
+    "runs": 2,
     "meanAnchorBlend": 0.868182,
-    "validationLoss": 0.14502769,
+    "validationLoss": 0.1450277,
     "validationScore": 55.9836,
-    "accepted": true,
-    "acceptedTrialMoves": 250958,
+    "accepted": false,
+    "acceptedTrialMoves": 337191,
     "validationRows": 538,
     "rule": "Challengers replace live AI calibration only when chronological held-out curve loss falls. Score is validation, not winning probability."
   }
