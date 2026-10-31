@@ -1,42 +1,102 @@
 {
   "modelVersion": "v3.1-curve-sampler-million-trained",
   "modelFamily": "curve-trajectory-generative-sampler",
-  "generatedAt": "2026-10-31T07:01:58.937684+00:00",
-  "targetIssue": "26124",
-  "targetDate": "2026-10-31",
-  "historyCount": 2941,
+  "generatedAt": "2026-10-31T18:32:20.542083+00:00",
+  "targetIssue": "26125",
+  "targetDate": "2026-11-02",
+  "historyCount": 2942,
   "historyRange": {
     "earliestIssue": "07001",
     "earliestDate": "2007-05-30",
-    "latestIssue": "26123",
-    "latestDate": "2026-10-28"
+    "latestIssue": "26124",
+    "latestDate": "2026-10-31"
   },
   "latestDraw": {
     "front": [
-      "13",
+      "12",
+      "14",
       "18",
-      "19",
-      "20",
-      "28"
+      "22",
+      "27"
     ],
     "back": [
-      "09",
-      "11"
+      "01",
+      "09"
     ]
   },
-  "lastEvaluation": null,
+  "lastEvaluation": {
+    "issue": "26124",
+    "date": "2026-10-31",
+    "modelFamily": "curve-sampler",
+    "evaluatedAt": "2026-10-31T18:32:19.819913+00:00",
+    "actual": {
+      "front": [
+        "12",
+        "14",
+        "18",
+        "22",
+        "27"
+      ],
+      "back": [
+        "01",
+        "09"
+      ]
+    },
+    "results": [
+      {
+        "rank": 1,
+        "label": "曲线主样本",
+        "frontHits": [],
+        "backHits": [],
+        "frontHitCount": 0,
+        "backHitCount": 0,
+        "curveDistance": 0.1441
+      },
+      {
+        "rank": 2,
+        "label": "波动延伸",
+        "frontHits": [],
+        "backHits": [],
+        "frontHitCount": 0,
+        "backHitCount": 0,
+        "curveDistance": 0.1125
+      },
+      {
+        "rank": 3,
+        "label": "随机带对冲",
+        "frontHits": [
+          "22"
+        ],
+        "backHits": [],
+        "frontHitCount": 1,
+        "backHitCount": 0,
+        "curveDistance": 0.1242
+      }
+    ],
+    "summary": {
+      "averageFrontHits": 0.333,
+      "averageBackHits": 0.0,
+      "bestCurveDistance": 0.1125
+    },
+    "learningUpdate": {
+      "profile": "wide-band",
+      "emaCurveDistance": 0.1511,
+      "temperatureAdjustment": 0.083,
+      "rule": "Prediction error changes only the sampling-band width; recent winning numbers are not fixed favourites."
+    }
+  },
   "calibration": {
     "selectedProfile": "wide-band",
     "selectedLabel": "宽带采样",
     "tests": 50,
-    "frontCurveLoss": 0.1397,
-    "backCurveLoss": 0.1986,
-    "historicalObjective": 0.1562,
-    "adjustedObjective": 0.1591,
-    "liveEvaluations": 47,
-    "liveCurveDistance": 0.1644,
-    "temperature": 1.44,
-    "temperatureAdjustment": -0.0526,
+    "frontCurveLoss": 0.1419,
+    "backCurveLoss": 0.1946,
+    "historicalObjective": 0.1567,
+    "adjustedObjective": 0.1547,
+    "liveEvaluations": 48,
+    "liveCurveDistance": 0.1511,
+    "temperature": 1.646,
+    "temperatureAdjustment": 0.083,
     "millionSimulation": {
       "meanAnchorBlend": 0.868182,
       "validationScore": 55.9836,
@@ -50,25 +110,25 @@
   "curveForecast": {
     "front": {
       "centers": [
-        6.45,
-        12.05,
-        17.18,
-        22.28,
-        28.73
+        6.47,
+        11.9,
+        17.04,
+        22.45,
+        28.63
       ],
       "sigmas": [
-        7.1,
-        9.47,
-        10.39,
-        10.69,
-        8.73
+        8.13,
+        10.45,
+        11.39,
+        12.01,
+        9.87
       ],
       "slopes": [
-        0.044,
-        -0.119,
-        0.24,
-        -0.007,
-        0.055
+        0.152,
+        0.343,
+        0.475,
+        0.077,
+        0.218
       ],
       "cycleLags": [
         10,
@@ -80,20 +140,20 @@
     },
     "back": {
       "centers": [
-        4.71,
-        9.12
+        4.06,
+        9.0
       ],
       "sigmas": [
-        4.24,
-        4.61
+        5.05,
+        5.16
       ],
       "slopes": [
-        0.02,
+        0.037,
         0.145
       ],
       "cycleLags": [
         5,
-        11
+        9
       ]
     }
   },
@@ -108,52 +168,52 @@
       "rank": 1,
       "label": "曲线主样本",
       "front": [
-        "04",
         "07",
-        "19",
+        "11",
+        "15",
         "23",
-        "28"
+        "27"
       ],
       "back": [
-        "06",
-        "08"
+        "04",
+        "10"
       ],
       "fit": 84.0,
-      "reason": "从五个排序位置的预测中心 [6.5 / 12.0 / 17.2 / 22.3 / 28.7] 及波动带中抽样；本组和值81、跨度24，并执行跨期与组间多样性约束。"
+      "reason": "从五个排序位置的预测中心 [6.5 / 11.9 / 17.0 / 22.4 / 28.6] 及波动带中抽样；本组和值83、跨度20，并执行跨期与组间多样性约束。"
     },
     {
       "rank": 2,
       "label": "波动延伸",
       "front": [
-        "05",
-        "10",
-        "17",
+        "04",
+        "13",
+        "14",
         "21",
-        "30"
+        "28"
       ],
       "back": [
-        "03",
+        "01",
         "11"
       ],
       "fit": 81.8,
-      "reason": "从五个排序位置的预测中心 [6.5 / 12.0 / 17.2 / 22.3 / 28.7] 及波动带中抽样；本组和值83、跨度25，并执行跨期与组间多样性约束。"
+      "reason": "从五个排序位置的预测中心 [6.5 / 11.9 / 17.0 / 22.4 / 28.6] 及波动带中抽样；本组和值80、跨度24，并执行跨期与组间多样性约束。"
     },
     {
       "rank": 3,
       "label": "随机带对冲",
       "front": [
-        "05",
-        "09",
-        "21",
-        "22",
+        "07",
+        "08",
+        "16",
+        "20",
         "28"
       ],
       "back": [
         "04",
-        "07"
+        "08"
       ],
       "fit": 79.6,
-      "reason": "从五个排序位置的预测中心 [6.5 / 12.0 / 17.2 / 22.3 / 28.7] 及波动带中抽样；本组和值85、跨度23，并执行跨期与组间多样性约束。"
+      "reason": "从五个排序位置的预测中心 [6.5 / 11.9 / 17.0 / 22.4 / 28.6] 及波动带中抽样；本组和值79、跨度21，并执行跨期与组间多样性约束。"
     }
   ],
   "note": "All valid combinations remain equally likely in a fair lottery. Curve fit is not a winning probability."
