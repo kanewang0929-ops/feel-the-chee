@@ -37567,5 +37567,298 @@
       },
       "disclaimer": "Validation score can improve while future lottery accuracy does not. All legal combinations remain equally likely in a fair draw."
     }
+  },
+  {
+    "runId": "2026-11-02T074422.759804+0000",
+    "generatedAt": "2026-11-02T07:44:22.759804+00:00",
+    "cadence": "daily-24h plus draw-night retries",
+    "models": {
+      "ai": {
+        "runId": "2026-11-02T074422.759804+0000",
+        "generatedAt": "2026-11-02T07:44:22.759804+00:00",
+        "model": "AI curve sampler",
+        "modelVersion": "v3.1-curve-sampler-million-trained",
+        "backtestVersion": "v1.2-walk-forward-base-curve",
+        "drawsEvaluated": 2442,
+        "ticketsEvaluated": 7326,
+        "averageFrontHits": 0.732187,
+        "averageBackHits": 0.329102,
+        "profilePerformance": [
+          {
+            "name": "wide-band",
+            "label": "宽带采样",
+            "draws": 2142,
+            "averageCurveLoss": 0.165387
+          },
+          {
+            "name": "adaptive-wave",
+            "label": "自适应波形",
+            "draws": 300,
+            "averageCurveLoss": 0.165905
+          }
+        ],
+        "curveBenchmark": {
+          "modelAverageLoss": 0.165451,
+          "persistenceAverageLoss": 0.192946,
+          "trailingMean60AverageLoss": 0.142717,
+          "excessVsTrailingMean60": 0.022734
+        },
+        "stateBefore": {
+          "temperatureAdjustment": -0.0043,
+          "selectedProfile": "wide-band"
+        },
+        "stateAfter": {
+          "temperatureAdjustment": -0.0267,
+          "selectedProfile": "wide-band",
+          "simulationRuns": 186
+        }
+      },
+      "chee": {
+        "runId": "2026-11-02T074422.759804+0000",
+        "generatedAt": "2026-11-02T07:44:22.759804+00:00",
+        "model": "Feel the Chee formula",
+        "modelVersion": "v2.1-formula-only",
+        "formulaVersion": "hetu-luoshu-date-issue-v2",
+        "backtestVersion": "v1.1-full-archive",
+        "drawsEvaluated": 2942,
+        "ticketsEvaluated": 5884,
+        "averageFrontHits": 0.720428,
+        "averageBackHits": 0.327498,
+        "averageElementSimilarity": 0.516314,
+        "formulaOnly": true,
+        "learningEnabled": false,
+        "strategyAdjustment": "none",
+        "simulationRuns": 186
+      },
+      "hybrid": {
+        "runId": "2026-11-02T074422.759804+0000",
+        "generatedAt": "2026-11-02T07:44:22.759804+00:00",
+        "model": "Fusion Agent",
+        "modelVersion": "v2.0-intuitive-fusion-agent",
+        "backtestVersion": "v2.0-sequential-intuitive-audit",
+        "drawsEvaluated": 2442,
+        "ticketsEvaluated": 4884,
+        "averageFrontHits": 0.706798,
+        "averageBackHits": 0.332514,
+        "weightsBefore": {
+          "source": {
+            "front": {
+              "ai": 0.332316,
+              "chee": 0.298477,
+              "instinct": 0.369207
+            },
+            "back": {
+              "ai": 0.384,
+              "chee": 0.316805,
+              "instinct": 0.299195
+            }
+          },
+          "strategy": {
+            "front": {
+              "allThree": 0.662852,
+              "aiChee": 1.045556,
+              "aiInstinct": 1.08636,
+              "cheeInstinct": 0.845287,
+              "aiOnly": 1.135991,
+              "cheeOnly": 0.942872,
+              "instinctOnly": 1.281083
+            },
+            "back": {
+              "allThree": 1.05573,
+              "aiChee": 0.970267,
+              "aiInstinct": 0.959719,
+              "cheeInstinct": 0.821167,
+              "aiOnly": 1.35,
+              "cheeOnly": 0.966873,
+              "instinctOnly": 0.848138
+            }
+          }
+        },
+        "weightsAfter": {
+          "source": {
+            "front": {
+              "ai": 0.557982,
+              "chee": 0.442018
+            },
+            "back": {
+              "ai": 0.595071,
+              "chee": 0.404929
+            }
+          },
+          "strategy": {
+            "front": {
+              "both": 1.018103,
+              "aiOnly": 1.083004,
+              "cheeOnly": 0.898892
+            },
+            "back": {
+              "both": 1.109907,
+              "aiOnly": 1.116715,
+              "cheeOnly": 0.773378
+            }
+          }
+        },
+        "simulationRuns": 185
+      }
+    },
+    "archived": {
+      "aiLearningEvents": 0,
+      "hybridLearningEvents": 0,
+      "aiForecastSnapshots": 0,
+      "hybridForecastSnapshots": 0
+    },
+    "storage": {
+      "aiSimulationLog": "data/ai-simulation-log.json",
+      "cheeSimulationLog": "data/chee-simulation-log.json",
+      "hybridSimulationLog": "data/hybrid-simulation-log.json",
+      "aiMasterLearningLog": "data/ai-master-learning-log.json",
+      "hybridMasterLearningLog": "data/hybrid-master-learning-log.json",
+      "cycleLog": "data/model-cycle-log.json"
+    },
+    "agentInstinct": {
+      "eventType": "agent-instinct-simulation-learning",
+      "generatedAt": "2026-11-02T07:44:24.414424+00:00",
+      "modelVersion": "v2.0-intuitive-fusion-agent",
+      "backtestVersion": "v2.0-sequential-intuitive-audit",
+      "drawsEvaluated": 2442,
+      "ticketsEvaluated": 4884,
+      "averageFrontHits": 0.706798,
+      "averageBackHits": 0.332514,
+      "weightsBefore": {
+        "front": {
+          "ai": 0.557982,
+          "chee": 0.442018
+        },
+        "back": {
+          "ai": 0.595071,
+          "chee": 0.404929
+        }
+      },
+      "weightsAfter": {
+        "front": {
+          "ai": 0.332942,
+          "chee": 0.297334,
+          "instinct": 0.369724
+        },
+        "back": {
+          "ai": 0.386828,
+          "chee": 0.315522,
+          "instinct": 0.29765
+        }
+      },
+      "strategyWeightsAfter": {
+        "front": {
+          "allThree": 0.675547,
+          "aiChee": 1.035092,
+          "aiInstinct": 1.094935,
+          "cheeInstinct": 0.837785,
+          "aiOnly": 1.137533,
+          "cheeOnly": 0.94415,
+          "instinctOnly": 1.274959
+        },
+        "back": {
+          "allThree": 1.069966,
+          "aiChee": 0.990008,
+          "aiInstinct": 0.947148,
+          "cheeInstinct": 0.824129,
+          "aiOnly": 1.35,
+          "cheeOnly": 0.948919,
+          "instinctOnly": 0.836674
+        }
+      },
+      "simulationRuns": 185,
+      "explanationPolicy": "Agent Instinct selections are logged but do not expose a reasoning narrative."
+    },
+    "millionSimulation": {
+      "runId": "20261102T074424.622447Z",
+      "generatedAt": "2026-11-02T07:44:24.622447+00:00",
+      "iterationsPerModel": 1000000,
+      "totalIterations": 3000000,
+      "cadence": "once per 24h; draw-night retries skip when a recent million-run exists",
+      "ai": {
+        "iterations": 1000000,
+        "trainingRows": 1904,
+        "validationRows": 538,
+        "anchorBefore": 0.868182,
+        "anchorAfter": 0.872422,
+        "validationLossBefore": 0.1449616,
+        "validationLossAfter": 0.14485895,
+        "validationScoreBefore": 55.9984,
+        "validationScoreAfter": 56.0214,
+        "accepted": true,
+        "acceptedTrialMoves": 336102,
+        "temperatureBefore": -0.0267,
+        "temperatureAfter": -0.0337
+      },
+      "chee": {
+        "iterations": 1000000,
+        "historicalTicketPool": 5884,
+        "sampledAverageFrontHits": 0.719473,
+        "sampledAverageBackHits": 0.328243,
+        "sampledAverageElementSimilarity": 0.516198,
+        "auditScore": 50.0021,
+        "formulaChanged": false
+      },
+      "agent": {
+        "iterations": 1000000,
+        "trainingRows": 1904,
+        "validationRows": 538,
+        "validationRawBefore": 1.01357853,
+        "validationRawAfter": 1.01357853,
+        "validationScoreBefore": 50.2444,
+        "validationScoreAfter": 50.2444,
+        "accepted": false,
+        "sourceWeightsBefore": {
+          "front": {
+            "ai": 0.332942,
+            "chee": 0.297334,
+            "instinct": 0.369724
+          },
+          "back": {
+            "ai": 0.386828,
+            "chee": 0.315522,
+            "instinct": 0.29765
+          }
+        },
+        "sourceWeightsAfter": {
+          "front": {
+            "ai": 0.332942,
+            "chee": 0.297334,
+            "instinct": 0.369724
+          },
+          "back": {
+            "ai": 0.386828,
+            "chee": 0.315522,
+            "instinct": 0.29765
+          }
+        },
+        "strategyWeightsAfter": {
+          "front": {
+            "allThree": 0.675547,
+            "aiChee": 1.035092,
+            "aiInstinct": 1.094935,
+            "cheeInstinct": 0.837785,
+            "aiOnly": 1.137533,
+            "cheeOnly": 0.94415,
+            "instinctOnly": 1.274959
+          },
+          "back": {
+            "allThree": 1.069966,
+            "aiChee": 0.990008,
+            "aiInstinct": 0.947148,
+            "cheeInstinct": 0.824129,
+            "aiOnly": 1.35,
+            "cheeOnly": 0.948919,
+            "instinctOnly": 0.836674
+          }
+        }
+      },
+      "policy": {
+        "ai": "adaptive; held-out validation gate",
+        "chee": "formula-only audit; no historical learning",
+        "agent": "adaptive; held-out validation gate"
+      },
+      "disclaimer": "Validation score can improve while future lottery accuracy does not. All legal combinations remain equally likely in a fair draw."
+    }
   }
 ]
