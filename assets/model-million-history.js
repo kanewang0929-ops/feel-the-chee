@@ -89,7 +89,7 @@
         <div class="weight-grid">
           <div class="weight"><span class="muted">今日完整循环</span><strong>${count(ai.cycles)}</strong></div>
           <div class="weight"><span class="muted">累计完整循环</span><strong>${count(total)}</strong></div>
-          <div class="weight"><span class="muted">当前验证分</span><strong>${fmt(ai.validationScoreAfter)}</strong></div>\n          <div class="weight"><span class="muted">每循环历史期数</span><strong>${count(ai.drawsPerCycle)}</strong></div>\n          <div class="weight"><span class="muted">有效逐期比较</span><strong>${count(ai.effectiveDrawComparisons)}</strong></div>
+          <div class="weight"><span class="muted">当前验证分</span><strong>${fmt(ai.validationScoreAfter)}</strong></div>\n          <div class="weight"><span class="muted">每循环档案遍历</span><strong>${count(ai.archiveDrawsTraversed || ai.drawsPerCycle)}</strong></div>\n          <div class="weight"><span class="muted">每循环可评分期数</span><strong>${count(ai.drawsPerCycle)}</strong></div>\n          <div class="weight"><span class="muted">有效逐期比较</span><strong>${count(ai.effectiveDrawComparisons)}</strong></div>
           <div class="weight"><span class="muted">本轮策略</span><strong>${ai.accepted ? "已升级" : "保持原策略"}</strong></div>
         </div>
         <div class="log-list">
@@ -168,7 +168,7 @@
         <div class="weight-grid">
           <div class="weight"><span class="muted">今日完整循环</span><strong>${count(agent.cycles)}</strong></div>
           <div class="weight"><span class="muted">累计完整循环</span><strong>${count(total)}</strong></div>
-          <div class="weight"><span class="muted">当前验证分</span><strong>${fmt(agent.validationScoreAfter)}</strong></div>\n          <div class="weight"><span class="muted">每循环历史期数</span><strong>${count(agent.drawsPerCycle)}</strong></div>\n          <div class="weight"><span class="muted">有效逐期比较</span><strong>${count(agent.effectiveDrawComparisons)}</strong></div>
+          <div class="weight"><span class="muted">当前验证分</span><strong>${fmt(agent.validationScoreAfter)}</strong></div>\n          <div class="weight"><span class="muted">每循环档案遍历</span><strong>${count(agent.archiveDrawsTraversed || agent.drawsPerCycle)}</strong></div>\n          <div class="weight"><span class="muted">每循环可评分期数</span><strong>${count(agent.drawsPerCycle)}</strong></div>\n          <div class="weight"><span class="muted">有效逐期比较</span><strong>${count(agent.effectiveDrawComparisons)}</strong></div>
           <div class="weight"><span class="muted">本轮策略</span><strong>${agent.accepted ? "已升级" : "保持原策略"}</strong></div>
         </div>
         <div class="log-list">
