@@ -182,7 +182,9 @@ def train_ai_full_cycles(backtest: dict, state: dict, rng: random.Random):
     old_total = int(prior.get("totalCycles", 0))
     state["fullHistoryCycleTraining"] = {
         "version": 1,
-        "cycleDefinition": "one candidate strategy evaluated across every eligible historical draw in chronological order",
+        "cycleDefinition": "one cycle traverses the archive from result 1 to latest; the initial warm-up builds state and every eligible later draw is scored chronologically",
+        "warmupDraws": int(backtest.get("summary", {}).get("warmupDraws", 0) or 0),
+        "archiveDrawsTraversed": full_count + int(backtest.get("summary", {}).get("warmupDraws", 0) or 0),
         "cyclesPerRun": CYCLES,
         "totalCycles": old_total + CYCLES,
         "runs": int(prior.get("runs", 0)) + 1,
@@ -415,7 +417,8 @@ def train_agent_full_cycles(backtest: dict, state: dict, rng: random.Random):
         prior = {}
     state["fullHistoryCycleTraining"] = {
         "version": 1,
-        "cycleDefinition": "one candidate strategy evaluated across every aligned historical draw in chronological order",
+        "cycleDefinition": "one cycle traverses the source archive from result 1 to latest; aligned post-warm-up draws are scored chronologically",
+        "archiveDrawsTraversed": full_count + int(backtest.get("summary", {}).get("warmupDraws", 0) or 0),
         "cyclesPerRun": CYCLES,
         "totalCycles": int(prior.get("totalCycles", 0)) + CYCLES,
         "runs": int(prior.get("runs", 0)) + 1,
@@ -509,7 +512,7 @@ def main() -> None:
         "runId": run_id,
         "generatedAt": stamp,
         "cyclesPerAdaptiveModel": CYCLES,
-        "cycleDefinition": "one cycle spans every eligible recorded draw from earliest walk-forward prediction to latest",
+        "cycleDefinition": "one cycle traverses recorded history from result 1 to latest; warm-up draws build state and all eligible later draws are compared prediction-vs-actual",
         "ai": ai_result,
         "agent": agent_result,
         "totalEffectiveDrawComparisons": ai_result["effectiveDrawComparisons"] + agent_result["effectiveDrawComparisons"],
