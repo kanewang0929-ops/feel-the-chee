@@ -104,7 +104,7 @@
             <div class="log-time">参数</div>
             <div>
               <div class="log-title">均值锚 ${fmt(ai.anchorBefore, 3)} → ${fmt(ai.anchorAfter, 3)}</div>
-              <div class="log-body">采样温度修正 ${fmt(ai.temperatureBefore, 4)} → ${fmt(ai.temperatureAfter, 4)}。最近一次真正通过验证的训练：${accepted ? time(accepted.generatedAt) : "尚无"}。</div>
+              <div class="log-body">完整历史损失 ${fmt(ai.fullHistoryLossBefore, 6)} → ${fmt(ai.fullHistoryLossAfter, 6)}。最近一次真正通过验证的训练：${accepted ? time(accepted.generatedAt) : "尚无"}。</div>
             </div>
           </div>
         </div>
@@ -117,7 +117,7 @@
                 const x = row.ai || {};
                 return `<tr>
                   <td>${time(row.generatedAt)}</td>
-                  <td>${count(x.iterations)}</td>
+                  <td>${count(x.cycles)}</td>
                   <td>${fmt(x.validationScoreBefore)}</td>
                   <td>${fmt(x.validationScoreAfter)}</td>
                   <td>${fmt(x.validationLossAfter, 6)}</td>
@@ -166,7 +166,7 @@
           <span class="badge gold">每日 1,000,000 次</span>
         </div>
         <div class="weight-grid">
-          <div class="weight"><span class="muted">今日模拟</span><strong>${count(agent.cycles)}</strong></div>
+          <div class="weight"><span class="muted">今日完整循环</span><strong>${count(agent.cycles)}</strong></div>
           <div class="weight"><span class="muted">累计完整循环</span><strong>${count(total)}</strong></div>
           <div class="weight"><span class="muted">当前验证分</span><strong>${fmt(agent.validationScoreAfter)}</strong></div>\n          <div class="weight"><span class="muted">每循环历史期数</span><strong>${count(agent.drawsPerCycle)}</strong></div>\n          <div class="weight"><span class="muted">有效逐期比较</span><strong>${count(agent.effectiveDrawComparisons)}</strong></div>
           <div class="weight"><span class="muted">本轮策略</span><strong>${agent.accepted ? "已升级" : "保持原策略"}</strong></div>
@@ -190,14 +190,14 @@
         <h3 style="margin-top:20px">Agent 完整历史循环逐次运行记录</h3>
         <div style="overflow:auto">
           <table>
-            <thead><tr><th>运行时间</th><th>模拟次数</th><th>验证分前</th><th>验证分后</th><th>前区权重 AI / 风水 / 直觉</th><th>后区权重 AI / 风水 / 直觉</th><th>结果</th></tr></thead>
+            <thead><tr><th>运行时间</th><th>完整循环次数</th><th>验证分前</th><th>验证分后</th><th>前区权重 AI / 风水 / 直觉</th><th>后区权重 AI / 风水 / 直觉</th><th>结果</th></tr></thead>
             <tbody>
               ${recent.map(row => {
                 const x = row.agent || {};
                 const w = x.sourceWeightsAfter || {};
                 return `<tr>
                   <td>${time(row.generatedAt)}</td>
-                  <td>${count(x.iterations)}</td>
+                  <td>${count(x.cycles)}</td>
                   <td>${fmt(x.validationScoreBefore)}</td>
                   <td>${fmt(x.validationScoreAfter)}</td>
                   <td>${pct(w.front?.ai)} / ${pct(w.front?.chee)} / ${pct(w.front?.instinct)}</td>
