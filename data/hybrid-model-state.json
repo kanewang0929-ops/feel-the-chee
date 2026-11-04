@@ -4,66 +4,66 @@
   "observations": 2444,
   "sourceEma": {
     "front": {
-      "ai": 1.144733659675016,
-      "chee": 0.9866912992842429,
-      "instinct": 1.186543157687885
+      "ai": 1.1424261203746788,
+      "chee": 0.9877389791857485,
+      "instinct": 1.1891079391672892
     },
     "back": {
-      "ai": 1.0989757250951337,
-      "chee": 0.9492925962531703,
-      "instinct": 0.9157264720014988
+      "ai": 1.0919865104127608,
+      "chee": 0.9472797163783135,
+      "instinct": 0.9067867200923647
     }
   },
   "sourceWeights": {
     "front": {
-      "ai": 0.345298,
-      "chee": 0.292372,
-      "instinct": 0.362331
+      "ai": 0.344225,
+      "chee": 0.292543,
+      "instinct": 0.363232
     },
     "back": {
-      "ai": 0.375924,
-      "chee": 0.317475,
-      "instinct": 0.306601
+      "ai": 0.375487,
+      "chee": 0.318823,
+      "instinct": 0.30569
     }
   },
   "strategyEma": {
     "front": {
-      "allThree": 0.6471152696509561,
-      "aiChee": 1.018667669696935,
-      "aiInstinct": 1.0509866189439656,
-      "cheeInstinct": 0.7493958719615117,
-      "aiOnly": 1.0731826675303684,
-      "cheeOnly": 0.8594372895598485,
-      "instinctOnly": 1.1684194717515406
+      "allThree": 0.6480466177476593,
+      "aiChee": 1.013807568031794,
+      "aiInstinct": 1.050411199893979,
+      "cheeInstinct": 0.7497383104870666,
+      "aiOnly": 1.0673810732167868,
+      "cheeOnly": 0.8616687665872802,
+      "instinctOnly": 1.1745373285103615
     },
     "back": {
-      "allThree": 0.7859693579371192,
-      "aiChee": 0.7775831759137557,
-      "aiInstinct": 0.7145341575631192,
-      "cheeInstinct": 0.5955689425456345,
-      "aiOnly": 0.9787017074972442,
-      "cheeOnly": 0.7271218505718839,
-      "instinctOnly": 0.6265435403993356
+      "allThree": 0.7858733356302368,
+      "aiChee": 0.7669054624327899,
+      "aiInstinct": 0.7007966873731538,
+      "cheeInstinct": 0.5982333293093827,
+      "aiOnly": 0.9813859270703121,
+      "cheeOnly": 0.7335879222497481,
+      "instinctOnly": 0.6342667590367134
     }
   },
   "strategyWeights": {
     "front": {
-      "allThree": 0.689762,
-      "aiChee": 1.0858,
-      "aiInstinct": 1.120249,
-      "cheeInstinct": 0.798783,
-      "aiOnly": 1.143908,
-      "cheeOnly": 0.916076,
-      "instinctOnly": 1.245421
+      "allThree": 0.690924,
+      "aiChee": 1.080886,
+      "aiInstinct": 1.119911,
+      "cheeInstinct": 0.799344,
+      "aiOnly": 1.138004,
+      "cheeOnly": 0.918681,
+      "instinctOnly": 1.25225
     },
     "back": {
-      "allThree": 1.056812,
-      "aiChee": 1.045536,
-      "aiInstinct": 0.96076,
-      "cheeInstinct": 0.8008,
-      "aiOnly": 1.315959,
-      "cheeOnly": 0.977686,
-      "instinctOnly": 0.842448
+      "allThree": 1.057693,
+      "aiChee": 1.032164,
+      "aiInstinct": 0.94319,
+      "cheeInstinct": 0.805152,
+      "aiOnly": 1.32083,
+      "cheeOnly": 0.987323,
+      "instinctOnly": 0.853648
     }
   },
   "cumulative": {
@@ -72,11 +72,11 @@
     "backHits": 1625.0,
     "draws": 2443.0
   },
-  "updatedAt": "2026-11-03T07:57:56.223052+00:00",
+  "updatedAt": "2026-11-04T07:32:49.585809+00:00",
   "simulationLearning": {
-    "runs": 189,
-    "lastRunId": "2026-11-03T075747.773325+0000",
-    "updatedAt": "2026-11-03T07:57:47.773325+00:00",
+    "runs": 190,
+    "lastRunId": "2026-11-04T073241.579459+0000",
+    "updatedAt": "2026-11-04T07:32:41.579459+00:00",
     "drawsEvaluated": 2443,
     "ticketsEvaluated": 4886,
     "averageFrontHits": 0.706918,
@@ -84,8 +84,8 @@
     "rule": "The live source and category EMAs are blended with the final state of the sequential historical fusion simulation."
   },
   "instinctSimulationLearning": {
-    "runs": 189,
-    "updatedAt": "2026-11-03T07:57:48.874246+00:00",
+    "runs": 190,
+    "updatedAt": "2026-11-04T07:32:42.652422+00:00",
     "backtestVersion": "v2.0-sequential-intuitive-audit",
     "drawsEvaluated": 2443,
     "ticketsEvaluated": 4886,
@@ -96,10 +96,10 @@
   "millionSimulationTraining": {
     "version": 1,
     "iterationsPerRun": 1000000,
-    "totalIterations": 5000000,
-    "runs": 5,
-    "validationRawScore": 1.01321174,
-    "validationScore": 50.2378,
+    "totalIterations": 6000000,
+    "runs": 6,
+    "validationRawScore": 1.01320569,
+    "validationScore": 50.2377,
     "accepted": false,
     "validationRows": 538,
     "rule": "Million bootstrap reward simulations estimate source/category weights; write only when chronological held-out validation improves."
