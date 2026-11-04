@@ -86,7 +86,11 @@ def chrono_split(rows: list, fraction: float = 0.22):
 def ai_row_values(row: dict):
     loss = row.get("curveLoss", {})
     try:
-        return float(loss["model"]), float(loss["trailingMean60"])
+        base = float(loss["model"])
+        trailing = float(loss["trailingMean60"])
+        relationship = float(loss.get("relationshipAnchor", base))
+        transition = float(loss.get("relationshipTransition", relationship))
+        return base, trailing, relationship, transition
     except (KeyError, TypeError, ValueError):
         return None
 
@@ -99,27 +103,41 @@ def ai_mean_components(rows: list[dict]):
     return (
         statistics.fmean(value[0] for value in values),
         statistics.fmean(value[1] for value in values),
+        statistics.fmean(value[2] for value in values),
+        statistics.fmean(value[3] for value in values),
         len(values),
     )
 
 
-def ai_loss_from_means(base_mean: float, anchor_mean: float, blend: float) -> float:
-    return (1.0 - blend) * base_mean + blend * anchor_mean
+def ai_loss_from_means(
+    base_mean: float,
+    anchor_mean: float,
+    relationship_mean: float,
+    transition_mean: float,
+    mean_blend: float,
+    relationship_blend: float,
+) -> float:
+    structural = (1.0 - mean_blend) * base_mean + mean_blend * anchor_mean
+    relationship_component = 0.72 * relationship_mean + 0.28 * transition_mean
+    return (1.0 - relationship_blend) * structural + relationship_blend * relationship_component
 
 
-def ai_draw_loss(row: dict, blend: float) -> float:
+def ai_draw_loss(row: dict, mean_blend: float, relationship_blend: float) -> float:
     values = ai_row_values(row)
     if not values:
         return float("nan")
-    return ai_loss_from_means(values[0], values[1], blend)
+    return ai_loss_from_means(
+        values[0], values[1], values[2], values[3],
+        mean_blend, relationship_blend,
+    )
 
 
 def train_ai_full_cycles(backtest: dict, state: dict, rng: random.Random):
     rows = [row for row in backtest.get("draws", []) if ai_row_values(row)]
     train_rows, validation_rows = chrono_split(rows)
-    full_base, full_anchor, full_count = ai_mean_components(rows)
-    train_base, train_anchor, train_count = ai_mean_components(train_rows)
-    val_base, val_anchor, val_count = ai_mean_components(validation_rows)
+    full_base, full_anchor, full_relationship, full_transition, full_count = ai_mean_components(rows)
+    train_base, train_anchor, train_relationship, train_transition, train_count = ai_mean_components(train_rows)
+    val_base, val_anchor, val_relationship, val_transition, val_count = ai_mean_components(validation_rows)
 
     prior = state.get("fullHistoryCycleTraining", {})
     if not isinstance(prior, dict):
@@ -132,10 +150,22 @@ def train_ai_full_cycles(backtest: dict, state: dict, rng: random.Random):
         AI_MAX_ANCHOR,
         float(prior.get("meanAnchorBlend", million.get("meanAnchorBlend", 0.0)) or 0.0),
     )
+    relationship_state = state.get("relationshipTraining", {}) if isinstance(state.get("relationshipTraining"), dict) else {}
+    current_relationship = clamp(
+        0.0, 0.95,
+        float(prior.get("relationshipBlend", relationship_state.get("blend", 0.0)) or 0.0),
+    )
 
     incumbent = current
-    incumbent_full = ai_loss_from_means(full_base, full_anchor, incumbent)
-    incumbent_val = ai_loss_from_means(val_base, val_anchor, incumbent)
+    incumbent_relationship = current_relationship
+    incumbent_full = ai_loss_from_means(
+        full_base, full_anchor, full_relationship, full_transition,
+        incumbent, incumbent_relationship,
+    )
+    incumbent_val = ai_loss_from_means(
+        val_base, val_anchor, val_relationship, val_transition,
+        incumbent, incumbent_relationship,
+    )
     best_objective = 0.72 * incumbent_full + 0.28 * incumbent_val
     accepted_trials = 0
 
@@ -144,32 +174,59 @@ def train_ai_full_cycles(backtest: dict, state: dict, rng: random.Random):
         sigma = 0.24 * (1.0 - progress) + 0.004
         if index % 25 == 0:
             candidate = rng.random() * AI_MAX_ANCHOR
+            candidate_relationship = rng.random() * 0.95
         else:
             candidate = clamp(0.0, AI_MAX_ANCHOR, incumbent + rng.gauss(0.0, sigma))
-        full_loss = ai_loss_from_means(full_base, full_anchor, candidate)
-        val_loss = ai_loss_from_means(val_base, val_anchor, candidate)
-        objective = 0.72 * full_loss + 0.28 * val_loss + 0.00025 * abs(candidate - current)
+            candidate_relationship = clamp(0.0, 0.95, incumbent_relationship + rng.gauss(0.0, sigma))
+        full_loss = ai_loss_from_means(
+            full_base, full_anchor, full_relationship, full_transition,
+            candidate, candidate_relationship,
+        )
+        val_loss = ai_loss_from_means(
+            val_base, val_anchor, val_relationship, val_transition,
+            candidate, candidate_relationship,
+        )
+        objective = (
+            0.72 * full_loss
+            + 0.28 * val_loss
+            + 0.00020 * abs(candidate - current)
+            + 0.00020 * abs(candidate_relationship - current_relationship)
+        )
         if objective + 1e-12 < best_objective:
             incumbent = candidate
+            incumbent_relationship = candidate_relationship
             incumbent_full = full_loss
             incumbent_val = val_loss
             best_objective = objective
             accepted_trials += 1
 
-    before_full = ai_loss_from_means(full_base, full_anchor, current)
-    before_val = ai_loss_from_means(val_base, val_anchor, current)
+    before_full = ai_loss_from_means(
+        full_base, full_anchor, full_relationship, full_transition,
+        current, current_relationship,
+    )
+    before_val = ai_loss_from_means(
+        val_base, val_anchor, val_relationship, val_transition,
+        current, current_relationship,
+    )
     accepted = incumbent_val + 1e-10 < before_val and incumbent_full <= before_full + 1e-9
     final = incumbent if accepted else current
-    after_full = ai_loss_from_means(full_base, full_anchor, final)
-    after_val = ai_loss_from_means(val_base, val_anchor, final)
+    final_relationship = incumbent_relationship if accepted else current_relationship
+    after_full = ai_loss_from_means(
+        full_base, full_anchor, full_relationship, full_transition,
+        final, final_relationship,
+    )
+    after_val = ai_loss_from_means(
+        val_base, val_anchor, val_relationship, val_transition,
+        final, final_relationship,
+    )
 
     improved_draws = 0
     worsened_draws = 0
     tied_draws = 0
     total_delta = 0.0
     for row in rows:
-        before = ai_draw_loss(row, current)
-        after = ai_draw_loss(row, final)
+        before = ai_draw_loss(row, current, current_relationship)
+        after = ai_draw_loss(row, final, final_relationship)
         delta = before - after
         total_delta += delta
         if delta > 1e-12:
@@ -191,6 +248,7 @@ def train_ai_full_cycles(backtest: dict, state: dict, rng: random.Random):
         "drawsPerCycle": full_count,
         "effectiveDrawComparisonsPerRun": CYCLES * full_count,
         "meanAnchorBlend": round(final, 8),
+        "relationshipBlend": round(final_relationship, 8),
         "fullHistoryLoss": round(after_full, 9),
         "validationLoss": round(after_val, 9),
         "validationScore": score_from_loss(after_val),
@@ -211,6 +269,17 @@ def train_ai_full_cycles(backtest: dict, state: dict, rng: random.Random):
         million["validationScore"] = score_from_loss(after_val)
         million["accepted"] = True
         state["millionSimulationTraining"] = million
+        state["relationshipTraining"] = {
+            "version": 1,
+            "blend": round(final_relationship, 8),
+            "validationLoss": round(after_val, 9),
+            "validationScore": score_from_loss(after_val),
+            "relationshipAnchorLoss": round(val_relationship, 9),
+            "relationshipTransitionLoss": round(val_transition, 9),
+            "features": ["positionDelta", "sumDelta", "spanDelta", "oddDelta", "repeatCount"],
+            "accepted": True,
+            "updatedBy": "full-history-cycle-training",
+        }
 
     return {
         "cycles": CYCLES,
@@ -220,6 +289,10 @@ def train_ai_full_cycles(backtest: dict, state: dict, rng: random.Random):
         "validationDraws": val_count,
         "anchorBefore": round(current, 8),
         "anchorAfter": round(final, 8),
+        "relationshipBlendBefore": round(current_relationship, 8),
+        "relationshipBlendAfter": round(final_relationship, 8),
+        "relationshipAnchorValidationLoss": round(val_relationship, 9),
+        "relationshipTransitionValidationLoss": round(val_transition, 9),
         "fullHistoryLossBefore": round(before_full, 9),
         "fullHistoryLossAfter": round(after_full, 9),
         "validationLossBefore": round(before_val, 9),
