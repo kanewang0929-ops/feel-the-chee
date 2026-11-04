@@ -21,6 +21,7 @@ on:
       - "scripts/daily_simulation_learning.py"
       - "scripts/million_simulation_training.py"
       - "scripts/full_history_cycle_training.py"
+      - "scripts/settle_agent_result.py"
       - "assets/ai-backtest.js"
       - "assets/chee-backtest.js"
       - "assets/hybrid-agent.js"
@@ -75,6 +76,9 @@ jobs:
 
       - name: Apply three-source Agent Instinct learning
         run: python scripts/intuitive_simulation_learning.py
+
+      - name: Settle the latest Agent forecast against the newest real draw
+        run: python scripts/settle_agent_result.py
 
       - name: Run one million complete-history prediction cycles for AI and Agent
         env:
