@@ -9,7 +9,7 @@ import curve_forecast as ai
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/"data/ai-backtest.json"
-VERSION="v1.2-walk-forward-base-curve"
+VERSION="v1.3-walk-forward-relational"
 WARMUP=500
 RECALIBRATE_EVERY=60
 FRONT_POOL=100
@@ -50,6 +50,10 @@ def forecast(history,actual,state,previous,profile0,cal0):
     p=dict(profile0);cal=dict(cal0);adj=float(state.get("temperatureAdjustment",0.))
     p["temperature"]*=1+adj
     fm=ai.model(history,"front",p,1,35);bm=ai.model(history,"back",p,1,12)
+    rfp=ai.relationship_profile(history,"front",1,35)
+    rbp=ai.relationship_profile(history,"back",1,12)
+    rfm=ai.apply_relationship_anchor(fm,history,"front",1.0,1,35)
+    rbm=ai.apply_relationship_anchor(bm,history,"back",1.0,1,12)
     rng=ai.random.Random(ai.seed(ai.VERSION,actual["issue"],actual["date"],len(history)))
     fp=audit_pool(rng,fm,history,"front",1,35,adj,FRONT_POOL,300)
     bp=audit_pool(rng,bm,history,"back",1,12,adj,BACK_POOL,120)
@@ -60,9 +64,9 @@ def forecast(history,actual,state,previous,profile0,cal0):
       "curveForecast":{"front":ai.summary(fm),"back":ai.summary(bm)},
       "results":[{"rank":x["rank"],"label":x["label"],"front":fmt(x["front"]),"back":fmt(x["back"]),"fit":x["fit"]} for x in chosen]
     }
-    return out,fm,bm
+    return out,fm,bm,rfm,rbm,rfp,rbp
 
-def score(actual,pred,fm,bm,history):
+def score(actual,pred,fm,bm,rfm,rbm,rfp,rbp,history):
     af=set(actual["front"]);ab=set(actual["back"]);tickets=[]
     for x in pred["results"]:
         f=[int(n) for n in x["front"]];b=[int(n) for n in x["back"]]
@@ -77,11 +81,31 @@ def score(actual,pred,fm,bm,history):
     pl=.72*ai.loss(actual["front"],centers(history[-1]["front"]),35)+.28*ai.loss(actual["back"],centers(history[-1]["back"]),12)
     mf=mean_centers(history,"front");mb=mean_centers(history,"back")
     tl=.72*ai.loss(actual["front"],mf,35)+.28*ai.loss(actual["back"],mb,12)
+    rl=.72*ai.loss(actual["front"],rfm,35)+.28*ai.loss(actual["back"],rbm,12)
+    relationship_loss=.72*ai.relationship_loss(actual["front"],history[-1]["front"],rfp,35)+.28*ai.relationship_loss(actual["back"],history[-1]["back"],rbp,12)
     return {
       "issue":actual["issue"],"date":actual["date"],"trainingDraws":len(history),
       "actual":{"front":fmt(actual["front"]),"back":fmt(actual["back"])},
       "profile":{"name":pred["calibration"]["selectedProfile"],"label":pred["calibration"]["selectedLabel"],"temperature":pred["calibration"]["temperature"]},
-      "curveLoss":{"model":round(ml,6),"persistence":round(pl,6),"trailingMean60":round(tl,6)},
+      "curveLoss":{"model":round(ml,6),"persistence":round(pl,6),"trailingMean60":round(tl,6),"relationshipAnchor":round(rl,6),"relationshipTransition":round(relationship_loss,6)},
+      "relationship":{
+        "front":{
+          "positionDelta":[round(v,4) for v in rfp["positionDelta"]],
+          "sumDelta":round(rfp["sumDelta"],4),
+          "spanDelta":round(rfp["spanDelta"],4),
+          "oddDelta":round(rfp["oddDelta"],4),
+          "repeatMean":round(rfp["repeatMean"],4),
+          "actualRepeat":len(set(actual["front"])&set(history[-1]["front"]))
+        },
+        "back":{
+          "positionDelta":[round(v,4) for v in rbp["positionDelta"]],
+          "sumDelta":round(rbp["sumDelta"],4),
+          "spanDelta":round(rbp["spanDelta"],4),
+          "oddDelta":round(rbp["oddDelta"],4),
+          "repeatMean":round(rbp["repeatMean"],4),
+          "actualRepeat":len(set(actual["back"])&set(history[-1]["back"]))
+        }
+      },
       "tickets":tickets,
       "bestTicket":{"rank":best["rank"],"frontHitCount":best["frontHitCount"],"backHitCount":best["backHitCount"],"curveDistance":best["curveDistance"]}
     }
@@ -96,6 +120,8 @@ def aggregate(rows):
     ml=statistics.fmean(x["curveLoss"]["model"] for x in rows)
     pl=statistics.fmean(x["curveLoss"]["persistence"] for x in rows)
     tl=statistics.fmean(x["curveLoss"]["trailingMean60"] for x in rows)
+    rl=statistics.fmean(x["curveLoss"].get("relationshipAnchor",x["curveLoss"]["model"]) for x in rows)
+    rtl=statistics.fmean(x["curveLoss"].get("relationshipTransition",x["curveLoss"]["model"]) for x in rows)
     fb=25/35;bb=4/12;fp=hyper(35,5,5);bp=hyper(12,2,2)
     template=lambda:{"draws":0,"tickets":0,"front":0,"back":0,"loss":0.}
     byyear=defaultdict(template);byprofile=defaultdict(template)
@@ -116,7 +142,7 @@ def aggregate(rows):
         "hitPatternDistribution":dict(sorted(patterns.items())),"bestOfThreeFrontDistribution":{str(h):bfd[h] for h in range(6)},
         "bestOfThreeBackDistribution":{str(h):bbd[h] for h in range(3)},"exactFivePlusTwo":patterns["5+2"]
       },
-      "curveBenchmark":{"modelAverageLoss":round(ml,6),"persistenceAverageLoss":round(pl,6),"trailingMean60AverageLoss":round(tl,6),"improvementVsPersistence":round(pl-ml,6),"improvementVsTrailingMean60":round(tl-ml,6),"note":"Lower is better. Persistence uses the previous draw; trailingMean60 uses prior 60-draw positional means."},
+      "curveBenchmark":{"modelAverageLoss":round(ml,6),"persistenceAverageLoss":round(pl,6),"trailingMean60AverageLoss":round(tl,6),"relationshipAnchorAverageLoss":round(rl,6),"relationshipTransitionAverageLoss":round(rtl,6),"improvementVsPersistence":round(pl-ml,6),"improvementVsTrailingMean60":round(tl-ml,6),"note":"Lower is better. Relationship metrics explicitly model consecutive actual-draw movement: positional displacement, sum/span/odd changes and repeat counts."},
       "theoreticalFixedTicketBaseline":{
         "averageFrontHitsPerTicket":round(fb,6),"averageBackHitsPerTicket":round(bb,6),"averageTotalHitsPerTicket":round(fb+bb,6),
         "frontHitProbabilities":{k:round(v,10) for k,v in fp.items()},"backHitProbabilities":{k:round(v,10) for k,v in bp.items()},
@@ -134,8 +160,8 @@ def main():
     for i in range(WARMUP,len(draws)):
         history=draws[:i];actual=draws[i]
         if p0 is None or (i-WARMUP)%RECALIBRATE_EVERY==0:p0,cal0=ai.choose(history,state)
-        pred,fm,bm=forecast(history,actual,state,previous,p0,cal0)
-        row=score(actual,pred,fm,bm,history)
+        pred,fm,bm,rfm,rbm,rfp,rbp=forecast(history,actual,state,previous,p0,cal0)
+        row=score(actual,pred,fm,bm,rfm,rbm,rfp,rbp,history)
         ev=ai.evaluate(pred,draws[:i+1],state,[])
         if ev is None:raise RuntimeError(f"Could not evaluate {actual['issue']}")
         row["learningUpdate"]=ev["learningUpdate"];rows.append(row);previous=pred
