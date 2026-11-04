@@ -1,0 +1,102 @@
+[
+  {
+    "runId": "20261104T124525.361966Z",
+    "generatedAt": "2026-11-04T12:45:25.361966+00:00",
+    "cyclesPerAdaptiveModel": 1000000,
+    "cycleDefinition": "one cycle spans every eligible recorded draw from earliest walk-forward prediction to latest",
+    "ai": {
+      "cycles": 1000000,
+      "drawsPerCycle": 2443,
+      "effectiveDrawComparisons": 2443000000,
+      "trainingDraws": 1905,
+      "validationDraws": 538,
+      "anchorBefore": 0.88,
+      "anchorAfter": 0.95,
+      "fullHistoryLossBefore": 0.145432563,
+      "fullHistoryLossAfter": 0.143841562,
+      "validationLossBefore": 0.144547203,
+      "validationLossAfter": 0.14285212,
+      "validationScoreBefore": 56.0913,
+      "validationScoreAfter": 56.4729,
+      "accepted": true,
+      "acceptedTrialMoves": 2,
+      "drawByDraw": {
+        "improved": 1686,
+        "worsened": 757,
+        "tied": 0
+      }
+    },
+    "agent": {
+      "cycles": 1000000,
+      "drawsPerCycle": 2443,
+      "effectiveDrawComparisons": 2443000000,
+      "trainingDraws": 1905,
+      "validationDraws": 538,
+      "fullHistoryRawBefore": 1.005850571,
+      "fullHistoryRawAfter": 1.014684748,
+      "validationRawBefore": 1.013214697,
+      "validationRawAfter": 1.021121309,
+      "validationScoreBefore": 50.2379,
+      "validationScoreAfter": 50.3802,
+      "accepted": true,
+      "acceptedTrialMoves": 42,
+      "sourceWeightsBefore": {
+        "front": {
+          "ai": 0.343208,
+          "chee": 0.292548,
+          "instinct": 0.364244
+        },
+        "back": {
+          "ai": 0.37565,
+          "chee": 0.320274,
+          "instinct": 0.304076
+        }
+      },
+      "sourceWeightsAfter": {
+        "front": {
+          "ai": 0.7,
+          "chee": 0.15,
+          "instinct": 0.15
+        },
+        "back": {
+          "ai": 0.15,
+          "chee": 0.15,
+          "instinct": 0.7
+        }
+      },
+      "strategyWeightsAfter": {
+        "front": {
+          "allThree": 0.65,
+          "aiChee": 0.65,
+          "aiInstinct": 0.65,
+          "cheeInstinct": 0.65,
+          "aiOnly": 1.35,
+          "cheeOnly": 1.35,
+          "instinctOnly": 1.35
+        },
+        "back": {
+          "allThree": 1.35,
+          "aiChee": 0.65,
+          "aiInstinct": 0.65,
+          "cheeInstinct": 0.65,
+          "aiOnly": 1.35,
+          "cheeOnly": 0.65,
+          "instinctOnly": 1.35
+        }
+      },
+      "drawByDraw": {
+        "improved": 1279,
+        "worsened": 1164,
+        "tied": 0
+      }
+    },
+    "totalEffectiveDrawComparisons": 4886000000,
+    "learningPolicy": {
+      "ai": "compare every draw; accept only if chronological validation improves and full-history loss does not worsen",
+      "agent": "compare every aligned draw; accept only if chronological validation improves and full-history reward does not worsen",
+      "chee": "formula-only; excluded from machine-learning updates"
+    },
+    "implementation": "draw-level metrics are precomputed once; candidate cycle scores use exact sufficient-statistic aggregation, then the winning strategy is rechecked draw-by-draw",
+    "disclaimer": "This optimizes historical out-of-sample validation. It cannot make a fair random lottery reliably predictable."
+  }
+]
