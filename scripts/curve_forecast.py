@@ -21,7 +21,7 @@ HISTORY_FILE = ROOT / "data" / "forecast-history.json"
 LOG_FILE = ROOT / "data" / "learning-log.json"
 STATE_FILE = ROOT / "data" / "model-state.json"
 
-VERSION = "v3.1-curve-sampler-million-trained"
+VERSION = "v3.2-relational-curve-sampler"
 
 PROFILES = [
     {
@@ -237,6 +237,130 @@ def curve(
         "cycleLag": cycle_lag,
         "cycleStrength": cycle_strength,
     }
+
+
+
+def relationship_profile(
+    draws: list[dict],
+    area: str,
+    lower: int,
+    upper: int,
+    window: int = 180,
+) -> dict:
+    """Model how consecutive actual draws move relative to one another.
+
+    Only historical draw-to-draw transitions are used. The profile captures
+    positional displacement, sum/span/odd-count changes, and repeat-count
+    behaviour. It never reads the target draw.
+    """
+    if len(draws) < 3:
+        width = len(draws[-1][area]) if draws else (5 if area == "front" else 2)
+        return {
+            "positionDelta": [0.0] * width,
+            "sumDelta": 0.0,
+            "spanDelta": 0.0,
+            "oddDelta": 0.0,
+            "repeatMean": 0.0,
+            "targetCenters": [float(v) for v in (draws[-1][area] if draws else range(1, width + 1))],
+        }
+
+    sample = draws[-min(window + 1, len(draws)) :]
+    transitions = list(zip(sample[:-1], sample[1:]))
+    width = len(sample[-1][area])
+    decay = 0.965
+    weights = [decay ** (len(transitions) - 1 - i) for i in range(len(transitions))]
+    wsum = sum(weights) or 1.0
+
+    position_delta = []
+    for pos in range(width):
+        delta = sum(
+            (right[area][pos] - left[area][pos]) * weight
+            for (left, right), weight in zip(transitions, weights)
+        ) / wsum
+        position_delta.append(delta)
+
+    def weighted_transition(fn):
+        return sum(fn(left, right) * weight for (left, right), weight in zip(transitions, weights)) / wsum
+
+    sum_delta = weighted_transition(lambda left, right: sum(right[area]) - sum(left[area]))
+    span_delta = weighted_transition(
+        lambda left, right: (right[area][-1] - right[area][0]) - (left[area][-1] - left[area][0])
+    )
+    odd_delta = weighted_transition(
+        lambda left, right: sum(v % 2 for v in right[area]) - sum(v % 2 for v in left[area])
+    )
+    repeat_mean = weighted_transition(
+        lambda left, right: len(set(left[area]) & set(right[area]))
+    )
+
+    latest = sample[-1][area]
+    target_centers = [
+        max(lower, min(upper, latest[pos] + position_delta[pos]))
+        for pos in range(width)
+    ]
+    return {
+        "positionDelta": position_delta,
+        "sumDelta": sum_delta,
+        "spanDelta": span_delta,
+        "oddDelta": odd_delta,
+        "repeatMean": repeat_mean,
+        "targetCenters": target_centers,
+    }
+
+
+def apply_relationship_anchor(
+    model_rows: list[dict],
+    draws: list[dict],
+    area: str,
+    blend: float,
+    lower: int,
+    upper: int,
+) -> list[dict]:
+    """Blend base curve centers with historical draw-to-draw transition targets."""
+    blend = max(0.0, min(0.95, float(blend or 0.0)))
+    if blend <= 0 or len(draws) < 3:
+        return [dict(row) for row in model_rows]
+
+    profile = relationship_profile(draws, area, lower, upper)
+    output = []
+    for index, row in enumerate(model_rows):
+        item = dict(row)
+        target = float(profile["targetCenters"][index])
+        item["preRelationshipCenter"] = float(row["center"])
+        item["relationshipCenter"] = target
+        item["center"] = (1.0 - blend) * float(row["center"]) + blend * target
+        output.append(item)
+    return output
+
+
+def relationship_loss(
+    actual: list[int],
+    previous: list[int],
+    profile: dict,
+    upper: int,
+) -> float:
+    """Score how well a transition profile predicts the next actual relationship."""
+    actual_delta = [a - b for a, b in zip(actual, previous)]
+    delta_loss = statistics.fmean(
+        abs(actual_delta[i] - profile["positionDelta"][i]) / upper
+        for i in range(len(actual))
+    )
+    sum_loss = abs(
+        (sum(actual) - sum(previous)) - profile["sumDelta"]
+    ) / (upper * len(actual))
+    actual_span_delta = (
+        (actual[-1] - actual[0]) - (previous[-1] - previous[0])
+    )
+    span_loss = abs(actual_span_delta - profile["spanDelta"]) / upper
+    repeat_loss = abs(
+        len(set(actual) & set(previous)) - profile["repeatMean"]
+    ) / max(1, len(actual))
+    return (
+        0.52 * delta_loss
+        + 0.18 * sum_loss
+        + 0.14 * span_loss
+        + 0.16 * repeat_loss
+    )
 
 
 def model(
@@ -786,6 +910,10 @@ def main() -> None:
     mean_anchor_blend = float(million_training.get("meanAnchorBlend", 0.0) or 0.0)
     front_model = apply_mean_anchor(front_model, draws, "front", mean_anchor_blend)
     back_model = apply_mean_anchor(back_model, draws, "back", mean_anchor_blend)
+    relationship_training = state.get("relationshipTraining", {}) if isinstance(state.get("relationshipTraining"), dict) else {}
+    relationship_blend = float(relationship_training.get("blend", 0.0) or 0.0)
+    front_model = apply_relationship_anchor(front_model, draws, "front", relationship_blend, 1, 35)
+    back_model = apply_relationship_anchor(back_model, draws, "back", relationship_blend, 1, 12)
     latest = draws[-1]
     issue = str(int(latest["issue"]) + 1)
     target_date = next_draw_day(latest["date"])
@@ -842,6 +970,12 @@ def main() -> None:
             **calibration,
             "temperature": round(profile["temperature"], 3),
             "temperatureAdjustment": round(adjustment, 4),
+            "relationshipTraining": {
+                "blend": round(relationship_blend, 6),
+                "validationScore": relationship_training.get("validationScore"),
+                "validationLoss": relationship_training.get("validationLoss"),
+                "features": ["positionDelta", "sumDelta", "spanDelta", "oddDelta", "repeatCount"],
+            },
             "millionSimulation": {
                 "meanAnchorBlend": round(mean_anchor_blend, 6),
                 "validationScore": million_training.get("validationScore"),
