@@ -4,66 +4,66 @@
   "observations": 2446,
   "sourceEma": {
     "front": {
-      "ai": 1.0868550835944384,
-      "chee": 1.0524402327875357,
-      "instinct": 1.0692162031281827
+      "ai": 1.0859923780088474,
+      "chee": 1.0425961714460847,
+      "instinct": 1.0666371911782018
     },
     "back": {
-      "ai": 1.0089347533121766,
-      "chee": 0.9485580011848869,
-      "instinct": 1.0569577651338722
+      "ai": 1.0083523662031724,
+      "chee": 0.9449453407635073,
+      "instinct": 1.0770221495124481
     }
   },
   "sourceWeights": {
     "front": {
-      "ai": 0.339732,
-      "chee": 0.327112,
-      "instinct": 0.333156
+      "ai": 0.341045,
+      "chee": 0.325163,
+      "instinct": 0.333791
     },
     "back": {
-      "ai": 0.334127,
-      "chee": 0.313183,
-      "instinct": 0.352689
+      "ai": 0.331631,
+      "chee": 0.309998,
+      "instinct": 0.35837
     }
   },
   "strategyEma": {
     "front": {
-      "allThree": 0.6130191926084729,
-      "aiChee": 0.802605513227066,
-      "aiInstinct": 0.9335566232178814,
-      "cheeInstinct": 0.6983475284327734,
-      "aiOnly": 1.2122769755860243,
-      "cheeOnly": 1.1475081786024854,
-      "instinctOnly": 1.0985174381823253
+      "allThree": 0.6147406586755138,
+      "aiChee": 0.7757224411946078,
+      "aiInstinct": 0.9364865129961053,
+      "cheeInstinct": 0.6902393355534315,
+      "aiOnly": 1.2225827287778435,
+      "cheeOnly": 1.139186727764823,
+      "instinctOnly": 1.0983955895857407
     },
     "back": {
-      "allThree": 0.7212776429406028,
-      "aiChee": 0.7207852737626647,
-      "aiInstinct": 0.6731349341727564,
-      "cheeInstinct": 0.7039153014837336,
-      "aiOnly": 0.8606996092693132,
-      "cheeOnly": 0.7378177201762478,
-      "instinctOnly": 0.9042946287519716
+      "allThree": 0.7339238275600108,
+      "aiChee": 0.7186792026275965,
+      "aiInstinct": 0.6779706899866934,
+      "cheeInstinct": 0.7084134575364399,
+      "aiOnly": 0.8439022141680326,
+      "cheeOnly": 0.7175926315399144,
+      "instinctOnly": 0.9188986999484993
     }
   },
   "strategyWeights": {
     "front": {
-      "allThree": 0.659583,
-      "aiChee": 0.86357,
-      "aiInstinct": 1.004468,
-      "cheeInstinct": 0.751392,
-      "aiOnly": 1.304359,
-      "cheeOnly": 1.23467,
-      "instinctOnly": 1.181958
+      "allThree": 0.664343,
+      "aiChee": 0.838314,
+      "aiInstinct": 1.01205,
+      "cheeInstinct": 0.745934,
+      "aiOnly": 1.321231,
+      "cheeOnly": 1.231106,
+      "instinctOnly": 1.187023
     },
     "back": {
-      "allThree": 0.948706,
-      "aiChee": 0.948059,
-      "aiInstinct": 0.885383,
-      "cheeInstinct": 0.925869,
-      "aiOnly": 1.13209,
-      "cheeOnly": 0.970462,
-      "instinctOnly": 1.189431
+      "allThree": 0.965802,
+      "aiChee": 0.945741,
+      "aiInstinct": 0.892171,
+      "cheeInstinct": 0.932231,
+      "aiOnly": 1.110527,
+      "cheeOnly": 0.944311,
+      "instinctOnly": 1.209218
     }
   },
   "cumulative": {
@@ -72,11 +72,11 @@
     "backHits": 1632.0,
     "draws": 2445.0
   },
-  "updatedAt": "2026-11-07T19:18:29.284585+00:00",
+  "updatedAt": "2026-11-08T07:23:28.851378+00:00",
   "simulationLearning": {
-    "runs": 201,
-    "lastRunId": "2026-11-07T191826.199137+0000",
-    "updatedAt": "2026-11-07T19:18:26.199137+00:00",
+    "runs": 202,
+    "lastRunId": "2026-11-08T072303.763723+0000",
+    "updatedAt": "2026-11-08T07:23:03.763723+00:00",
     "drawsEvaluated": 2445,
     "ticketsEvaluated": 4890,
     "averageFrontHits": 0.707566,
@@ -84,8 +84,8 @@
     "rule": "The live source and category EMAs are blended with the final state of the sequential historical fusion simulation."
   },
   "instinctSimulationLearning": {
-    "runs": 201,
-    "updatedAt": "2026-11-07T19:18:27.407330+00:00",
+    "runs": 202,
+    "updatedAt": "2026-11-08T07:23:04.911520+00:00",
     "backtestVersion": "v2.0-sequential-intuitive-audit",
     "drawsEvaluated": 2445,
     "ticketsEvaluated": 4890,
@@ -107,21 +107,21 @@
   "fullHistoryCycleTraining": {
     "version": 1,
     "cycleDefinition": "one cycle traverses the source archive from result 1 to latest; aligned post-warm-up draws are scored chronologically",
-    "archiveDrawsTraversed": 2444,
+    "archiveDrawsTraversed": 2445,
     "cyclesPerRun": 1000000,
-    "totalCycles": 3000000,
-    "runs": 3,
-    "drawsPerCycle": 2444,
-    "effectiveDrawComparisonsPerRun": 2444000000,
-    "validationRawScore": 1.025023745,
-    "validationScore": 50.4504,
+    "totalCycles": 4000000,
+    "runs": 4,
+    "drawsPerCycle": 2445,
+    "effectiveDrawComparisonsPerRun": 2445000000,
+    "validationRawScore": 1.024853212,
+    "validationScore": 50.4474,
     "accepted": true,
-    "acceptedTrialMoves": 45,
+    "acceptedTrialMoves": 35,
     "drawByDrawComparison": {
-      "improved": 1237,
-      "worsened": 1207,
+      "improved": 1235,
+      "worsened": 1210,
       "tied": 0,
-      "meanRewardImprovement": 0.007198636
+      "meanRewardImprovement": 0.007443007
     },
     "rule": "Every candidate cycle spans the complete aligned draw archive. Promotion requires better chronological holdout reward and no worse full-history reward."
   }

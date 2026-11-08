@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-07T19:18:28.598890+00:00",
+  "updatedAt": "2026-11-08T07:23:28.284596+00:00",
   "profiles": {
     "front": {
       "stable-history": {
@@ -29,25 +29,25 @@
     "wide-band": {
       "evaluations": 51,
       "lastCurveDistance": 0.088486,
-      "emaCurveDistance": 0.148123,
+      "emaCurveDistance": 0.152845,
       "simulationCurveDistance": 0.164988,
       "simulationDraws": 1740,
-      "simulationUpdatedAt": "2026-11-07T19:18:26.199137+00:00"
+      "simulationUpdatedAt": "2026-11-08T07:23:03.763723+00:00"
     },
     "adaptive-wave": {
       "evaluations": 8,
-      "emaCurveDistance": 0.169654,
+      "emaCurveDistance": 0.16973,
       "simulationCurveDistance": 0.169927,
       "simulationDraws": 705,
-      "simulationUpdatedAt": "2026-11-07T19:18:26.199137+00:00"
+      "simulationUpdatedAt": "2026-11-08T07:23:03.763723+00:00"
     }
   },
   "selectedProfile": "wide-band",
-  "temperatureAdjustment": 0.0178,
+  "temperatureAdjustment": -0.0134,
   "simulationLearning": {
-    "runs": 202,
-    "lastRunId": "2026-11-07T191826.199137+0000",
-    "updatedAt": "2026-11-07T19:18:26.199137+00:00",
+    "runs": 203,
+    "lastRunId": "2026-11-08T072303.763723+0000",
+    "updatedAt": "2026-11-08T07:23:03.763723+00:00",
     "drawsEvaluated": 2445,
     "ticketsEvaluated": 7335,
     "bestProfile": {
@@ -77,7 +77,7 @@
       "excessVsTrailingMean60": 0.023745
     },
     "strategyAdjustment": {
-      "temperatureAdjustment": 0.0178,
+      "temperatureAdjustment": -0.0134,
       "rule": "Historical simulation profile losses update profile EMAs. The model narrows its sampling band when it underperforms the 60-draw positional-mean benchmark."
     }
   },
@@ -98,23 +98,23 @@
     "version": 1,
     "cycleDefinition": "one cycle traverses the archive from result 1 to latest; the initial warm-up builds state and every eligible later draw is scored chronologically",
     "warmupDraws": 500,
-    "archiveDrawsTraversed": 2944,
+    "archiveDrawsTraversed": 2945,
     "cyclesPerRun": 1000000,
-    "totalCycles": 3000000,
-    "runs": 3,
-    "drawsPerCycle": 2444,
-    "effectiveDrawComparisonsPerRun": 2444000000,
+    "totalCycles": 4000000,
+    "runs": 4,
+    "drawsPerCycle": 2445,
+    "effectiveDrawComparisonsPerRun": 2445000000,
     "meanAnchorBlend": 0.95,
     "relationshipBlend": 0.0,
-    "fullHistoryLoss": 0.143869856,
-    "validationLoss": 0.143173528,
-    "validationScore": 56.4004,
+    "fullHistoryLoss": 0.143853778,
+    "validationLoss": 0.143244947,
+    "validationScore": 56.3843,
     "accepted": false,
     "acceptedTrialMoves": 0,
     "drawByDrawComparison": {
       "improved": 0,
       "worsened": 0,
-      "tied": 2444,
+      "tied": 2445,
       "meanLossImprovement": 0.0
     },
     "rule": "Every candidate cycle spans the complete eligible draw archive. Promotion requires lower chronological holdout loss and no worse full-history loss."
