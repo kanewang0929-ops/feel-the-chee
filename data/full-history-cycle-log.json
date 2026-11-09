@@ -410,5 +410,109 @@
     },
     "implementation": "draw-level metrics are precomputed once; candidate cycle scores use exact sufficient-statistic aggregation, then the winning strategy is rechecked draw-by-draw",
     "disclaimer": "This optimizes historical out-of-sample validation. It cannot make a fair random lottery reliably predictable."
+  },
+  {
+    "runId": "20261109T080202.923827Z",
+    "generatedAt": "2026-11-09T08:02:02.923827+00:00",
+    "cyclesPerAdaptiveModel": 1000000,
+    "cycleDefinition": "one cycle traverses recorded history from result 1 to latest; warm-up draws build state and all eligible later draws are compared prediction-vs-actual",
+    "ai": {
+      "cycles": 1000000,
+      "drawsPerCycle": 2445,
+      "effectiveDrawComparisons": 2445000000,
+      "trainingDraws": 1907,
+      "validationDraws": 538,
+      "anchorBefore": 0.95,
+      "anchorAfter": 0.95,
+      "relationshipBlendBefore": 0.0,
+      "relationshipBlendAfter": 0.0,
+      "relationshipAnchorValidationLoss": 0.196401357,
+      "relationshipTransitionValidationLoss": 0.191883558,
+      "fullHistoryLossBefore": 0.143853778,
+      "fullHistoryLossAfter": 0.143853778,
+      "validationLossBefore": 0.143244947,
+      "validationLossAfter": 0.143244947,
+      "validationScoreBefore": 56.3843,
+      "validationScoreAfter": 56.3843,
+      "accepted": false,
+      "acceptedTrialMoves": 0,
+      "drawByDraw": {
+        "improved": 0,
+        "worsened": 0,
+        "tied": 2445
+      }
+    },
+    "agent": {
+      "cycles": 1000000,
+      "drawsPerCycle": 2445,
+      "effectiveDrawComparisons": 2445000000,
+      "trainingDraws": 1907,
+      "validationDraws": 538,
+      "fullHistoryRawBefore": 1.003748931,
+      "fullHistoryRawAfter": 1.011129103,
+      "validationRawBefore": 1.015357931,
+      "validationRawAfter": 1.024863299,
+      "validationScoreBefore": 50.2764,
+      "validationScoreAfter": 50.4475,
+      "accepted": true,
+      "acceptedTrialMoves": 41,
+      "sourceWeightsBefore": {
+        "front": {
+          "ai": 0.341792,
+          "chee": 0.324218,
+          "instinct": 0.33399
+        },
+        "back": {
+          "ai": 0.329756,
+          "chee": 0.30785,
+          "instinct": 0.362393
+        }
+      },
+      "sourceWeightsAfter": {
+        "front": {
+          "ai": 0.15,
+          "chee": 0.15,
+          "instinct": 0.7
+        },
+        "back": {
+          "ai": 0.7,
+          "chee": 0.15,
+          "instinct": 0.15
+        }
+      },
+      "strategyWeightsAfter": {
+        "front": {
+          "allThree": 0.65,
+          "aiChee": 0.65,
+          "aiInstinct": 0.65,
+          "cheeInstinct": 0.65,
+          "aiOnly": 1.35,
+          "cheeOnly": 1.35,
+          "instinctOnly": 1.35
+        },
+        "back": {
+          "allThree": 0.65,
+          "aiChee": 0.65,
+          "aiInstinct": 0.65,
+          "cheeInstinct": 0.65,
+          "aiOnly": 1.35,
+          "cheeOnly": 0.65,
+          "instinctOnly": 0.65
+        }
+      },
+      "drawByDraw": {
+        "improved": 1233,
+        "worsened": 1212,
+        "tied": 0
+      }
+    },
+    "totalEffectiveDrawComparisons": 4890000000,
+    "learningPolicy": {
+      "ai": "compare every draw; accept only if chronological validation improves and full-history loss does not worsen",
+      "agent": "compare every aligned draw; accept only if chronological validation improves and full-history reward does not worsen",
+      "chee": "formula-only; excluded from machine-learning updates"
+    },
+    "implementation": "draw-level metrics are precomputed once; candidate cycle scores use exact sufficient-statistic aggregation, then the winning strategy is rechecked draw-by-draw",
+    "disclaimer": "This optimizes historical out-of-sample validation. It cannot make a fair random lottery reliably predictable."
   }
 ]
