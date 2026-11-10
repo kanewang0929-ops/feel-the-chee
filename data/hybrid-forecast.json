@@ -1,7 +1,7 @@
 {
   "modelVersion": "v2.0-intuitive-fusion-agent",
   "modelFamily": "adaptive-three-source-intuitive-agent",
-  "generatedAt": "2026-11-09T23:45:11.287872+00:00",
+  "generatedAt": "2026-11-10T08:29:08.326166+00:00",
   "targetIssue": "26129",
   "targetDate": "2026-11-11",
   "sourceModels": {
@@ -11,385 +11,38 @@
   },
   "sourceWeights": {
     "front": {
-      "ai": 0.346114,
-      "chee": 0.315683,
-      "instinct": 0.338202
+      "ai": 0.34936,
+      "chee": 0.314659,
+      "instinct": 0.335981
     },
     "back": {
-      "ai": 0.329112,
-      "chee": 0.318138,
-      "instinct": 0.352749
+      "ai": 0.32782,
+      "chee": 0.314495,
+      "instinct": 0.357685
     }
   },
   "strategyWeights": {
     "front": {
-      "allThree": 0.663139,
-      "aiChee": 0.783991,
-      "aiInstinct": 1.024478,
-      "cheeInstinct": 0.730202,
-      "aiOnly": 1.347718,
-      "cheeOnly": 1.195984,
-      "instinctOnly": 1.254487
+      "allThree": 0.661945,
+      "aiChee": 0.774511,
+      "aiInstinct": 1.039953,
+      "cheeInstinct": 0.729454,
+      "aiOnly": 1.35,
+      "cheeOnly": 1.200542,
+      "instinctOnly": 1.240424
     },
     "back": {
-      "allThree": 1.098355,
-      "aiChee": 0.96639,
-      "aiInstinct": 0.89467,
-      "cheeInstinct": 0.916162,
-      "aiOnly": 1.045847,
-      "cheeOnly": 0.885529,
-      "instinctOnly": 1.193046
+      "allThree": 1.066879,
+      "aiChee": 0.975912,
+      "aiInstinct": 0.910096,
+      "cheeInstinct": 0.919504,
+      "aiOnly": 1.047043,
+      "cheeOnly": 0.885312,
+      "instinctOnly": 1.195253
     }
   },
   "observations": 2447,
-  "lastEvaluation": {
-    "actual": {
-      "front": [
-        "03",
-        "13",
-        "20",
-        "25",
-        "34"
-      ],
-      "back": [
-        "09",
-        "12"
-      ]
-    },
-    "results": [
-      {
-        "rank": 1,
-        "label": "直觉主选",
-        "front": [
-          "04",
-          "14",
-          "18",
-          "22",
-          "27"
-        ],
-        "back": [
-          "03",
-          "09"
-        ],
-        "frontHits": [],
-        "backHits": [
-          "09"
-        ],
-        "frontHitCount": 0,
-        "backHitCount": 1,
-        "sourceMix": {
-          "front": {
-            "allThree": 1,
-            "aiChee": 0,
-            "aiInstinct": 3,
-            "cheeInstinct": 0,
-            "aiOnly": 1,
-            "cheeOnly": 0,
-            "instinctOnly": 0
-          },
-          "back": {
-            "allThree": 1,
-            "aiChee": 0,
-            "aiInstinct": 1,
-            "cheeInstinct": 0,
-            "aiOnly": 0,
-            "cheeOnly": 0,
-            "instinctOnly": 0
-          }
-        },
-        "numberSources": {
-          "front": {
-            "04": [
-              "ai",
-              "chee",
-              "instinct"
-            ],
-            "14": [
-              "ai",
-              "instinct"
-            ],
-            "18": [
-              "ai",
-              "instinct"
-            ],
-            "22": [
-              "ai",
-              "instinct"
-            ],
-            "27": [
-              "ai"
-            ]
-          },
-          "back": {
-            "03": [
-              "ai",
-              "instinct"
-            ],
-            "09": [
-              "ai",
-              "chee",
-              "instinct"
-            ]
-          }
-        }
-      },
-      {
-        "rank": 2,
-        "label": "自由对冲",
-        "front": [
-          "04",
-          "05",
-          "18",
-          "22",
-          "28"
-        ],
-        "back": [
-          "01",
-          "09"
-        ],
-        "frontHits": [],
-        "backHits": [
-          "09"
-        ],
-        "frontHitCount": 0,
-        "backHitCount": 1,
-        "sourceMix": {
-          "front": {
-            "allThree": 1,
-            "aiChee": 1,
-            "aiInstinct": 2,
-            "cheeInstinct": 0,
-            "aiOnly": 0,
-            "cheeOnly": 0,
-            "instinctOnly": 1
-          },
-          "back": {
-            "allThree": 1,
-            "aiChee": 0,
-            "aiInstinct": 0,
-            "cheeInstinct": 1,
-            "aiOnly": 0,
-            "cheeOnly": 0,
-            "instinctOnly": 0
-          }
-        },
-        "numberSources": {
-          "front": {
-            "04": [
-              "ai",
-              "chee",
-              "instinct"
-            ],
-            "05": [
-              "instinct"
-            ],
-            "18": [
-              "ai",
-              "instinct"
-            ],
-            "22": [
-              "ai",
-              "instinct"
-            ],
-            "28": [
-              "ai",
-              "chee"
-            ]
-          },
-          "back": {
-            "01": [
-              "chee",
-              "instinct"
-            ],
-            "09": [
-              "ai",
-              "chee",
-              "instinct"
-            ]
-          }
-        }
-      }
-    ],
-    "summary": {
-      "averageFrontHits": 0.0,
-      "averageBackHits": 1.0,
-      "bestTotalHits": 1
-    },
-    "sourcePerformance": {
-      "front": {
-        "ai": {
-          "averageHits": 0.3333,
-          "rewardRatio": 0.4667
-        },
-        "chee": {
-          "averageHits": 0.0,
-          "rewardRatio": 0.25
-        },
-        "instinct": {
-          "averageHits": 0.5,
-          "rewardRatio": 0.7
-        }
-      },
-      "back": {
-        "ai": {
-          "averageHits": 0.6667,
-          "rewardRatio": 2.0
-        },
-        "chee": {
-          "averageHits": 1.0,
-          "rewardRatio": 2.5
-        },
-        "instinct": {
-          "averageHits": 0.5,
-          "rewardRatio": 1.5
-        }
-      }
-    },
-    "strategyPerformance": {
-      "front": {
-        "allThree": {
-          "candidateCount": 1,
-          "hitCount": 0,
-          "rewardRatio": 0.25
-        },
-        "aiChee": {
-          "candidateCount": 2,
-          "hitCount": 0,
-          "rewardRatio": 0.25
-        },
-        "aiInstinct": {
-          "candidateCount": 3,
-          "hitCount": 0,
-          "rewardRatio": 0.25
-        },
-        "cheeInstinct": {
-          "candidateCount": 1,
-          "hitCount": 0,
-          "rewardRatio": 0.25
-        },
-        "aiOnly": {
-          "candidateCount": 9,
-          "hitCount": 1,
-          "rewardRatio": 0.7778
-        },
-        "cheeOnly": {
-          "candidateCount": 4,
-          "hitCount": 0,
-          "rewardRatio": 0.25
-        },
-        "instinctOnly": {
-          "candidateCount": 4,
-          "hitCount": 1,
-          "rewardRatio": 1.75
-        }
-      },
-      "back": {
-        "allThree": {
-          "candidateCount": 1,
-          "hitCount": 1,
-          "rewardRatio": 2.5
-        },
-        "aiInstinct": {
-          "candidateCount": 1,
-          "hitCount": 0,
-          "rewardRatio": 0.25
-        },
-        "cheeInstinct": {
-          "candidateCount": 1,
-          "hitCount": 0,
-          "rewardRatio": 0.25
-        },
-        "aiOnly": {
-          "candidateCount": 3,
-          "hitCount": 0,
-          "rewardRatio": 0.25
-        },
-        "cheeOnly": {
-          "candidateCount": 1,
-          "hitCount": 0,
-          "rewardRatio": 0.25
-        },
-        "instinctOnly": {
-          "candidateCount": 1,
-          "hitCount": 0,
-          "rewardRatio": 0.25
-        }
-      }
-    },
-    "weightsBefore": {
-      "source": {
-        "front": {
-          "ai": 0.346963,
-          "chee": 0.318489,
-          "instinct": 0.334548
-        },
-        "back": {
-          "ai": 0.328201,
-          "chee": 0.309109,
-          "instinct": 0.36269
-        }
-      },
-      "strategy": {
-        "front": {
-          "allThree": 0.668676,
-          "aiChee": 0.792876,
-          "aiInstinct": 1.040025,
-          "cheeInstinct": 0.737597,
-          "aiOnly": 1.34513,
-          "cheeOnly": 1.21628,
-          "instinctOnly": 1.199416
-        },
-        "back": {
-          "allThree": 0.987523,
-          "aiChee": 0.959362,
-          "aiInstinct": 0.914593,
-          "cheeInstinct": 0.936933,
-          "aiOnly": 1.071742,
-          "cheeOnly": 0.905091,
-          "instinctOnly": 1.224756
-        }
-      }
-    },
-    "weightsAfter": {
-      "source": {
-        "front": {
-          "ai": 0.346114,
-          "chee": 0.315683,
-          "instinct": 0.338202
-        },
-        "back": {
-          "ai": 0.329112,
-          "chee": 0.318138,
-          "instinct": 0.352749
-        }
-      },
-      "strategy": {
-        "front": {
-          "allThree": 0.663139,
-          "aiChee": 0.783991,
-          "aiInstinct": 1.024478,
-          "cheeInstinct": 0.730202,
-          "aiOnly": 1.347718,
-          "cheeOnly": 1.195984,
-          "instinctOnly": 1.254487
-        },
-        "back": {
-          "allThree": 1.098355,
-          "aiChee": 0.96639,
-          "aiInstinct": 0.89467,
-          "cheeInstinct": 0.916162,
-          "aiOnly": 1.045847,
-          "cheeOnly": 0.885529,
-          "instinctOnly": 1.193046
-        }
-      }
-    },
-    "learningRule": "AI, 风水 and Agent Instinct use bounded EMAs. Each source retains at least 15% influence.",
-    "issue": "26128",
-    "date": "2026-11-09",
-    "evaluatedAt": "2026-11-09T23:45:09.815279+00:00",
-    "modelVersion": "v2.0-intuitive-fusion-agent"
-  },
+  "lastEvaluation": null,
   "sourceAuditSummary": {
     "ai": {
       "draws": 2446,
@@ -415,52 +68,52 @@
           "rank": 1,
           "label": "曲线主样本",
           "front": [
-            "04",
-            "12",
-            "13",
-            "23",
-            "27"
+            "07",
+            "10",
+            "20",
+            "27",
+            "28"
           ],
           "back": [
-            "08",
+            "06",
             "11"
           ],
           "fit": 84.0,
-          "reason": "从五个排序位置的预测中心 [5.8 / 11.5 / 17.5 / 23.1 / 29.4] 及波动带中抽样；本组和值79、跨度23，并执行跨期与组间多样性约束。"
+          "reason": "从五个排序位置的预测中心 [5.8 / 11.5 / 17.5 / 23.1 / 29.4] 及波动带中抽样；本组和值92、跨度21，并执行跨期与组间多样性约束。"
         },
         {
           "rank": 2,
           "label": "波动延伸",
           "front": [
-            "07",
-            "11",
-            "18",
-            "24",
-            "32"
+            "10",
+            "13",
+            "16",
+            "23",
+            "31"
           ],
           "back": [
-            "04",
-            "07"
+            "06",
+            "09"
           ],
           "fit": 81.8,
-          "reason": "从五个排序位置的预测中心 [5.8 / 11.5 / 17.5 / 23.1 / 29.4] 及波动带中抽样；本组和值92、跨度25，并执行跨期与组间多样性约束。"
+          "reason": "从五个排序位置的预测中心 [5.8 / 11.5 / 17.5 / 23.1 / 29.4] 及波动带中抽样；本组和值93、跨度21，并执行跨期与组间多样性约束。"
         },
         {
           "rank": 3,
           "label": "随机带对冲",
           "front": [
-            "05",
-            "16",
+            "08",
+            "11",
             "18",
-            "26",
-            "27"
+            "23",
+            "30"
           ],
           "back": [
-            "03",
+            "04",
             "09"
           ],
           "fit": 79.6,
-          "reason": "从五个排序位置的预测中心 [5.8 / 11.5 / 17.5 / 23.1 / 29.4] 及波动带中抽样；本组和值92、跨度22，并执行跨期与组间多样性约束。"
+          "reason": "从五个排序位置的预测中心 [5.8 / 11.5 / 17.5 / 23.1 / 29.4] 及波动带中抽样；本组和值90、跨度22，并执行跨期与组间多样性约束。"
         }
       ]
     },
@@ -526,15 +179,15 @@
           "rank": 1,
           "label": "直觉落子",
           "front": [
-            "05",
+            "03",
             "07",
-            "20",
-            "33",
-            "34"
+            "10",
+            "29",
+            "35"
           ],
           "back": [
             "01",
-            "02"
+            "06"
           ],
           "instinctValue": 84.0
         },
@@ -542,14 +195,14 @@
           "rank": 2,
           "label": "直觉回声",
           "front": [
+            "11",
             "17",
-            "19",
-            "25",
-            "30",
+            "28",
+            "31",
             "32"
           ],
           "back": [
-            "06",
+            "07",
             "10"
           ],
           "instinctValue": 79.5
@@ -565,30 +218,30 @@
       "label": "直觉主选",
       "front": [
         "07",
-        "18",
-        "20",
-        "25",
-        "32"
+        "10",
+        "17",
+        "28",
+        "31"
       ],
       "back": [
-        "03",
-        "06"
+        "06",
+        "10"
       ],
       "agentScore": 86.0,
       "sourceMix": {
         "front": {
-          "allThree": 0,
-          "aiChee": 1,
-          "aiInstinct": 2,
-          "cheeInstinct": 1,
+          "allThree": 1,
+          "aiChee": 0,
+          "aiInstinct": 3,
+          "cheeInstinct": 0,
           "aiOnly": 0,
           "cheeOnly": 0,
           "instinctOnly": 1
         },
         "back": {
           "allThree": 0,
-          "aiChee": 1,
-          "aiInstinct": 0,
+          "aiChee": 0,
+          "aiInstinct": 1,
           "cheeInstinct": 0,
           "aiOnly": 0,
           "cheeOnly": 0,
@@ -601,28 +254,29 @@
             "ai",
             "instinct"
           ],
-          "18": [
+          "10": [
             "ai",
-            "chee"
+            "instinct"
           ],
-          "20": [
+          "17": [
+            "instinct"
+          ],
+          "28": [
+            "ai",
+            "instinct"
+          ],
+          "31": [
+            "ai",
             "chee",
-            "instinct"
-          ],
-          "25": [
-            "instinct"
-          ],
-          "32": [
-            "ai",
             "instinct"
           ]
         },
         "back": {
-          "03": [
-            "ai",
-            "chee"
-          ],
           "06": [
+            "ai",
+            "instinct"
+          ],
+          "10": [
             "instinct"
           ]
         }
@@ -633,31 +287,31 @@
       "rank": 2,
       "label": "自由对冲",
       "front": [
-        "05",
         "07",
-        "20",
-        "32",
-        "33"
+        "10",
+        "18",
+        "29",
+        "31"
       ],
       "back": [
         "01",
-        "11"
+        "06"
       ],
-      "agentScore": 83.2,
+      "agentScore": 79.0,
       "sourceMix": {
         "front": {
-          "allThree": 0,
-          "aiChee": 0,
-          "aiInstinct": 3,
+          "allThree": 1,
+          "aiChee": 1,
+          "aiInstinct": 2,
           "cheeInstinct": 1,
           "aiOnly": 0,
           "cheeOnly": 0,
-          "instinctOnly": 1
+          "instinctOnly": 0
         },
         "back": {
           "allThree": 0,
-          "aiChee": 1,
-          "aiInstinct": 0,
+          "aiChee": 0,
+          "aiInstinct": 1,
           "cheeInstinct": 1,
           "aiOnly": 0,
           "cheeOnly": 0,
@@ -666,23 +320,25 @@
       },
       "numberSources": {
         "front": {
-          "05": [
-            "ai",
-            "instinct"
-          ],
           "07": [
             "ai",
             "instinct"
           ],
-          "20": [
-            "chee",
-            "instinct"
-          ],
-          "32": [
+          "10": [
             "ai",
             "instinct"
           ],
-          "33": [
+          "18": [
+            "ai",
+            "chee"
+          ],
+          "29": [
+            "chee",
+            "instinct"
+          ],
+          "31": [
+            "ai",
+            "chee",
             "instinct"
           ]
         },
@@ -691,9 +347,9 @@
             "chee",
             "instinct"
           ],
-          "11": [
+          "06": [
             "ai",
-            "chee"
+            "instinct"
           ]
         }
       },
