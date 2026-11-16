@@ -5,32 +5,32 @@
   "formulaOnly": true,
   "historyUsedForPrediction": false,
   "learningEnabled": false,
-  "generatedAt": "2026-11-16T08:00:17.203390+00:00",
+  "generatedAt": "2026-11-16T23:22:44.790847+00:00",
   "summary": {
-    "drawsEvaluated": 2948,
-    "ticketsEvaluated": 5896,
+    "drawsEvaluated": 2949,
+    "ticketsEvaluated": 5898,
     "dateRange": {
       "earliest": "2007-05-30",
-      "latest": "2026-11-14"
+      "latest": "2026-11-16"
     },
     "observed": {
-      "averageFrontHitsPerTicket": 0.71998,
-      "averageBackHitsPerTicket": 0.32751,
-      "averageTotalHitsPerTicket": 1.04749,
-      "averageElementSimilarity": 0.516257,
-      "ticketsWithAnyFrontHit": 3317,
+      "averageFrontHitsPerTicket": 0.720414,
+      "averageBackHitsPerTicket": 0.327399,
+      "averageTotalHitsPerTicket": 1.047813,
+      "averageElementSimilarity": 0.5163,
+      "ticketsWithAnyFrontHit": 3319,
       "ticketsWithAnyBackHit": 1837,
       "ticketsWithFrontAndBackHit": 1032,
       "frontHitDistribution": {
         "0": 2579,
         "1": 2477,
-        "2": 753,
+        "2": 755,
         "3": 86,
         "4": 1,
         "5": 0
       },
       "backHitDistribution": {
-        "0": 4059,
+        "0": 4061,
         "1": 1743,
         "2": 94
       },
@@ -41,7 +41,7 @@
         "1+0": 1719,
         "1+1": 714,
         "1+2": 44,
-        "2+0": 507,
+        "2+0": 509,
         "2+1": 235,
         "2+2": 11,
         "3+0": 58,
@@ -52,13 +52,13 @@
       "bestOfTwoFrontDistribution": {
         "0": 701,
         "1": 1526,
-        "2": 635,
+        "2": 636,
         "3": 85,
         "4": 1,
         "5": 0
       },
       "bestOfTwoBackDistribution": {
-        "0": 1788,
+        "0": 1789,
         "1": 1086,
         "2": 74
       },
@@ -82,26 +82,26 @@
         "2": 0.0151515152
       },
       "expectedFrontHitCounts": {
-        "0": 2588.209,
-        "1": 2488.662,
-        "2": 737.381,
-        "3": 79.005,
-        "4": 2.724,
+        "0": 2589.087,
+        "1": 2489.506,
+        "2": 737.632,
+        "3": 79.032,
+        "4": 2.725,
         "5": 0.018
       },
       "expectedBackHitCounts": {
-        "0": 4020.0,
-        "1": 1786.667,
-        "2": 89.333
+        "0": 4021.364,
+        "1": 1787.273,
+        "2": 89.364
       },
       "note": "Exact fixed-ticket expectation under a fair draw. It is a benchmark, not a promise of independence in every operational detail."
     },
     "comparison": {
-      "frontMeanDifference": 0.005694,
-      "backMeanDifference": -0.005823,
-      "totalMeanDifference": -0.000129,
-      "frontMeanRatio": 1.007972,
-      "backMeanRatio": 0.982531
+      "frontMeanDifference": 0.006128,
+      "backMeanDifference": -0.005934,
+      "totalMeanDifference": 0.000194,
+      "frontMeanRatio": 1.008579,
+      "backMeanRatio": 0.982197
     },
     "byYear": {
       "2007": {
@@ -238,11 +238,11 @@
         "averageElementSimilarity": 0.5329
       },
       "2026": {
-        "draws": 130,
-        "tickets": 260,
-        "averageFrontHits": 0.6769,
-        "averageBackHits": 0.3462,
-        "averageElementSimilarity": 0.5038
+        "draws": 131,
+        "tickets": 262,
+        "averageFrontHits": 0.687,
+        "averageBackHits": 0.3435,
+        "averageElementSimilarity": 0.5049
       }
     },
     "byPrimaryElement": {
@@ -261,11 +261,11 @@
         "averageElementSimilarity": 0.5234
       },
       "金": {
-        "draws": 606,
-        "tickets": 1212,
-        "averageFrontHits": 0.7261,
-        "averageBackHits": 0.3449,
-        "averageElementSimilarity": 0.5116
+        "draws": 607,
+        "tickets": 1214,
+        "averageFrontHits": 0.7282,
+        "averageBackHits": 0.3443,
+        "averageElementSimilarity": 0.5118
       },
       "木": {
         "draws": 599,
@@ -2037,6 +2037,90 @@
     ],
     "recentExamples": [
       {
+        "issue": "26131",
+        "date": "2026-11-16",
+        "actual": {
+          "front": [
+            "02",
+            "11",
+            "18",
+            "19",
+            "29"
+          ],
+          "back": [
+            "04",
+            "07"
+          ]
+        },
+        "formulaContext": {
+          "heavenNumber": 1,
+          "earthNumber": 4,
+          "humanNumber": 3,
+          "movingLine": 3,
+          "guaNumber": 2,
+          "yinYang": "阳",
+          "primaryElement": "金",
+          "supportElement": "水",
+          "balanceElement": "木"
+        },
+        "tickets": [
+          {
+            "rank": 1,
+            "label": "五行主衡",
+            "front": [
+              "01",
+              "02",
+              "04",
+              "19",
+              "21"
+            ],
+            "back": [
+              "09",
+              "11"
+            ],
+            "frontHits": [
+              "02",
+              "19"
+            ],
+            "backHits": [],
+            "frontHitCount": 2,
+            "backHitCount": 0,
+            "elementSimilarity": 0.7143,
+            "cheeValue": 86.0
+          },
+          {
+            "rank": 2,
+            "label": "生化对冲",
+            "front": [
+              "01",
+              "04",
+              "11",
+              "20",
+              "29"
+            ],
+            "back": [
+              "01",
+              "09"
+            ],
+            "frontHits": [
+              "11",
+              "29"
+            ],
+            "backHits": [],
+            "frontHitCount": 2,
+            "backHitCount": 0,
+            "elementSimilarity": 0.5714,
+            "cheeValue": 79.6
+          }
+        ],
+        "bestTicket": {
+          "rank": 1,
+          "frontHitCount": 2,
+          "backHitCount": 0,
+          "elementSimilarity": 0.7143
+        }
+      },
+      {
         "issue": "26130",
         "date": "2026-11-14",
         "actual": {
@@ -3569,93 +3653,6 @@
           "frontHitCount": 2,
           "backHitCount": 0,
           "elementSimilarity": 0.4286
-        }
-      },
-      {
-        "issue": "26111",
-        "date": "2026-09-28",
-        "actual": {
-          "front": [
-            "10",
-            "11",
-            "17",
-            "26",
-            "29"
-          ],
-          "back": [
-            "01",
-            "03"
-          ]
-        },
-        "formulaContext": {
-          "heavenNumber": 2,
-          "earthNumber": 2,
-          "humanNumber": 5,
-          "movingLine": 6,
-          "guaNumber": 6,
-          "yinYang": "阳",
-          "primaryElement": "木",
-          "supportElement": "火",
-          "balanceElement": "土"
-        },
-        "tickets": [
-          {
-            "rank": 1,
-            "label": "五行主衡",
-            "front": [
-              "02",
-              "03",
-              "11",
-              "12",
-              "23"
-            ],
-            "back": [
-              "03",
-              "12"
-            ],
-            "frontHits": [
-              "11"
-            ],
-            "backHits": [
-              "03"
-            ],
-            "frontHitCount": 1,
-            "backHitCount": 1,
-            "elementSimilarity": 0.4286,
-            "cheeValue": 86.0
-          },
-          {
-            "rank": 2,
-            "label": "生化对冲",
-            "front": [
-              "11",
-              "27",
-              "29",
-              "32",
-              "33"
-            ],
-            "back": [
-              "02",
-              "03"
-            ],
-            "frontHits": [
-              "11",
-              "29"
-            ],
-            "backHits": [
-              "03"
-            ],
-            "frontHitCount": 2,
-            "backHitCount": 1,
-            "elementSimilarity": 0.5714,
-            "cheeValue": 79.6
-          }
-        ],
-        "bestTicket": {
-          "rank": 2,
-          "frontHitCount": 2,
-          "backHitCount": 1,
-          "elementSimilarity": 0.5714
         }
       }
     ]
@@ -244934,10 +244931,94 @@
         "backHitCount": 0,
         "elementSimilarity": 0.5714
       }
+    },
+    {
+      "issue": "26131",
+      "date": "2026-11-16",
+      "actual": {
+        "front": [
+          "02",
+          "11",
+          "18",
+          "19",
+          "29"
+        ],
+        "back": [
+          "04",
+          "07"
+        ]
+      },
+      "formulaContext": {
+        "heavenNumber": 1,
+        "earthNumber": 4,
+        "humanNumber": 3,
+        "movingLine": 3,
+        "guaNumber": 2,
+        "yinYang": "阳",
+        "primaryElement": "金",
+        "supportElement": "水",
+        "balanceElement": "木"
+      },
+      "tickets": [
+        {
+          "rank": 1,
+          "label": "五行主衡",
+          "front": [
+            "01",
+            "02",
+            "04",
+            "19",
+            "21"
+          ],
+          "back": [
+            "09",
+            "11"
+          ],
+          "frontHits": [
+            "02",
+            "19"
+          ],
+          "backHits": [],
+          "frontHitCount": 2,
+          "backHitCount": 0,
+          "elementSimilarity": 0.7143,
+          "cheeValue": 86.0
+        },
+        {
+          "rank": 2,
+          "label": "生化对冲",
+          "front": [
+            "01",
+            "04",
+            "11",
+            "20",
+            "29"
+          ],
+          "back": [
+            "01",
+            "09"
+          ],
+          "frontHits": [
+            "11",
+            "29"
+          ],
+          "backHits": [],
+          "frontHitCount": 2,
+          "backHitCount": 0,
+          "elementSimilarity": 0.5714,
+          "cheeValue": 79.6
+        }
+      ],
+      "bestTicket": {
+        "rank": 1,
+        "frontHitCount": 2,
+        "backHitCount": 0,
+        "elementSimilarity": 0.7143
+      }
     }
   ],
   "performance": {
-    "uniqueFormulaContexts": 0,
+    "uniqueFormulaContexts": 1,
     "cacheHits": 0,
     "frontCandidatePool": 16,
     "backCandidatePool": 10
