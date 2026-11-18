@@ -26,6 +26,7 @@ AUDIT_FILE = DATA / "joy-kane-audit.json"
 PREDICTION_LEDGER = DATA / "joy-kane-predictions.jsonl"
 RESULT_LEDGER = DATA / "joy-kane-results.jsonl"
 STATE_FILE = DATA / "joy-kane-model-state.json"
+LIVE_LOCK_FILE = DATA / "joy-kane-live-lock.json"
 TRAINING_LOG = DATA / "joy-kane-training-log.jsonl"
 
 WARMUP = max(100, int(os.environ.get("DUEL_WARMUP_DRAWS", "200")))
@@ -521,6 +522,7 @@ def main() -> None:
         name: {"front": 0, "back": 0, "total": 0, "draws": 0}
         for name in AGENTS
     }
+    prior_live_lock = read_json(LIVE_LOCK_FILE, {})
 
     PREDICTION_LEDGER.parent.mkdir(parents=True, exist_ok=True)
     with PREDICTION_LEDGER.open("w", encoding="utf-8") as prediction_log, RESULT_LEDGER.open("w", encoding="utf-8") as result_log:
@@ -529,15 +531,42 @@ def main() -> None:
             target_meta = metadata[index]
             issue, target_date = target_meta["issue"], target_meta["date"]
 
-            joy_prediction, joy_signals = make_agent_prediction("joy", history, states["joy"], issue, target_date)
-            kane_prediction, kane_signals = make_agent_prediction("kane", history, states["kane"], issue, target_date)
-
             history_hash = digest([
                 {"issue": row["issue"], "date": row["date"], "front": row["front"], "back": row["back"]}
                 for row in history
             ])
-            prediction_id = digest(["joy-kane-v1", issue, target_date, history_hash])[:24]
-            locked_at = stamp()
+            use_live_lock = (
+                prior_live_lock.get("issue") == issue
+                and prior_live_lock.get("date") == target_date
+                and prior_live_lock.get("historyDigest") == history_hash
+                and isinstance(prior_live_lock.get("agents"), dict)
+            )
+
+            if use_live_lock:
+                joy_prediction = clone(prior_live_lock["agents"]["joy"]["prediction"])
+                kane_prediction = clone(prior_live_lock["agents"]["kane"]["prediction"])
+                joy_signals = clone(prior_live_lock["agents"]["joy"]["signalBundles"])
+                kane_signals = clone(prior_live_lock["agents"]["kane"]["signalBundles"])
+                prediction_id = prior_live_lock["predictionId"]
+                locked_at = prior_live_lock["predictionLockedAt"]
+                sealed_agents = {
+                    name: {
+                        "modelVersion": prior_live_lock["agents"][name]["modelVersion"],
+                        "weights": prior_live_lock["agents"][name]["weights"],
+                        "tickets": prior_live_lock["agents"][name]["prediction"]["results"],
+                    }
+                    for name in AGENTS
+                }
+            else:
+                joy_prediction, joy_signals = make_agent_prediction("joy", history, states["joy"], issue, target_date)
+                kane_prediction, kane_signals = make_agent_prediction("kane", history, states["kane"], issue, target_date)
+                prediction_id = digest(["joy-kane-v1", issue, target_date, history_hash])[:24]
+                locked_at = stamp()
+                sealed_agents = {
+                    "joy": {"modelVersion": joy_prediction["modelVersion"], "weights": clone(states["joy"]["weights"]), "tickets": joy_prediction["results"]},
+                    "kane": {"modelVersion": kane_prediction["modelVersion"], "weights": clone(states["kane"]["weights"]), "tickets": kane_prediction["results"]},
+                }
+
             sealed = {
                 "eventType": "prediction_locked",
                 "predictionId": prediction_id,
@@ -548,10 +577,8 @@ def main() -> None:
                 "trainingThroughDate": history[-1]["date"],
                 "historyDigest": history_hash,
                 "predictionLockedAt": locked_at,
-                "agents": {
-                    "joy": {"modelVersion": joy_prediction["modelVersion"], "weights": states["joy"]["weights"], "tickets": joy_prediction["results"]},
-                    "kane": {"modelVersion": kane_prediction["modelVersion"], "weights": states["kane"]["weights"], "tickets": kane_prediction["results"]},
-                },
+                "livePredictionLock": use_live_lock,
+                "agents": sealed_agents,
                 "futureLeakage": False,
             }
             append_jsonl(prediction_log, sealed)
@@ -618,6 +645,7 @@ def main() -> None:
                 "actualRevealedAt": revealed_at,
                 "trainingThroughIssue": history[-1]["issue"],
                 "futureLeakage": False,
+                "usedLivePredictionLock": use_live_lock,
             })
 
     # The final historical replay state is a clean chronological state.
@@ -659,13 +687,72 @@ def main() -> None:
                 "reason": f"Daily million-cycle search already ran {age:.1f} hours ago.",
             }
 
-    # Generate the next live forecast from all known draws and each agent's own state.
+    # Keep the upcoming draw's prediction immutable until its result is published.
     latest_draw = draws[-1]
     target_issue, target_date = next_target(latest_draw)
-    next_forecasts = {}
-    for name in AGENTS:
-        prediction, _ = make_agent_prediction(name, draws, states[name], target_issue, target_date)
-        next_forecasts[name] = prediction
+    live_history_hash = digest([
+        {"issue": row["issue"], "date": row["date"], "front": row["front"], "back": row["back"]}
+        for row in draws
+    ])
+    reuse_live_lock = (
+        prior_live_lock.get("issue") == target_issue
+        and prior_live_lock.get("date") == target_date
+        and prior_live_lock.get("historyDigest") == live_history_hash
+        and isinstance(prior_live_lock.get("agents"), dict)
+    )
+    if reuse_live_lock:
+        live_lock = clone(prior_live_lock)
+    else:
+        live_agents = {}
+        for name in AGENTS:
+            prediction, signal_bundles = make_agent_prediction(name, draws, states[name], target_issue, target_date)
+            live_agents[name] = {
+                "modelVersion": prediction["modelVersion"],
+                "weights": clone(states[name]["weights"]),
+                "prediction": prediction,
+                "signalBundles": signal_bundles,
+            }
+        live_lock = {
+            "eventType": "prediction_locked",
+            "predictionId": digest(["joy-kane-v1", target_issue, target_date, live_history_hash])[:24],
+            "issue": target_issue,
+            "date": target_date,
+            "trainingDrawCount": len(draws),
+            "trainingThroughIssue": latest_draw["issue"],
+            "trainingThroughDate": latest_draw["date"],
+            "historyDigest": live_history_hash,
+            "predictionLockedAt": stamp(),
+            "agents": live_agents,
+            "futureLeakage": False,
+        }
+
+    next_forecasts = {
+        name: clone(live_lock["agents"][name]["prediction"])
+        for name in AGENTS
+    }
+    write_json(LIVE_LOCK_FILE, live_lock)
+    with PREDICTION_LEDGER.open("a", encoding="utf-8") as prediction_log:
+        append_jsonl(prediction_log, {
+            "eventType": "prediction_locked",
+            "predictionId": live_lock["predictionId"],
+            "issue": live_lock["issue"],
+            "date": live_lock["date"],
+            "trainingDrawCount": live_lock["trainingDrawCount"],
+            "trainingThroughIssue": live_lock["trainingThroughIssue"],
+            "trainingThroughDate": live_lock["trainingThroughDate"],
+            "historyDigest": live_lock["historyDigest"],
+            "predictionLockedAt": live_lock["predictionLockedAt"],
+            "livePredictionLock": True,
+            "agents": {
+                name: {
+                    "modelVersion": live_lock["agents"][name]["modelVersion"],
+                    "weights": live_lock["agents"][name]["weights"],
+                    "tickets": live_lock["agents"][name]["prediction"]["results"],
+                }
+                for name in AGENTS
+            },
+            "futureLeakage": False,
+        })
 
     def averages(name):
         row = score_totals[name]
@@ -730,6 +817,7 @@ def main() -> None:
             "scoreDefinition": summary["scoreDefinition"],
             "predictionLedger": "data/joy-kane-predictions.jsonl",
             "resultLedger": "data/joy-kane-results.jsonl",
+            "liveLock": "data/joy-kane-live-lock.json",
             "auditFile": "data/joy-kane-audit.json",
             "dailyTraining": {
                 "cyclesPerAgent": CYCLES if should_train else 0,
@@ -756,6 +844,7 @@ def main() -> None:
             }
             for name in AGENTS
         },
+        "livePredictionLock": {"issue": live_lock["issue"], "date": live_lock["date"], "predictionId": live_lock["predictionId"], "lockedAt": live_lock["predictionLockedAt"]},
         "audit": {"file": "data/joy-kane-audit.json", "rows": len(audit_rows)},
     }
     write_json(DASHBOARD_FILE, dashboard)
