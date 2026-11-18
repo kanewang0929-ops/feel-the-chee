@@ -217,7 +217,7 @@ def weighted_scores(signals: dict[str, dict[int, float]], weights: dict[str, flo
     }
 
 
-def weighted_sample(rng: random.Random, scores: dict[int, float], count: int, pool_size: int, excluded: set[int], pool: list[int] | None = None) -> list[int]:
+def weighted_sample(rng: random.Random, scores: dict[int, float], count: int, pool_size: int, excluded: set[int], pool: list[int] | None = None, exploration: float = 0.08) -> list[int]:
     candidates = [n for n in (pool or [n for n, _ in sorted(scores.items(), key=lambda item: item[1], reverse=True)[:pool_size]]) if n not in excluded]
     if len(candidates) < count:
         candidates = [n for n in scores if n not in excluded]
@@ -226,7 +226,8 @@ def weighted_sample(rng: random.Random, scores: dict[int, float], count: int, po
         available = [n for n in candidates if n not in selected]
         if not available:
             break
-        weights = [0.02 + max(0.0, scores[n]) ** 2.2 for n in available]
+        power = 2.2 - 1.4 * min(0.20, max(0.0, exploration))
+        weights = [0.02 + max(0.0, scores[n]) ** power for n in available]
         pick = rng.choices(available, weights=weights, k=1)[0]
         selected.append(pick)
     return sorted(selected)
@@ -254,6 +255,7 @@ def generate_tickets(
     rng: random.Random,
     *,
     balanced: bool,
+    exploration: float = 0.08,
 ) -> list[dict]:
     tickets = []
     historical_sums = [sum(row["front"]) for row in history[-200:]]
@@ -263,8 +265,8 @@ def generate_tickets(
     for _ in range(PICK_COUNT):
         candidates = []
         for _attempt in range(40 if balanced else 12):
-            front = weighted_sample(rng, front_scores, 5, 20, set(), front_pool)
-            back = weighted_sample(rng, back_scores, 2, 8, set(), back_pool)
+            front = weighted_sample(rng, front_scores, 5, 20, set(), front_pool, exploration)
+            back = weighted_sample(rng, back_scores, 2, 8, set(), back_pool, exploration)
             if len(front) != 5 or len(back) != 2:
                 continue
             cost = balance_cost(front, back, target_sum) if balanced else 0.0
@@ -278,7 +280,7 @@ def generate_tickets(
     return tickets
 
 
-def signal_ticket_bundles(name: str, feature_maps: dict, history: list[dict], seed: int) -> dict:
+def signal_ticket_bundles(name: str, feature_maps: dict, history: list[dict], seed: int, exploration: float) -> dict:
     output = {}
     for index, signal in enumerate(AGENTS[name]):
         rng = random.Random(seed ^ ((index + 1) * 0x9E3779B1))
@@ -288,6 +290,7 @@ def signal_ticket_bundles(name: str, feature_maps: dict, history: list[dict], se
             history,
             rng,
             balanced=(name == "kane"),
+            exploration=exploration,
         )
     return output
 
@@ -295,14 +298,15 @@ def signal_ticket_bundles(name: str, feature_maps: dict, history: list[dict], se
 def make_agent_prediction(name: str, history: list[dict], state: dict, target_issue: str, target_date: str):
     features = {area: number_signals(history, area) for area in AREAS}
     seed = int(digest([name, target_issue, target_date, digest(history)])[:16], 16)
-    signal_bundles = signal_ticket_bundles(name, features, history, seed)
+    exploration = float(state.get("exploration", 0.08) or 0.08)
+    signal_bundles = signal_ticket_bundles(name, features, history, seed, exploration)
     combined = {
         area: weighted_scores(features[area], state["weights"][area])
         for area in AREAS
     }
     rng = random.Random(seed ^ 0xD1A5E)
     picks = generate_tickets(
-        combined["front"], combined["back"], history, rng, balanced=(name == "kane")
+        combined["front"], combined["back"], history, rng, balanced=(name == "kane"), exploration=exploration
     )
     results = [
         {
