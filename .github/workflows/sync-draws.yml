@@ -68,7 +68,7 @@ jobs:
         run: |
           git config user.name "feel-the-chee-learning-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/draws.json data/chee-forecast.json data/chee-backtest.json data/joy-kane-*
+          git add data/joy-kane-*
 
           if git diff --cached --quiet; then
             echo "No draw, forecast, agent state, audit, or training-log changes detected."
@@ -76,5 +76,7 @@ jobs:
           fi
 
           git commit -m "data: refresh Joy and Kane predictions and learning audit"
+          # Draw synchronization and Feng Shui outputs are published by their own workflow.
+          # Keep this commit scoped to Joy/Kane artifacts to avoid overwriting concurrent draw updates.
           git pull --rebase origin main
           git push origin main
