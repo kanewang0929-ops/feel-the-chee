@@ -130,6 +130,7 @@ jobs:
             data/full-history-cycle-log.json \
             data/walk-forward-agent.json \
             data/walk-forward-agent-predictions.jsonl \
+            data/walk-forward-agent-results.jsonl \
             data/walk-forward-agent-state.json
 
           if git diff --cached --quiet; then
@@ -137,6 +138,6 @@ jobs:
             exit 0
           fi
 
-          git commit -m "data: refresh daily AI, Chee, and Agent Instinct learning"
+          git commit -m "data: refresh daily walk-forward Agent and learning records"
           git pull --rebase origin main
           git push origin main
