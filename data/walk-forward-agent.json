@@ -1,7 +1,7 @@
 {
   "modelVersion": "v1.0-strict-walk-forward-agent",
   "modelFamily": "chronological-no-lookahead-prediction-agent",
-  "generatedAt": "2026-11-18T12:47:15.752900+00:00",
+  "generatedAt": "2026-11-18T12:56:02.056482+00:00",
   "walkForward": true,
   "futureLeakage": false,
   "method": {
@@ -2359,34 +2359,34 @@
       "targetDate": "2026-11-18",
       "sourceWeights": {
         "front": {
-          "ai": 0.3549606450393549,
-          "chee": 0.31731568268431726,
-          "instinct": 0.3277236722763277
+          "ai": 0.3552353552353552,
+          "chee": 0.3172693172693173,
+          "instinct": 0.32749532749532745
         },
         "back": {
-          "ai": 0.33045366954633043,
-          "chee": 0.2828577171422828,
-          "instinct": 0.38668861331138665
+          "ai": 0.3306,
+          "chee": 0.282963,
+          "instinct": 0.386437
         }
       },
       "strategyWeights": {
         "front": {
-          "allThree": 0.673925,
-          "aiChee": 0.807773,
-          "aiInstinct": 1.083982,
-          "cheeInstinct": 0.703359,
-          "aiOnly": 1.327053,
-          "cheeOnly": 1.208016,
-          "instinctOnly": 1.195891
+          "allThree": 0.669725,
+          "aiChee": 0.806763,
+          "aiInstinct": 1.087343,
+          "cheeInstinct": 0.705428,
+          "aiOnly": 1.329118,
+          "cheeOnly": 1.208767,
+          "instinctOnly": 1.192855
         },
         "back": {
-          "allThree": 0.923091,
-          "aiChee": 0.97807,
-          "aiInstinct": 1.067456,
-          "cheeInstinct": 0.911506,
-          "aiOnly": 1.103279,
-          "cheeOnly": 0.806981,
-          "instinctOnly": 1.209617
+          "allThree": 0.923882,
+          "aiChee": 0.979385,
+          "aiInstinct": 1.072741,
+          "cheeInstinct": 0.911659,
+          "aiOnly": 1.101555,
+          "cheeOnly": 0.806936,
+          "instinctOnly": 1.203842
         }
       },
       "observations": 2449,
@@ -2420,126 +2420,54 @@
           "rank": 1,
           "label": "直觉主选",
           "front": [
-            "01",
+            "02",
             "14",
             "18",
-            "19",
-            "28"
+            "24",
+            "29"
           ],
           "back": [
-            "05",
-            "09"
+            "04",
+            "08"
           ],
           "agentScore": 86.0,
           "sourceMix": {
             "front": {
-              "allThree": 0,
-              "aiChee": 1,
-              "aiInstinct": 2,
+              "allThree": 1,
+              "aiChee": 0,
+              "aiInstinct": 1,
               "cheeInstinct": 0,
-              "aiOnly": 2,
+              "aiOnly": 1,
               "cheeOnly": 0,
-              "instinctOnly": 0
+              "instinctOnly": 2
             },
             "back": {
-              "allThree": 2,
+              "allThree": 1,
               "aiChee": 0,
               "aiInstinct": 0,
               "cheeInstinct": 0,
-              "aiOnly": 0,
+              "aiOnly": 1,
               "cheeOnly": 0,
               "instinctOnly": 0
             }
           },
           "numberSources": {
             "front": {
-              "01": [
-                "ai",
+              "02": [
                 "instinct"
               ],
               "14": [
                 "ai",
-                "chee"
+                "chee",
+                "instinct"
               ],
               "18": [
                 "ai"
               ],
-              "19": [
-                "ai"
-              ],
-              "28": [
-                "ai",
-                "instinct"
-              ]
-            },
-            "back": {
-              "05": [
-                "ai",
-                "chee",
+              "24": [
                 "instinct"
               ],
-              "09": [
-                "ai",
-                "chee",
-                "instinct"
-              ]
-            }
-          },
-          "instinctStatement": "Agent 直觉落子，不展开推理。"
-        },
-        {
-          "rank": 2,
-          "label": "自由对冲",
-          "front": [
-            "01",
-            "14",
-            "17",
-            "20",
-            "28"
-          ],
-          "back": [
-            "04",
-            "05"
-          ],
-          "agentScore": 80.0,
-          "sourceMix": {
-            "front": {
-              "allThree": 0,
-              "aiChee": 1,
-              "aiInstinct": 2,
-              "cheeInstinct": 1,
-              "aiOnly": 1,
-              "cheeOnly": 0,
-              "instinctOnly": 0
-            },
-            "back": {
-              "allThree": 2,
-              "aiChee": 0,
-              "aiInstinct": 0,
-              "cheeInstinct": 0,
-              "aiOnly": 0,
-              "cheeOnly": 0,
-              "instinctOnly": 0
-            }
-          },
-          "numberSources": {
-            "front": {
-              "01": [
-                "ai",
-                "instinct"
-              ],
-              "14": [
-                "ai",
-                "chee"
-              ],
-              "17": [
-                "ai"
-              ],
-              "20": [
-                "chee",
-                "instinct"
-              ],
-              "28": [
+              "29": [
                 "ai",
                 "instinct"
               ]
@@ -2550,7 +2478,76 @@
                 "chee",
                 "instinct"
               ],
-              "05": [
+              "08": [
+                "ai"
+              ]
+            }
+          },
+          "instinctStatement": "Agent 直觉落子，不展开推理。"
+        },
+        {
+          "rank": 2,
+          "label": "自由对冲",
+          "front": [
+            "06",
+            "14",
+            "15",
+            "24",
+            "29"
+          ],
+          "back": [
+            "03",
+            "04"
+          ],
+          "agentScore": 82.2,
+          "sourceMix": {
+            "front": {
+              "allThree": 1,
+              "aiChee": 0,
+              "aiInstinct": 1,
+              "cheeInstinct": 1,
+              "aiOnly": 1,
+              "cheeOnly": 0,
+              "instinctOnly": 1
+            },
+            "back": {
+              "allThree": 1,
+              "aiChee": 0,
+              "aiInstinct": 1,
+              "cheeInstinct": 0,
+              "aiOnly": 0,
+              "cheeOnly": 0,
+              "instinctOnly": 0
+            }
+          },
+          "numberSources": {
+            "front": {
+              "06": [
+                "ai"
+              ],
+              "14": [
+                "ai",
+                "chee",
+                "instinct"
+              ],
+              "15": [
+                "chee",
+                "instinct"
+              ],
+              "24": [
+                "instinct"
+              ],
+              "29": [
+                "ai",
+                "instinct"
+              ]
+            },
+            "back": {
+              "03": [
+                "ai",
+                "instinct"
+              ],
+              "04": [
                 "ai",
                 "chee",
                 "instinct"
@@ -2580,14 +2577,14 @@
       },
       "sourceWeights": {
         "front": {
-          "ai": 0.3549606450393549,
-          "chee": 0.31731568268431726,
-          "instinct": 0.3277236722763277
+          "ai": 0.3552353552353552,
+          "chee": 0.3172693172693173,
+          "instinct": 0.32749532749532745
         },
         "back": {
-          "ai": 0.33045366954633043,
-          "chee": 0.2828577171422828,
-          "instinct": 0.38668861331138665
+          "ai": 0.3306,
+          "chee": 0.282963,
+          "instinct": 0.386437
         }
       },
       "strategyEma": {
@@ -2612,22 +2609,22 @@
       },
       "strategyWeights": {
         "front": {
-          "allThree": 0.673925,
-          "aiChee": 0.807773,
-          "aiInstinct": 1.083982,
-          "cheeInstinct": 0.703359,
-          "aiOnly": 1.327053,
-          "cheeOnly": 1.208016,
-          "instinctOnly": 1.195891
+          "allThree": 0.669725,
+          "aiChee": 0.806763,
+          "aiInstinct": 1.087343,
+          "cheeInstinct": 0.705428,
+          "aiOnly": 1.329118,
+          "cheeOnly": 1.208767,
+          "instinctOnly": 1.192855
         },
         "back": {
-          "allThree": 0.923091,
-          "aiChee": 0.97807,
-          "aiInstinct": 1.067456,
-          "cheeInstinct": 0.911506,
-          "aiOnly": 1.103279,
-          "cheeOnly": 0.806981,
-          "instinctOnly": 1.209617
+          "allThree": 0.923882,
+          "aiChee": 0.979385,
+          "aiInstinct": 1.072741,
+          "cheeInstinct": 0.911659,
+          "aiOnly": 1.101555,
+          "cheeOnly": 0.806936,
+          "instinctOnly": 1.203842
         }
       },
       "cumulative": {
@@ -2636,7 +2633,7 @@
         "backHits": 1655,
         "draws": 2449
       },
-      "updatedAt": "2026-11-18T12:47:15.092879+00:00",
+      "updatedAt": "2026-11-18T12:56:01.567635+00:00",
       "liveWeightSource": "sequential replay plus accepted million-cycle optimization"
     }
   },
@@ -2737,7 +2734,7 @@
         "backHits": 1655,
         "draws": 2449
       },
-      "updatedAt": "2026-11-18T12:47:15.092879+00:00"
+      "updatedAt": "2026-11-18T12:56:01.567635+00:00"
     },
     "agentLiveState": {
       "version": 2,
@@ -2757,14 +2754,14 @@
       },
       "sourceWeights": {
         "front": {
-          "ai": 0.3549606450393549,
-          "chee": 0.31731568268431726,
-          "instinct": 0.3277236722763277
+          "ai": 0.3552353552353552,
+          "chee": 0.3172693172693173,
+          "instinct": 0.32749532749532745
         },
         "back": {
-          "ai": 0.33045366954633043,
-          "chee": 0.2828577171422828,
-          "instinct": 0.38668861331138665
+          "ai": 0.3306,
+          "chee": 0.282963,
+          "instinct": 0.386437
         }
       },
       "strategyEma": {
@@ -2789,22 +2786,22 @@
       },
       "strategyWeights": {
         "front": {
-          "allThree": 0.673925,
-          "aiChee": 0.807773,
-          "aiInstinct": 1.083982,
-          "cheeInstinct": 0.703359,
-          "aiOnly": 1.327053,
-          "cheeOnly": 1.208016,
-          "instinctOnly": 1.195891
+          "allThree": 0.669725,
+          "aiChee": 0.806763,
+          "aiInstinct": 1.087343,
+          "cheeInstinct": 0.705428,
+          "aiOnly": 1.329118,
+          "cheeOnly": 1.208767,
+          "instinctOnly": 1.192855
         },
         "back": {
-          "allThree": 0.923091,
-          "aiChee": 0.97807,
-          "aiInstinct": 1.067456,
-          "cheeInstinct": 0.911506,
-          "aiOnly": 1.103279,
-          "cheeOnly": 0.806981,
-          "instinctOnly": 1.209617
+          "allThree": 0.923882,
+          "aiChee": 0.979385,
+          "aiInstinct": 1.072741,
+          "cheeInstinct": 0.911659,
+          "aiOnly": 1.101555,
+          "cheeOnly": 0.806936,
+          "instinctOnly": 1.203842
         }
       },
       "cumulative": {
@@ -2813,7 +2810,7 @@
         "backHits": 1655,
         "draws": 2449
       },
-      "updatedAt": "2026-11-18T12:47:15.092879+00:00",
+      "updatedAt": "2026-11-18T12:56:01.567635+00:00",
       "liveWeightSource": "sequential replay plus accepted million-cycle optimization"
     }
   },
