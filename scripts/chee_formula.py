@@ -14,7 +14,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DRAWS_FILE = ROOT / "data" / "draws.json"
-AI_FORECAST_FILE = ROOT / "data" / "forecast.json"
 OUTPUT_FILE = ROOT / "data" / "chee-forecast.json"
 VERSION = "v2.1-formula-only"
 FORMULA = "hetu-luoshu-date-issue-v2"
@@ -71,14 +70,15 @@ def next_draw_day(last_date: str) -> str:
 
 
 def target() -> tuple[str, str]:
-    ai_forecast = read_json(AI_FORECAST_FILE, {})
-    if ai_forecast.get("targetIssue") and ai_forecast.get("targetDate"):
-        return str(ai_forecast["targetIssue"]), str(ai_forecast["targetDate"])
     metadata = read_json(DRAWS_FILE, {}).get("meta", {})
-    return (
-        str(int(metadata["latestIssue"]) + 1),
-        next_draw_day(metadata["latestDate"]),
-    )
+    latest_issue = str(metadata["latestIssue"])
+    target_date = next_draw_day(metadata["latestDate"])
+    target_year = date.fromisoformat(target_date).year % 100
+    latest_year = int(latest_issue[:2])
+    latest_sequence = int(latest_issue[2:])
+    if target_year != latest_year:
+        latest_sequence = 0
+    return f"{target_year:02d}{latest_sequence + 1:03d}", target_date
 
 
 def elem(number: int) -> str:
