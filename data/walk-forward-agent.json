@@ -1,7 +1,7 @@
 {
   "modelVersion": "v1.0-strict-walk-forward-agent",
   "modelFamily": "chronological-no-lookahead-prediction-agent",
-  "generatedAt": "2026-11-18T12:31:30.383772+00:00",
+  "generatedAt": "2026-11-18T12:47:15.752900+00:00",
   "walkForward": true,
   "futureLeakage": false,
   "method": {
@@ -19,7 +19,8 @@
     "historyDigest": "SHA-256 of the exact historical prefix used for each prediction.",
     "fengShuiPolicy": "Formula-only. Uses target issue/date and never learns from historical results.",
     "liveOptimizationPolicy": "Accepted million-cycle weights may affect the next live forecast only, never earlier historical predictions.",
-    "predictionLedger": "data/walk-forward-agent-predictions.jsonl"
+    "predictionLedger": "data/walk-forward-agent-predictions.jsonl",
+    "resultLedger": "data/walk-forward-agent-results.jsonl"
   },
   "summary": {
     "drawsEvaluated": 2449,
@@ -98,14 +99,13 @@
       "averageFrontHitsPerTicket": 0.714286,
       "averageBackHitsPerTicket": 0.333333,
       "averageTotalHitsPerTicket": 1.047619,
-      "note": "Expected hit counts for one uniformly random valid 5+2 ticket in a fair draw."
+      "note": "Expected hit counts for one uniformly random valid ticket in a fair draw."
     },
     "dateRange": {
       "earliest": "2010-08-30",
       "latest": "2026-11-16"
     },
-    "futureLeakage": false,
-    "historyRecords": 2449
+    "futureLeakage": false
   },
   "learningCurve": [
     {
@@ -2109,6 +2109,10 @@
       "observations": 2449
     }
   ],
+  "historyRecords": {
+    "predictionLedger": "data/walk-forward-agent-predictions.jsonl",
+    "resultLedger": "data/walk-forward-agent-results.jsonl"
+  },
   "nextForecast": {
     "targetIssue": "26132",
     "targetDate": "2026-11-18",
@@ -2355,34 +2359,34 @@
       "targetDate": "2026-11-18",
       "sourceWeights": {
         "front": {
-          "ai": 0.354518,
-          "chee": 0.317475,
-          "instinct": 0.328007
+          "ai": 0.3549606450393549,
+          "chee": 0.31731568268431726,
+          "instinct": 0.3277236722763277
         },
         "back": {
-          "ai": 0.33022,
-          "chee": 0.28269,
-          "instinct": 0.38709
+          "ai": 0.33045366954633043,
+          "chee": 0.2828577171422828,
+          "instinct": 0.38668861331138665
         }
       },
       "strategyWeights": {
         "front": {
-          "allThree": 0.679726,
-          "aiChee": 0.809154,
-          "aiInstinct": 1.079304,
-          "cheeInstinct": 0.700477,
-          "aiOnly": 1.323928,
-          "cheeOnly": 1.207342,
-          "instinctOnly": 1.200069
+          "allThree": 0.673925,
+          "aiChee": 0.807773,
+          "aiInstinct": 1.083982,
+          "cheeInstinct": 0.703359,
+          "aiOnly": 1.327053,
+          "cheeOnly": 1.208016,
+          "instinctOnly": 1.195891
         },
         "back": {
-          "allThree": 0.921916,
-          "aiChee": 0.976163,
-          "aiInstinct": 1.060023,
-          "cheeInstinct": 0.911219,
-          "aiOnly": 1.106294,
-          "cheeOnly": 0.806838,
-          "instinctOnly": 1.217547
+          "allThree": 0.923091,
+          "aiChee": 0.97807,
+          "aiInstinct": 1.067456,
+          "cheeInstinct": 0.911506,
+          "aiOnly": 1.103279,
+          "cheeOnly": 0.806981,
+          "instinctOnly": 1.209617
         }
       },
       "observations": 2449,
@@ -2423,24 +2427,24 @@
             "28"
           ],
           "back": [
-            "04",
-            "08"
+            "05",
+            "09"
           ],
           "agentScore": 86.0,
           "sourceMix": {
             "front": {
               "allThree": 0,
               "aiChee": 1,
-              "aiInstinct": 3,
+              "aiInstinct": 2,
               "cheeInstinct": 0,
-              "aiOnly": 1,
+              "aiOnly": 2,
               "cheeOnly": 0,
               "instinctOnly": 0
             },
             "back": {
-              "allThree": 1,
+              "allThree": 2,
               "aiChee": 0,
-              "aiInstinct": 1,
+              "aiInstinct": 0,
               "cheeInstinct": 0,
               "aiOnly": 0,
               "cheeOnly": 0,
@@ -2461,7 +2465,78 @@
                 "ai"
               ],
               "19": [
+                "ai"
+              ],
+              "28": [
                 "ai",
+                "instinct"
+              ]
+            },
+            "back": {
+              "05": [
+                "ai",
+                "chee",
+                "instinct"
+              ],
+              "09": [
+                "ai",
+                "chee",
+                "instinct"
+              ]
+            }
+          },
+          "instinctStatement": "Agent 直觉落子，不展开推理。"
+        },
+        {
+          "rank": 2,
+          "label": "自由对冲",
+          "front": [
+            "01",
+            "14",
+            "17",
+            "20",
+            "28"
+          ],
+          "back": [
+            "04",
+            "05"
+          ],
+          "agentScore": 80.0,
+          "sourceMix": {
+            "front": {
+              "allThree": 0,
+              "aiChee": 1,
+              "aiInstinct": 2,
+              "cheeInstinct": 1,
+              "aiOnly": 1,
+              "cheeOnly": 0,
+              "instinctOnly": 0
+            },
+            "back": {
+              "allThree": 2,
+              "aiChee": 0,
+              "aiInstinct": 0,
+              "cheeInstinct": 0,
+              "aiOnly": 0,
+              "cheeOnly": 0,
+              "instinctOnly": 0
+            }
+          },
+          "numberSources": {
+            "front": {
+              "01": [
+                "ai",
+                "instinct"
+              ],
+              "14": [
+                "ai",
+                "chee"
+              ],
+              "17": [
+                "ai"
+              ],
+              "20": [
+                "chee",
                 "instinct"
               ],
               "28": [
@@ -2475,79 +2550,9 @@
                 "chee",
                 "instinct"
               ],
-              "08": [
-                "ai",
-                "instinct"
-              ]
-            }
-          },
-          "instinctStatement": "Agent 直觉落子，不展开推理。"
-        },
-        {
-          "rank": 2,
-          "label": "自由对冲",
-          "front": [
-            "06",
-            "08",
-            "14",
-            "19",
-            "28"
-          ],
-          "back": [
-            "05",
-            "08"
-          ],
-          "agentScore": 77.2,
-          "sourceMix": {
-            "front": {
-              "allThree": 0,
-              "aiChee": 1,
-              "aiInstinct": 4,
-              "cheeInstinct": 0,
-              "aiOnly": 0,
-              "cheeOnly": 0,
-              "instinctOnly": 0
-            },
-            "back": {
-              "allThree": 0,
-              "aiChee": 1,
-              "aiInstinct": 1,
-              "cheeInstinct": 0,
-              "aiOnly": 0,
-              "cheeOnly": 0,
-              "instinctOnly": 0
-            }
-          },
-          "numberSources": {
-            "front": {
-              "06": [
-                "ai",
-                "instinct"
-              ],
-              "08": [
-                "ai",
-                "instinct"
-              ],
-              "14": [
-                "ai",
-                "chee"
-              ],
-              "19": [
-                "ai",
-                "instinct"
-              ],
-              "28": [
-                "ai",
-                "instinct"
-              ]
-            },
-            "back": {
               "05": [
                 "ai",
-                "chee"
-              ],
-              "08": [
-                "ai",
+                "chee",
                 "instinct"
               ]
             }
@@ -2575,14 +2580,14 @@
       },
       "sourceWeights": {
         "front": {
-          "ai": 0.354518,
-          "chee": 0.317475,
-          "instinct": 0.328007
+          "ai": 0.3549606450393549,
+          "chee": 0.31731568268431726,
+          "instinct": 0.3277236722763277
         },
         "back": {
-          "ai": 0.33022,
-          "chee": 0.28269,
-          "instinct": 0.38709
+          "ai": 0.33045366954633043,
+          "chee": 0.2828577171422828,
+          "instinct": 0.38668861331138665
         }
       },
       "strategyEma": {
@@ -2607,22 +2612,22 @@
       },
       "strategyWeights": {
         "front": {
-          "allThree": 0.679726,
-          "aiChee": 0.809154,
-          "aiInstinct": 1.079304,
-          "cheeInstinct": 0.700477,
-          "aiOnly": 1.323928,
-          "cheeOnly": 1.207342,
-          "instinctOnly": 1.200069
+          "allThree": 0.673925,
+          "aiChee": 0.807773,
+          "aiInstinct": 1.083982,
+          "cheeInstinct": 0.703359,
+          "aiOnly": 1.327053,
+          "cheeOnly": 1.208016,
+          "instinctOnly": 1.195891
         },
         "back": {
-          "allThree": 0.921916,
-          "aiChee": 0.976163,
-          "aiInstinct": 1.060023,
-          "cheeInstinct": 0.911219,
-          "aiOnly": 1.106294,
-          "cheeOnly": 0.806838,
-          "instinctOnly": 1.217547
+          "allThree": 0.923091,
+          "aiChee": 0.97807,
+          "aiInstinct": 1.067456,
+          "cheeInstinct": 0.911506,
+          "aiOnly": 1.103279,
+          "cheeOnly": 0.806981,
+          "instinctOnly": 1.209617
         }
       },
       "cumulative": {
@@ -2631,7 +2636,7 @@
         "backHits": 1655,
         "draws": 2449
       },
-      "updatedAt": "2026-11-18T12:31:29.647470+00:00",
+      "updatedAt": "2026-11-18T12:47:15.092879+00:00",
       "liveWeightSource": "sequential replay plus accepted million-cycle optimization"
     }
   },
@@ -2732,7 +2737,7 @@
         "backHits": 1655,
         "draws": 2449
       },
-      "updatedAt": "2026-11-18T12:31:29.647470+00:00"
+      "updatedAt": "2026-11-18T12:47:15.092879+00:00"
     },
     "agentLiveState": {
       "version": 2,
@@ -2752,14 +2757,14 @@
       },
       "sourceWeights": {
         "front": {
-          "ai": 0.354518,
-          "chee": 0.317475,
-          "instinct": 0.328007
+          "ai": 0.3549606450393549,
+          "chee": 0.31731568268431726,
+          "instinct": 0.3277236722763277
         },
         "back": {
-          "ai": 0.33022,
-          "chee": 0.28269,
-          "instinct": 0.38709
+          "ai": 0.33045366954633043,
+          "chee": 0.2828577171422828,
+          "instinct": 0.38668861331138665
         }
       },
       "strategyEma": {
@@ -2784,22 +2789,22 @@
       },
       "strategyWeights": {
         "front": {
-          "allThree": 0.679726,
-          "aiChee": 0.809154,
-          "aiInstinct": 1.079304,
-          "cheeInstinct": 0.700477,
-          "aiOnly": 1.323928,
-          "cheeOnly": 1.207342,
-          "instinctOnly": 1.200069
+          "allThree": 0.673925,
+          "aiChee": 0.807773,
+          "aiInstinct": 1.083982,
+          "cheeInstinct": 0.703359,
+          "aiOnly": 1.327053,
+          "cheeOnly": 1.208016,
+          "instinctOnly": 1.195891
         },
         "back": {
-          "allThree": 0.921916,
-          "aiChee": 0.976163,
-          "aiInstinct": 1.060023,
-          "cheeInstinct": 0.911219,
-          "aiOnly": 1.106294,
-          "cheeOnly": 0.806838,
-          "instinctOnly": 1.217547
+          "allThree": 0.923091,
+          "aiChee": 0.97807,
+          "aiInstinct": 1.067456,
+          "cheeInstinct": 0.911506,
+          "aiOnly": 1.103279,
+          "cheeOnly": 0.806981,
+          "instinctOnly": 1.209617
         }
       },
       "cumulative": {
@@ -2808,13 +2813,9 @@
         "backHits": 1655,
         "draws": 2449
       },
-      "updatedAt": "2026-11-18T12:31:29.647470+00:00",
+      "updatedAt": "2026-11-18T12:47:15.092879+00:00",
       "liveWeightSource": "sequential replay plus accepted million-cycle optimization"
     }
   },
-  "note": "This is a historical walk-forward audit, not proof that a fair lottery can be predicted. All valid combinations remain equally likely in a fair draw.",
-  "historyRecords": {
-    "predictionLedger": "data/walk-forward-agent-predictions.jsonl",
-    "resultLedger": "data/walk-forward-agent-results.jsonl"
-  }
+  "note": "This is a historical walk-forward audit, not proof that a fair lottery can be predicted. All valid combinations remain equally likely in a fair draw."
 }
