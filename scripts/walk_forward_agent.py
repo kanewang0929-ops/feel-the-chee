@@ -265,7 +265,7 @@ def optimized_live_agent_state(replay_state: dict) -> dict:
     weights are never fed backwards into an earlier historical prediction.
     """
     state = clone(replay_state)
-    optimized = ai.read_json(agent.STATE_FILE, {})
+    optimized = ai.read_json(DATA / "hybrid-model-state.json", {})
     if not isinstance(optimized, dict):
         return state
 
@@ -522,9 +522,14 @@ def main() -> None:
         "front": fmt(latest["front"]),
         "back": fmt(latest["back"]),
     }
-    ai_next["lastEvaluation"] = (
-        rows[-1]["evaluation"]["ai"] if rows else None
-    )
+    ai_next["lastEvaluation"] = ({
+        "issue": rows[-1]["issue"],
+        "actual": rows[-1]["actual"],
+        "summary": {
+            "averageFrontHits": rows[-1]["evaluation"]["ai"]["averageFrontHitsPerTicket"],
+            "averageBackHits": rows[-1]["evaluation"]["ai"]["averageBackHitsPerTicket"],
+        },
+    } if rows else None)
 
     chee_next = make_chee_prediction(next_issue, next_date)
     live_agent_state = optimized_live_agent_state(agent_state)
