@@ -14,6 +14,14 @@ function agentFetch(url){
   });
 }
 
+let agentWalkForwardPayloadPromise=null;
+function loadAgentWalkForwardPayload(){
+  if(!agentWalkForwardPayloadPromise){
+    agentWalkForwardPayloadPromise=agentFetch(AGENT_FORECAST_URL);
+  }
+  return agentWalkForwardPayloadPromise;
+}
+
 function walkForwardAgentView(payload){
   const next=payload.nextForecast||{};
   const forecast=next.agent||{};
@@ -380,7 +388,7 @@ async function loadAgentForecast(){
   if(agentForecastLoaded) return;
   agentForecastLoaded=true;
   try{
-    const payload=await agentFetch(AGENT_FORECAST_URL);
+    const payload=await loadAgentWalkForwardPayload();
     renderAgentForecast(walkForwardAgentView(payload));
   }catch(error){
     console.warn("Agent forecast unavailable",error);
@@ -393,7 +401,7 @@ async function loadAgentSimulationLog(){
   if(agentSimulationLoaded) return;
   agentSimulationLoaded=true;
   try{
-    const payload=await agentFetch(AGENT_SIMULATION_LOG_URL);
+    const payload=await loadAgentWalkForwardPayload();
     renderAgentSimulationLog([walkForwardSimulationView(payload)]);
   }catch(error){
     console.warn("Agent simulation log unavailable",error);
@@ -414,7 +422,7 @@ async function loadAgentBacktest(){
   learning.appendChild(loading);
 
   try{
-    const payload=await agentFetch(AGENT_BACKTEST_URL);
+    const payload=await loadAgentWalkForwardPayload();
     renderAgentBacktest(walkForwardBacktestView(payload));
   }catch(error){
     console.warn("Agent backtest unavailable",error);
