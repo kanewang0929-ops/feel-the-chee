@@ -22,6 +22,7 @@ on:
       - "scripts/million_simulation_training.py"
       - "scripts/full_history_cycle_training.py"
       - "scripts/settle_agent_result.py"
+      - "scripts/walk_forward_agent.py"
       - "assets/ai-backtest.js"
       - "assets/chee-backtest.js"
       - "assets/hybrid-agent.js"
@@ -95,6 +96,9 @@ jobs:
       - name: Generate the next two Agent Instinct results
         run: python scripts/intuitive_agent_runtime.py
 
+      - name: Run strict no-lookahead walk-forward Agent simulation
+        run: python scripts/walk_forward_agent.py
+
       - name: Commit draw, forecasts, audits, states, and permanent logs
         run: |
           git config user.name "feel-the-chee-learning-bot"
@@ -123,7 +127,10 @@ jobs:
             data/hybrid-forecast-master-history.json \
             data/model-cycle-log.json \
             data/million-simulation-log.json \
-            data/full-history-cycle-log.json
+            data/full-history-cycle-log.json \
+            data/walk-forward-agent.json \
+            data/walk-forward-agent-predictions.jsonl \
+            data/walk-forward-agent-state.json
 
           if git diff --cached --quiet; then
             echo "No draw, forecast, audit, state, or learning-log changes detected."
