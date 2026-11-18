@@ -21,7 +21,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 DRAW_FILE = DATA / "draws.json"
-LEGACY_FORECAST = DATA / "forecast.json"
 DASHBOARD_FILE = DATA / "joy-kane-dashboard.json"
 AUDIT_FILE = DATA / "joy-kane-audit.json"
 PREDICTION_LEDGER = DATA / "joy-kane-predictions.jsonl"
@@ -497,25 +496,17 @@ def latest_training_age(logs: list[dict]) -> float | None:
 
 
 def next_target(latest_draw: dict) -> tuple[str, str]:
-    old = read_json(LEGACY_FORECAST, {})
-    issue, target_date = str(old.get("targetIssue", "")), str(old.get("targetDate", ""))
-    if issue and target_date and target_date > latest_draw["date"]:
-        return issue, target_date
     last_date = date.fromisoformat(latest_draw["date"])
     target = last_date + timedelta(days=1)
     while target.weekday() not in (0, 2, 5):
         target += timedelta(days=1)
     last_issue = latest_draw["issue"]
-    try:
-        year = int(last_issue[:2])
-        sequence = int(last_issue[2:])
-        target_year = target.year % 100
-        if target_year != year:
-            sequence = 0
-        issue = f"{target_year:02d}{sequence + 1:03d}"
-    except (ValueError, TypeError):
-        issue = last_issue
-    return issue, target.isoformat()
+    year = int(last_issue[:2])
+    sequence = int(last_issue[2:])
+    target_year = target.year % 100
+    if target_year != year:
+        sequence = 0
+    return f"{target_year:02d}{sequence + 1:03d}", target.isoformat()
 
 
 def main() -> None:
