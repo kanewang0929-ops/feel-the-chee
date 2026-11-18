@@ -98,7 +98,8 @@ def make_ai_prediction(
         if not isinstance(relationship_training, dict):
             relationship_training = {}
         mean_blend = float(million.get("meanAnchorBlend", 0.0) or 0.0)
-        relationship_blend = float(relationship_training.get("blend", 1.0) or 1.0)
+        blend_value = relationship_training.get("blend", 1.0)
+        relationship_blend = float(1.0 if blend_value is None else blend_value)
     else:
         # Historical replay starts from a clean state and uses only transitions
         # contained in the prefix before the target draw.
@@ -284,10 +285,12 @@ def optimized_live_agent_state(replay_state: dict) -> dict:
 
         strategy_weights = optimized.get("strategyWeights", {}).get(area, {})
         if all(name in strategy_weights for name in agent.CATEGORIES):
-            state["strategyWeights"][area] = {
+            candidate = {
                 name: max(0.0, float(strategy_weights[name]))
                 for name in agent.CATEGORIES
             }
+            if sum(candidate.values()) > 0:
+                state["strategyWeights"][area] = candidate
 
     state["liveWeightSource"] = "sequential replay plus accepted million-cycle optimization"
     return state
