@@ -217,8 +217,8 @@ def weighted_scores(signals: dict[str, dict[int, float]], weights: dict[str, flo
     }
 
 
-def weighted_sample(rng: random.Random, scores: dict[int, float], count: int, pool_size: int, excluded: set[int]) -> list[int]:
-    candidates = [n for n, _ in sorted(scores.items(), key=lambda item: item[1], reverse=True) if n not in excluded][:pool_size]
+def weighted_sample(rng: random.Random, scores: dict[int, float], count: int, pool_size: int, excluded: set[int], pool: list[int] | None = None) -> list[int]:
+    candidates = [n for n in (pool or [n for n, _ in sorted(scores.items(), key=lambda item: item[1], reverse=True)[:pool_size]]) if n not in excluded]
     if len(candidates) < count:
         candidates = [n for n in scores if n not in excluded]
     selected = []
@@ -258,11 +258,13 @@ def generate_tickets(
     balanced: bool,
 ) -> list[dict]:
     tickets = []
+    front_pool = [n for n, _ in sorted(front_scores.items(), key=lambda item: item[1], reverse=True)[:20]]
+    back_pool = [n for n, _ in sorted(back_scores.items(), key=lambda item: item[1], reverse=True)[:8]]
     for _ in range(PICK_COUNT):
         candidates = []
-        for _attempt in range(100 if balanced else 18):
-            front = weighted_sample(rng, front_scores, 5, 20, set())
-            back = weighted_sample(rng, back_scores, 2, 8, set())
+        for _attempt in range(40 if balanced else 12):
+            front = weighted_sample(rng, front_scores, 5, 20, set(), front_pool)
+            back = weighted_sample(rng, back_scores, 2, 8, set(), back_pool)
             if len(front) != 5 or len(back) != 2:
                 continue
             cost = balance_cost(front, back, history) if balanced else 0.0
@@ -570,10 +572,12 @@ def main() -> None:
             joy_metrics = score_tickets(joy_prediction["results"], actual)
             kane_metrics = score_tickets(kane_prediction["results"], actual)
             joy_best, kane_best = joy_metrics["bestTotalHits"], kane_metrics["bestTotalHits"]
-            if joy_best > kane_best:
+            joy_rank = (joy_metrics["bestTotalHits"], joy_metrics["bestFrontHits"], joy_metrics["bestBackHits"])
+            kane_rank = (kane_metrics["bestTotalHits"], kane_metrics["bestFrontHits"], kane_metrics["bestBackHits"])
+            if joy_rank > kane_rank:
                 winner = "joy"
                 win_counts["joy"] += 1
-            elif kane_best > joy_best:
+            elif kane_rank > joy_rank:
                 winner = "kane"
                 win_counts["kane"] += 1
             else:
