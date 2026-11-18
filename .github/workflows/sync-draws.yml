@@ -1,4 +1,4 @@
-name: 同步开奖并更新预测
+name: Daily Joy and Kane prediction duel
 
 on:
   workflow_dispatch:
@@ -7,33 +7,18 @@ on:
       - main
     paths:
       - "scripts/sync_draws.py"
-      - "scripts/curve_forecast.py"
-      - "scripts/ai_backtest.py"
       - "scripts/chee_formula.py"
       - "scripts/chee_backtest.py"
-      - "scripts/hybrid_agent.py"
-      - "scripts/hybrid_backtest.py"
-      - "scripts/intuitive_agent.py"
-      - "scripts/intuitive_agent_runtime.py"
-      - "scripts/intuitive_backtest.py"
-      - "scripts/intuitive_backtest_runner.py"
-      - "scripts/intuitive_simulation_learning.py"
-      - "scripts/daily_simulation_learning.py"
-      - "scripts/million_simulation_training.py"
-      - "scripts/full_history_cycle_training.py"
-      - "scripts/settle_agent_result.py"
-      - "scripts/walk_forward_agent.py"
-      - "assets/ai-backtest.js"
-      - "assets/chee-backtest.js"
-      - "assets/hybrid-agent.js"
-      - "assets/agent-instinct.js"
-      - "assets/model-million-history.js"
+      - "scripts/joy_kane_duel.py"
+      - "scripts/summarize_joy_kane_logs.py"
+      - "assets/app.js"
+      - "assets/joy-kane.js"
+      - "assets/style.css"
       - "index.html"
       - ".github/workflows/sync-draws.yml"
   schedule:
-    # 每天北京时间09:15运行三模型完整模拟与学习闭环。
+    # Daily Beijing-time 09:15. Extra draw-night syncs refresh predictions after results publish.
     - cron: "15 1 * * *"
-    # 保留开奖日晚间重试：北京时间周一、周三、周六22:10、22:35、23:00。
     - cron: "10,35 14 * * 1,3,6"
     - cron: "0 15 * * 1,3,6"
 
@@ -41,11 +26,11 @@ permissions:
   contents: write
 
 concurrency:
-  group: sync-curve-formula-instinct-backtests
+  group: joy-kane-daily-prediction-duel
   cancel-in-progress: true
 
 jobs:
-  sync-and-forecast:
+  sync-train-and-publish:
     runs-on: ubuntu-latest
     timeout-minutes: 240
 
@@ -60,84 +45,36 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Synchronize complete draw history
+      - name: Synchronize the complete draw database
         run: python scripts/sync_draws.py
 
-      - name: Backtest AI with strict walk-forward training
-        run: python scripts/ai_backtest.py
-
-      - name: Backtest Feel the Chee across all stored draws
+      - name: Audit the formula-only Feng Shui engine
         run: python scripts/chee_backtest.py
 
-      - name: Simulate AI, Chee, and independent Agent Instinct
-        run: python scripts/intuitive_backtest_runner.py
-
-      - name: Apply simulation learning and archive permanent model logs
-        run: python scripts/daily_simulation_learning.py
-
-      - name: Apply three-source Agent Instinct learning
-        run: python scripts/intuitive_simulation_learning.py
-
-      - name: Settle the latest Agent forecast against the newest real draw
-        run: python scripts/settle_agent_result.py
-
-      - name: Run one million complete-history prediction cycles for AI and Agent
-        env:
-          FULL_HISTORY_CYCLES: "1000000"
-          MIN_HOURS_BETWEEN_FULL_HISTORY_RUNS: "20"
-        run: python scripts/full_history_cycle_training.py
-
-      - name: Learn draw curves and sample the next AI forecast
-        run: python scripts/curve_forecast.py
-
-      - name: Calculate formula-only Feel the Chee results
+      - name: Generate formula-only Feng Shui forecast
         run: python scripts/chee_formula.py
 
-      - name: Generate the next two Agent Instinct results
-        run: python scripts/intuitive_agent_runtime.py
+      - name: Run strict walk-forward Joy and Kane duel
+        env:
+          DUEL_WARMUP_DRAWS: "200"
+          DUEL_CYCLES: "1000000"
+          MIN_HOURS_BETWEEN_DUEL_TRAINING: "23"
+        run: python scripts/joy_kane_duel.py
 
-      - name: Run strict no-lookahead walk-forward Agent simulation
-        run: python scripts/walk_forward_agent.py
+      - name: Summarize daily optimization logs older than seven days
+        run: python scripts/summarize_joy_kane_logs.py
 
-      - name: Commit draw, forecasts, audits, states, and permanent logs
+      - name: Commit draw database, forecasts, agent states, and audit ledgers
         run: |
           git config user.name "feel-the-chee-learning-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add \
-            data/draws.json \
-            data/forecast.json \
-            data/forecast-history.json \
-            data/learning-log.json \
-            data/model-state.json \
-            data/ai-backtest.json \
-            data/ai-simulation-log.json \
-            data/ai-master-learning-log.json \
-            data/ai-forecast-master-history.json \
-            data/chee-forecast.json \
-            data/chee-backtest.json \
-            data/chee-model-state.json \
-            data/chee-simulation-log.json \
-            data/hybrid-forecast.json \
-            data/hybrid-history.json \
-            data/hybrid-learning-log.json \
-            data/hybrid-model-state.json \
-            data/hybrid-backtest.json \
-            data/hybrid-simulation-log.json \
-            data/hybrid-master-learning-log.json \
-            data/hybrid-forecast-master-history.json \
-            data/model-cycle-log.json \
-            data/million-simulation-log.json \
-            data/full-history-cycle-log.json \
-            data/walk-forward-agent.json \
-            data/walk-forward-agent-predictions.jsonl \
-            data/walk-forward-agent-results.jsonl \
-            data/walk-forward-agent-state.json
+          git add data/draws.json data/chee-forecast.json data/chee-backtest.json data/joy-kane-*
 
           if git diff --cached --quiet; then
-            echo "No draw, forecast, audit, state, or learning-log changes detected."
+            echo "No draw, forecast, agent state, audit, or training-log changes detected."
             exit 0
           fi
 
-          git commit -m "data: refresh daily walk-forward Agent and learning records"
+          git commit -m "data: refresh Joy and Kane predictions and learning audit"
           git pull --rebase origin main
           git push origin main
