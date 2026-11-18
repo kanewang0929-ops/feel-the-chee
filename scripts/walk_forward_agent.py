@@ -465,7 +465,7 @@ def main() -> None:
                 "learningUpdate": row["learningUpdate"],
                 "futureLeakage": False,
             }
-            result_ledger.write(json.dumps(result_event, ensure_ascii=False) + "\\n")
+            result_ledger.write(json.dumps(result_event, ensure_ascii=False) + "\n")
             result_ledger.flush()
             os.fsync(result_ledger.fileno())
 
