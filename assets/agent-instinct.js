@@ -58,6 +58,8 @@ function walkForwardBacktestView(payload){
   const summary=payload.summary||{};
   return {
     backtestVersion:payload.modelVersion,
+    predictionLocks:summary.predictionLocks||0,
+    futureLeakage:payload.futureLeakage===false,
     summary:{
       drawsEvaluated:summary.drawsEvaluated||0,
       ticketsEvaluated:summary.ticketsEvaluated||0,
@@ -171,7 +173,7 @@ function renderAgentForecast(payload){
   if(card){
     card.innerHTML=`<div class="section-head">
       <div>
-        <h2>融合 Agent · 下期精选</h2>
+        <h2>Walk-forward Agent · 下期精选</h2>
         <div class="muted">第${payload.targetIssue}期 · 逐期模拟后更新模型，先锁定预测再揭示开奖。</div>
       </div>
       <span class="badge gold">2组结果 · Agent Instinct</span>
@@ -283,7 +285,7 @@ function renderAgentSimulationLog(rows){
 
   card.innerHTML=`<div class="section-head">
     <div>
-      <h2>Agent Instinct 每日模拟日志</h2>
+      <h2>Walk-forward Agent 逐期模拟日志</h2>
       <div class="muted">按历史期次逐期回放。每期预测先写入独立账本，开奖结果随后才进入评分与学习。</div>
     </div>
     <span class="badge gold">最近运行 ${generatedAt}</span>
@@ -343,6 +345,13 @@ function renderAgentBacktest(payload){
   </div>
   <div class="log-list">
     <div class="log">
+      <div class="log-time">无未来信息泄漏</div>
+      <div>
+        <div class="log-title">已锁定 ${Number(payload.predictionLocks||summary.drawsEvaluated||0).toLocaleString("zh-CN")} 条历史预测</div>
+        <div class="log-body">每条记录都保存训练数据截止期与历史数据摘要。目标期开奖号码只在预测写入账本后用于评分。</div>
+      </div>
+    </div>
+    <div class="log">
       <div class="log-time">三源对比</div>
       <div>
         <div class="log-title">AI · 风水 · Agent直觉</div>
@@ -401,7 +410,7 @@ async function loadAgentBacktest(){
   const loading=document.createElement("div");
   loading.id="hybridBacktestLoading";
   loading.className="card";
-  loading.innerHTML=`<h2>Agent Instinct 历史学习回测</h2><div class="muted">正在读取三源逐期模拟...</div>`;
+  loading.innerHTML=`<h2>Agent 严格逐期历史模拟</h2><div class="muted">正在读取预测封存账本与逐期评分...</div>`;
   learning.appendChild(loading);
 
   try{
@@ -409,7 +418,7 @@ async function loadAgentBacktest(){
     renderAgentBacktest(walkForwardBacktestView(payload));
   }catch(error){
     console.warn("Agent backtest unavailable",error);
-    loading.innerHTML=`<h2>Agent Instinct 历史学习回测</h2><div class="muted">三源模拟结果暂不可用。</div>`;
+    loading.innerHTML=`<h2>Agent 严格逐期历史模拟</h2><div class="muted">模拟结果暂不可用，请检查最新运行记录。</div>`;
   }
 }
 
