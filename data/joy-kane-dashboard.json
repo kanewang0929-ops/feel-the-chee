@@ -1,6 +1,6 @@
 {
   "modelVersion": "v1.0-joy-kane-duel",
-  "generatedAt": "2026-11-18T13:14:18.950123+00:00",
+  "generatedAt": "2026-11-18T14:31:04.602365+00:00",
   "walkForward": true,
   "futureLeakage": false,
   "method": {
@@ -34,8 +34,8 @@
     "liveLock": "data/joy-kane-live-lock.json",
     "auditFile": "data/joy-kane-audit.json",
     "dailyTraining": {
-      "cyclesPerAgent": 1000000,
-      "ranToday": true,
+      "cyclesPerAgent": 0,
+      "ranToday": false,
       "minimumHoursBetweenRuns": 23.0,
       "objective": "Exact best-ticket front plus back hit counts only."
     }
@@ -218,7 +218,9 @@
         "validationDraws": 550,
         "untouchedTestDraws": 275,
         "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
-        "updatedAt": "2026-11-18T13:14:02.605739+00:00"
+        "updatedAt": "2026-11-18T13:14:02.605739+00:00",
+        "skipped": true,
+        "reason": "Daily million-cycle search already ran 1.3 hours ago."
       }
     },
     "kane": {
@@ -260,7 +262,9 @@
         "validationDraws": 550,
         "untouchedTestDraws": 275,
         "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
-        "updatedAt": "2026-11-18T13:14:18.869530+00:00"
+        "updatedAt": "2026-11-18T13:14:18.869530+00:00",
+        "skipped": true,
+        "reason": "Daily million-cycle search already ran 1.3 hours ago."
       }
     }
   },
