@@ -36,7 +36,7 @@ jobs:
         run: |
           git config user.name "feel-the-chee-learning-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/forecast.json data/forecast-history.json data/learning-log.json data/model-state.json data/walk-forward-agent.json data/walk-forward-agent-predictions.jsonl data/walk-forward-agent-state.json
+          git add data/forecast.json data/forecast-history.json data/learning-log.json data/model-state.json data/walk-forward-agent.json data/walk-forward-agent-predictions.jsonl data/walk-forward-agent-results.jsonl data/walk-forward-agent-state.json
 
           if git diff --cached --quiet; then
             echo "Forecast unchanged"
