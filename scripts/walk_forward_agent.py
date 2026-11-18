@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 OUTPUT_FILE = DATA / "walk-forward-agent.json"
 PREDICTION_LEDGER_FILE = DATA / "walk-forward-agent-predictions.jsonl"
+RESULT_LEDGER_FILE = DATA / "walk-forward-agent-results.jsonl"
 STATE_FILE = DATA / "walk-forward-agent-state.json"
 
 VERSION = "v1.0-strict-walk-forward-agent"
@@ -315,7 +316,7 @@ def main() -> None:
     calibration_seed = None
 
     PREDICTION_LEDGER_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with PREDICTION_LEDGER_FILE.open("w", encoding="utf-8") as ledger:
+    with PREDICTION_LEDGER_FILE.open("w", encoding="utf-8") as ledger, RESULT_LEDGER_FILE.open("w", encoding="utf-8") as result_ledger:
         for index in range(WARMUP, len(draws)):
             history = draws[:index]
 
@@ -441,7 +442,6 @@ def main() -> None:
                     "chee": chee_metrics,
                     "instinct": instinct_metrics,
                     "agent": agent_metrics,
-                    "agentLearning": agent_evaluation,
                 },
                 "learningUpdate": {
                     "ai": ai_learning.get("learningUpdate") if ai_learning else None,
@@ -450,6 +450,25 @@ def main() -> None:
                 },
                 "futureLeakage": False,
             }
+            result_event = {
+                "eventType": "result_scored",
+                "predictionId": prediction_id,
+                "issue": target_issue,
+                "date": target_date,
+                "trainingDrawCount": len(history),
+                "trainingThroughIssue": history[-1]["issue"],
+                "historyDigest": history_digest,
+                "predictionLockedAt": locked_at,
+                "actualRevealedAt": revealed_at,
+                "actual": row["actual"],
+                "evaluation": row["evaluation"],
+                "learningUpdate": row["learningUpdate"],
+                "futureLeakage": False,
+            }
+            result_ledger.write(json.dumps(result_event, ensure_ascii=False) + "\\n")
+            result_ledger.flush()
+            os.fsync(result_ledger.fileno())
+
             rows.append(row)
             previous_ai = ai_prediction
 
@@ -589,9 +608,9 @@ def main() -> None:
         "sourcePerformance": source_performance,
         "comparison": {"sourcePerformance": source_performance},
         "theoreticalFixedTicketBaseline": {
-            "averageFrontHitsPerTicket": round(5 / 35, 6),
-            "averageBackHitsPerTicket": round(2 / 12, 6),
-            "averageTotalHitsPerTicket": round(5 / 35 + 2 / 12, 6),
+            "averageFrontHitsPerTicket": round(25 / 35, 6),
+            "averageBackHitsPerTicket": round(4 / 12, 6),
+            "averageTotalHitsPerTicket": round(25 / 35 + 4 / 12, 6),
             "note": "Expected hit counts for one uniformly random valid ticket in a fair draw.",
         },
         "dateRange": {
@@ -623,10 +642,14 @@ def main() -> None:
             "fengShuiPolicy": "Formula-only. Uses target issue/date and never learns from historical results.",
             "liveOptimizationPolicy": "Accepted million-cycle weights may affect the next live forecast only, never earlier historical predictions.",
             "predictionLedger": "data/walk-forward-agent-predictions.jsonl",
+            "resultLedger": "data/walk-forward-agent-results.jsonl",
         },
         "summary": summary,
         "learningCurve": learning_curve,
-        "draws": rows,
+        "historyRecords": {
+            "predictionLedger": "data/walk-forward-agent-predictions.jsonl",
+            "resultLedger": "data/walk-forward-agent-results.jsonl",
+        },
         "nextForecast": {
             "targetIssue": next_issue,
             "targetDate": next_date,
