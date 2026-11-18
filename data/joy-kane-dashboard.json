@@ -1,6 +1,6 @@
 {
   "modelVersion": "v1.0-joy-kane-duel",
-  "generatedAt": "2026-11-18T21:55:50.610596+00:00",
+  "generatedAt": "2026-11-18T22:33:04.335373+00:00",
   "walkForward": true,
   "futureLeakage": false,
   "method": {
@@ -49,20 +49,20 @@
     },
     "joy": {
       "draws": 2750,
-      "averageBestFrontHits": 1.228364,
+      "averageBestFrontHits": 1.228,
       "averageBestBackHits": 0.445455,
-      "averageBestTotalHits": 1.673818
+      "averageBestTotalHits": 1.673455
     },
     "kane": {
       "draws": 2750,
-      "averageBestFrontHits": 1.228364,
+      "averageBestFrontHits": 1.229455,
       "averageBestBackHits": 0.469818,
-      "averageBestTotalHits": 1.698182
+      "averageBestTotalHits": 1.699273
     },
     "duelWins": {
       "joy": 1101,
-      "kane": 1118,
-      "tie": 531
+      "kane": 1119,
+      "tie": 530
     },
     "scoreDefinition": "Per draw, each agent is scored by its single closest ticket: exact front matches plus exact back matches. Ties are broken by front hits, then back hits. No pattern, balance, frequency, overdue, or model-fit bonus is added.",
     "randomTicketBaseline": {
@@ -199,11 +199,11 @@
       },
       "duel": {
         "wins": 911,
-        "losses": 924,
-        "ties": 915,
-        "opponentScoreTotal": 4670.0
+        "losses": 925,
+        "ties": 914,
+        "opponentScoreTotal": 4673.0
       },
-      "exploration": 0.18981366347973108,
+      "exploration": 0.19081366347973108,
       "dailyTraining": {
         "cyclesPerRun": 1000000,
         "accepted": true,
@@ -220,7 +220,7 @@
         "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
         "updatedAt": "2026-11-18T13:14:02.605739+00:00",
         "skipped": true,
-        "reason": "Daily million-cycle search already ran 8.7 hours ago."
+        "reason": "Daily million-cycle search already ran 9.3 hours ago."
       }
     },
     "kane": {
@@ -242,12 +242,12 @@
         }
       },
       "duel": {
-        "wins": 924,
+        "wins": 925,
         "losses": 911,
-        "ties": 915,
-        "opponentScoreTotal": 4603.0
+        "ties": 914,
+        "opponentScoreTotal": 4602.0
       },
-      "exploration": 0.1918106834423105,
+      "exploration": 0.19085163002509895,
       "dailyTraining": {
         "cyclesPerRun": 1000000,
         "accepted": true,
@@ -264,7 +264,7 @@
         "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
         "updatedAt": "2026-11-18T13:14:18.869530+00:00",
         "skipped": true,
-        "reason": "Daily million-cycle search already ran 8.7 hours ago."
+        "reason": "Daily million-cycle search already ran 9.3 hours ago."
       }
     }
   },
