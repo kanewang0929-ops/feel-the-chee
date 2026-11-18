@@ -215,7 +215,7 @@ function renderForecast(payload){
     ?results.map(forecastCard).join("")
     :`<div class="forecast"><div class="muted">AI结果暂不可用。</div></div>`;
   card.querySelector(".section-head .muted").textContent=
-    `基于 ${Number(payload.historyCount||0).toLocaleString("zh-CN")} 期数据学习开奖排序曲线，从下一期波动带中输出3组候选。`;
+    `Joy 独立AI模型 · 已学习 ${Number(payload.historyCount||0).toLocaleString("zh-CN")} 期历史数据 · 严格逐期封存预测。`;
   card.querySelector(".section-head .badge").textContent=`Joy · ${results.length}组预测`;
   const next=document.querySelector(".next");
   if(next) next.textContent=`下一期开奖：${payload.targetDate} · 第${payload.targetIssue}期`;
