@@ -792,6 +792,7 @@ def main() -> None:
             for name in AGENTS
         },
         "crossLearning": "Agents compare their best-ticket hit counts after each reveal. Their model weights remain independent; each adjusts its own exploration rate from the head-to-head outcome.",
+        "livePredictionLock": {"issue": live_lock["issue"], "date": live_lock["date"], "predictionId": live_lock["predictionId"], "lockedAt": live_lock["predictionLockedAt"]},
     }
     write_json(STATE_FILE, state_payload)
 
