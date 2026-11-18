@@ -115,6 +115,10 @@ function renderJoyKaneLearning(payload){
   </div>
   <div class="log-list">
     <div class="log">
+      <div class="log-time">下期预测已封存</div>
+      <div class="log-body">第${payload.livePredictionLock?.issue||payload.nextForecast?.targetIssue||"-"}期 · ${payload.livePredictionLock?.date||payload.nextForecast?.targetDate||"-"} · 封存时间 ${payload.livePredictionLock?.lockedAt||"-"}。开奖结果公布前不会改写这组号码。</div>
+    </div>
+    <div class="log">
       <div class="log-time">唯一评分标准</div>
       <div class="log-body">每期比较每个智能体最接近实际开奖的一组号码。前区精确命中数 + 后区精确命中数 = 本期得分。没有曲线拟合分、和值奖励、冷热号奖励或平衡奖励。</div>
     </div>
@@ -133,6 +137,10 @@ function renderJoyKaneLearning(payload){
     <div class="log">
       <div class="log-time">OVERDUE NUMBERS 注意事项</div>
       <div class="log-body">${payload.method?.overdueCaveat||"遗漏期数描述历史间隔，并不意味着下一期概率提高。公平独立开奖中，遗漏号码不会因为等待更久而变得更容易出现。"}</div>
+    </div>
+    <div class="log">
+      <div class="log-time">日志归档</div>
+      <div class="log-body">每日百万次参数搜索日志在满七天后自动汇总为周报。逐期开奖预测、实际结果和命中审计不会被压缩或删除。</div>
     </div>
   </div>`;
 }
@@ -179,7 +187,7 @@ function renderJoyKaneAudit(){
     <table class="audit-table">
       <thead><tr><th>期次 / 日期</th><th>实际开奖号码</th><th>Joy · 3组预测及命中</th><th>Kane · 3组预测及命中</th><th>本期胜者</th></tr></thead>
       <tbody>${pageRows.map(row=>`<tr>
-        <td><strong>${row.issue}</strong><div class="muted">${row.date}</div><div class="audit-cutoff">训练截止 ${row.trainingThroughIssue||"-"}</div></td>
+        <td><strong>${row.issue}</strong><div class="muted">${row.date}</div><div class="audit-cutoff">训练截止 ${row.trainingThroughIssue||"-"}</div><div class="audit-cutoff">${row.usedLivePredictionLock?"真实预测封存":"历史逐期回放"}</div></td>
         <td><div class="numbers">${(row.actual?.front||[]).map(n=>jkBall(n)).join("")}<span class="plus">+</span>${(row.actual?.back||[]).map(n=>jkBall(n,true)).join("")}</div></td>
         <td>${auditAgentCell(row.joy,"Joy")}</td>
         <td>${auditAgentCell(row.kane,"Kane")}</td>
