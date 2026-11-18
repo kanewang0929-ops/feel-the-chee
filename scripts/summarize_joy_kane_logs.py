@@ -97,7 +97,7 @@ def main():
 
             summary_agents[agent] = {
                 "runs": combined_count,
-                "totalCycles": int(old.get("totalCycles", 0)) + sum(int(event.get("cycles", 0) or 0) for event in events),
+                "totalCycles": int(old.get("totalCycles", 0)) + sum(int(event.get("cyclesPerRun", 0) or 0) for event in events),
                 "acceptedRuns": int(old.get("acceptedRuns", 0)) + sum(1 for event in events if event.get("accepted")),
                 "averageValidationBefore": avg("validationScoreBefore"),
                 "averageValidationAfter": avg("validationScoreAfter"),
