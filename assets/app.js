@@ -8,8 +8,12 @@ tabs.forEach(button=>button.addEventListener("click",()=>{
 
 const LIVE_HISTORY_URL="https://raw.githubusercontent.com/yangxb919/lottery-data/main/data/dlt.json";
 const LOCAL_HISTORY_URL="./data/draws.json";
-const FORECAST_URL="./data/forecast.json";
-const CHEE_FORECAST_URL="./data/chee-forecast.json";
+const WALK_FORWARD_URL="./data/walk-forward-agent.json";
+let walkForwardPayloadPromise=null;
+function loadWalkForwardPayload(){
+  if(!walkForwardPayloadPromise) walkForwardPayloadPromise=fetchJson(WALK_FORWARD_URL);
+  return walkForwardPayloadPromise;
+}
 
 let draws=[];
 let currentPage=1;
@@ -166,7 +170,7 @@ function renderAiLearning(payload){
 
   const calibration=payload.calibration||{};
   summary.querySelector(".section-head .muted").textContent=
-    "AI学习五个前区排序位置和两个后区排序位置的运行曲线，并从预测中心与不确定带中生成3组不同路径。";
+    "AI信号严格按历史期次逐期生成，每一期只读取目标期之前的开奖数据。";
   summary.querySelector(".section-head .badge").textContent=`AI模型 ${payload.modelVersion||"-"}`;
   summary.querySelector(".weight-grid").innerHTML=`
     <div class="weight"><span class="muted">曲线画像</span><strong>${calibration.selectedLabel||calibration.selectedProfile||"-"}</strong></div>
@@ -197,7 +201,7 @@ function renderAiLearning(payload){
     <div class="log">
       <div class="log-time">下一期曲线</div>
       <div>
-        <div class="log-title">从预测中心与波动带生成候选</div>
+        <div class="log-title">从过去的开奖曲线与波动带生成候选</div>
         <div class="log-body">前区中心：${centers.join(" / ")}；标准差：${sigmas.join(" / ")}。页面固定显示3组AI结果。</div>
       </div>
     </div>`;
@@ -283,7 +287,8 @@ function renderChee(payload){
 
 async function loadForecast(){
   try{
-    renderForecast(await fetchJson(FORECAST_URL));
+    const payload=await loadWalkForwardPayload();
+    renderForecast(payload.nextForecast?.ai||payload);
   }catch(error){
     console.warn("Forecast unavailable",error);
     const list=document.querySelector("#aiPredictionCard .forecast-list");
@@ -293,7 +298,8 @@ async function loadForecast(){
 
 async function loadCheeForecast(){
   try{
-    renderChee(await fetchJson(CHEE_FORECAST_URL));
+    const payload=await loadWalkForwardPayload();
+    renderChee(payload.nextForecast?.chee||payload);
   }catch(error){
     console.warn("Chee forecast unavailable",error);
     const list=document.querySelector("#cheePredictionCard .forecast-list");
