@@ -141,3 +141,27 @@ th{color:#cbd5f3;font-weight:800}
 .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
 @media(max-width:900px){.grid{grid-template-columns:1fr}.weight-grid{grid-template-columns:1fr 1fr}.header{align-items:flex-start;flex-direction:column}}
 @media(max-width:600px){.form-grid{grid-template-columns:1fr}.weight-grid{grid-template-columns:1fr}.log{grid-template-columns:1fr}}
+
+
+/* Joy vs Kane dashboard and draw-by-draw audit */
+.duel-agent-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:16px 0}
+.duel-agent-learning{margin:0}
+.signal-weights{display:flex;gap:7px;flex-wrap:wrap}
+.signal-weight{display:inline-flex;padding:6px 9px;border-radius:8px;background:rgba(255,255,255,.06);font-size:12px;color:var(--text)}
+.audit-wrap{width:100%;overflow:auto;border-radius:12px}
+.audit-table{min-width:1120px}
+.audit-table th{position:sticky;top:0;z-index:1;background:#1a2130}
+.audit-table td{vertical-align:top;min-width:150px}
+.audit-table td:nth-child(3),.audit-table td:nth-child(4){min-width:310px}
+.audit-agent-cell{display:grid;gap:10px}
+.audit-ticket{padding:9px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.025)}
+.audit-ticket-head{font-size:11px;color:var(--muted);margin-bottom:6px}
+.audit-ticket .numbers{gap:4px}
+.audit-ticket .ball{width:25px;height:25px;font-size:11px}
+.audit-hit{font-size:11px;color:var(--muted);margin-top:7px}
+.audit-best{font-size:12px;font-weight:800;padding:7px 9px;border-radius:8px;background:rgba(255,209,102,.09)}
+.audit-cutoff{font-size:11px;color:var(--muted);margin-top:5px}
+.duel-overview{margin:14px 0}
+#joyKaneAudit .toolbar{align-items:center}
+#joyKaneAudit .search{max-width:240px}
+@media(max-width:900px){.duel-agent-grid{grid-template-columns:1fr}}
