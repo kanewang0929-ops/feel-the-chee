@@ -1,0 +1,527 @@
+{
+  "eventType": "prediction_locked",
+  "predictionId": "7eb4b20199a6deb5166685ac",
+  "issue": "26132",
+  "date": "2026-11-18",
+  "trainingDrawCount": 2949,
+  "trainingThroughIssue": "26131",
+  "trainingThroughDate": "2026-11-16",
+  "historyDigest": "38efd092c5f943b256b52a1f20a1941da90159478b1ece6dca01c69a92119a7c",
+  "predictionLockedAt": "2026-11-18T13:14:18.948343+00:00",
+  "agents": {
+    "joy": {
+      "modelVersion": "joy-adaptive-hit-model-v1",
+      "weights": {
+        "front": {
+          "curve": 0.9986747538705852,
+          "transition": 0.00044174870980488945,
+          "frequency": 0.00044174870980488945,
+          "recency": 0.00044174870980488945
+        },
+        "back": {
+          "curve": 0.00098460480316063,
+          "transition": 0.0011083515435109884,
+          "frequency": 0.001005217637763384,
+          "recency": 0.9969018260155651
+        }
+      },
+      "prediction": {
+        "modelVersion": "joy-adaptive-hit-model-v1",
+        "targetIssue": "26132",
+        "targetDate": "2026-11-18",
+        "results": [
+          {
+            "rank": 1,
+            "label": "Joy Main",
+            "front": [
+              "06",
+              "07",
+              "16",
+              "18",
+              "29"
+            ],
+            "back": [
+              "07",
+              "12"
+            ]
+          },
+          {
+            "rank": 2,
+            "label": "Joy Alternative 1",
+            "front": [
+              "05",
+              "11",
+              "16",
+              "23",
+              "24"
+            ],
+            "back": [
+              "07",
+              "09"
+            ]
+          },
+          {
+            "rank": 3,
+            "label": "Joy Alternative 2",
+            "front": [
+              "07",
+              "11",
+              "16",
+              "19",
+              "29"
+            ],
+            "back": [
+              "04",
+              "07"
+            ]
+          }
+        ]
+      },
+      "signalBundles": {
+        "curve": [
+          {
+            "front": [
+              6,
+              7,
+              11,
+              22,
+              29
+            ],
+            "back": [
+              4,
+              9
+            ]
+          },
+          {
+            "front": [
+              4,
+              10,
+              11,
+              29,
+              30
+            ],
+            "back": [
+              4,
+              8
+            ]
+          },
+          {
+            "front": [
+              5,
+              7,
+              24,
+              29,
+              30
+            ],
+            "back": [
+              4,
+              5
+            ]
+          }
+        ],
+        "transition": [
+          {
+            "front": [
+              3,
+              22,
+              29,
+              33,
+              35
+            ],
+            "back": [
+              7,
+              10
+            ]
+          },
+          {
+            "front": [
+              1,
+              29,
+              33,
+              34,
+              35
+            ],
+            "back": [
+              7,
+              10
+            ]
+          },
+          {
+            "front": [
+              3,
+              29,
+              30,
+              33,
+              34
+            ],
+            "back": [
+              2,
+              10
+            ]
+          }
+        ],
+        "frequency": [
+          {
+            "front": [
+              2,
+              3,
+              12,
+              18,
+              26
+            ],
+            "back": [
+              2,
+              7
+            ]
+          },
+          {
+            "front": [
+              2,
+              3,
+              13,
+              14,
+              26
+            ],
+            "back": [
+              2,
+              8
+            ]
+          },
+          {
+            "front": [
+              3,
+              4,
+              9,
+              13,
+              14
+            ],
+            "back": [
+              2,
+              9
+            ]
+          }
+        ],
+        "recency": [
+          {
+            "front": [
+              1,
+              2,
+              11,
+              14,
+              18
+            ],
+            "back": [
+              9,
+              12
+            ]
+          },
+          {
+            "front": [
+              11,
+              18,
+              25,
+              27,
+              29
+            ],
+            "back": [
+              4,
+              12
+            ]
+          },
+          {
+            "front": [
+              2,
+              6,
+              14,
+              18,
+              25
+            ],
+            "back": [
+              4,
+              9
+            ]
+          }
+        ]
+      }
+    },
+    "kane": {
+      "modelVersion": "kane-adaptive-hit-model-v1",
+      "weights": {
+        "front": {
+          "frequency": 0.0004187897802788041,
+          "interval": 0.0004187897802788041,
+          "deviation": 0.0004187897802788041,
+          "distribution": 0.9983248408788847,
+          "overdue": 0.0004187897802788041
+        },
+        "back": {
+          "frequency": 0.0008248387881873852,
+          "interval": 0.0008537858812992565,
+          "deviation": 0.0008248387881873852,
+          "distribution": 0.9966716977541386,
+          "overdue": 0.0008248387881873852
+        }
+      },
+      "prediction": {
+        "modelVersion": "kane-adaptive-hit-model-v1",
+        "targetIssue": "26132",
+        "targetDate": "2026-11-18",
+        "results": [
+          {
+            "rank": 1,
+            "label": "Kane Main",
+            "front": [
+              "01",
+              "10",
+              "22",
+              "27",
+              "32"
+            ],
+            "back": [
+              "02",
+              "07"
+            ]
+          },
+          {
+            "rank": 2,
+            "label": "Kane Alternative 1",
+            "front": [
+              "01",
+              "03",
+              "26",
+              "28",
+              "29"
+            ],
+            "back": [
+              "03",
+              "12"
+            ]
+          },
+          {
+            "rank": 3,
+            "label": "Kane Alternative 2",
+            "front": [
+              "01",
+              "02",
+              "18",
+              "29",
+              "33"
+            ],
+            "back": [
+              "03",
+              "12"
+            ]
+          }
+        ]
+      },
+      "signalBundles": {
+        "frequency": [
+          {
+            "front": [
+              2,
+              8,
+              21,
+              26,
+              33
+            ],
+            "back": [
+              1,
+              8
+            ]
+          },
+          {
+            "front": [
+              8,
+              9,
+              18,
+              26,
+              27
+            ],
+            "back": [
+              1,
+              8
+            ]
+          },
+          {
+            "front": [
+              3,
+              13,
+              14,
+              26,
+              29
+            ],
+            "back": [
+              5,
+              12
+            ]
+          }
+        ],
+        "interval": [
+          {
+            "front": [
+              4,
+              9,
+              16,
+              21,
+              35
+            ],
+            "back": [
+              5,
+              12
+            ]
+          },
+          {
+            "front": [
+              9,
+              10,
+              16,
+              21,
+              26
+            ],
+            "back": [
+              5,
+              10
+            ]
+          },
+          {
+            "front": [
+              9,
+              10,
+              16,
+              21,
+              32
+            ],
+            "back": [
+              5,
+              10
+            ]
+          }
+        ],
+        "deviation": [
+          {
+            "front": [
+              2,
+              7,
+              20,
+              30,
+              31
+            ],
+            "back": [
+              3,
+              10
+            ]
+          },
+          {
+            "front": [
+              7,
+              15,
+              17,
+              28,
+              30
+            ],
+            "back": [
+              3,
+              10
+            ]
+          },
+          {
+            "front": [
+              1,
+              17,
+              20,
+              24,
+              31
+            ],
+            "back": [
+              6,
+              11
+            ]
+          }
+        ],
+        "distribution": [
+          {
+            "front": [
+              1,
+              10,
+              26,
+              29,
+              31
+            ],
+            "back": [
+              3,
+              8
+            ]
+          },
+          {
+            "front": [
+              1,
+              7,
+              22,
+              24,
+              32
+            ],
+            "back": [
+              3,
+              8
+            ]
+          },
+          {
+            "front": [
+              1,
+              12,
+              22,
+              29,
+              32
+            ],
+            "back": [
+              3,
+              10
+            ]
+          }
+        ],
+        "overdue": [
+          {
+            "front": [
+              4,
+              9,
+              16,
+              21,
+              32
+            ],
+            "back": [
+              5,
+              12
+            ]
+          },
+          {
+            "front": [
+              7,
+              9,
+              16,
+              20,
+              31
+            ],
+            "back": [
+              5,
+              10
+            ]
+          },
+          {
+            "front": [
+              4,
+              10,
+              16,
+              31,
+              35
+            ],
+            "back": [
+              5,
+              12
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "futureLeakage": false
+}

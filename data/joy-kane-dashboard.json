@@ -1,0 +1,277 @@
+{
+  "modelVersion": "v1.0-joy-kane-duel",
+  "generatedAt": "2026-11-18T13:14:18.950123+00:00",
+  "walkForward": true,
+  "futureLeakage": false,
+  "method": {
+    "warmupDraws": 200,
+    "predictionOrder": [
+      "read only the chronological prefix before the target draw",
+      "generate Joy and Kane predictions from independent model states",
+      "flush both sealed predictions to the prediction-only ledger",
+      "reveal the target draw",
+      "score each agent by its closest ticket using exact matches only",
+      "update each agent and record the head-to-head result"
+    ],
+    "joySignals": [
+      "curve",
+      "transition",
+      "frequency",
+      "recency"
+    ],
+    "kaneSignals": [
+      "frequency",
+      "interval",
+      "deviation",
+      "distribution",
+      "overdue"
+    ],
+    "kaneMethod": "200-draw frequency, interval tracking, deviation from expected frequency, four-block distribution balance, and overdue interval signals; balanced ticket construction is a candidate-generation heuristic only.",
+    "overdueCaveat": "Overdue is a historical absence description, not a probability increase. In a fair independent draw, a number's next-draw probability does not rise because it has been absent.",
+    "scoreDefinition": "Per draw, each agent is scored by its single closest ticket: exact front matches plus exact back matches. Ties are broken by front hits, then back hits. No pattern, balance, frequency, overdue, or model-fit bonus is added.",
+    "predictionLedger": "data/joy-kane-predictions.jsonl",
+    "resultLedger": "data/joy-kane-results.jsonl",
+    "liveLock": "data/joy-kane-live-lock.json",
+    "auditFile": "data/joy-kane-audit.json",
+    "dailyTraining": {
+      "cyclesPerAgent": 1000000,
+      "ranToday": true,
+      "minimumHoursBetweenRuns": 23.0,
+      "objective": "Exact best-ticket front plus back hit counts only."
+    }
+  },
+  "summary": {
+    "drawsEvaluated": 2749,
+    "warmupDraws": 200,
+    "dateRange": {
+      "earliest": "2008-09-15",
+      "latest": "2026-11-16"
+    },
+    "joy": {
+      "draws": 2749,
+      "averageBestFrontHits": 1.228447,
+      "averageBestBackHits": 0.445617,
+      "averageBestTotalHits": 1.674063
+    },
+    "kane": {
+      "draws": 2749,
+      "averageBestFrontHits": 1.228447,
+      "averageBestBackHits": 0.469989,
+      "averageBestTotalHits": 1.698436
+    },
+    "duelWins": {
+      "joy": 1101,
+      "kane": 1118,
+      "tie": 530
+    },
+    "scoreDefinition": "Per draw, each agent is scored by its single closest ticket: exact front matches plus exact back matches. Ties are broken by front hits, then back hits. No pattern, balance, frequency, overdue, or model-fit bonus is added.",
+    "randomTicketBaseline": {
+      "expectedFrontHits": 0.714286,
+      "expectedBackHits": 0.333333,
+      "expectedTotalHits": 1.047619
+    }
+  },
+  "nextForecast": {
+    "targetIssue": "26132",
+    "targetDate": "2026-11-18",
+    "historyCount": 2949,
+    "joy": {
+      "modelVersion": "joy-adaptive-hit-model-v1",
+      "targetIssue": "26132",
+      "targetDate": "2026-11-18",
+      "results": [
+        {
+          "rank": 1,
+          "label": "Joy Main",
+          "front": [
+            "06",
+            "07",
+            "16",
+            "18",
+            "29"
+          ],
+          "back": [
+            "07",
+            "12"
+          ]
+        },
+        {
+          "rank": 2,
+          "label": "Joy Alternative 1",
+          "front": [
+            "05",
+            "11",
+            "16",
+            "23",
+            "24"
+          ],
+          "back": [
+            "07",
+            "09"
+          ]
+        },
+        {
+          "rank": 3,
+          "label": "Joy Alternative 2",
+          "front": [
+            "07",
+            "11",
+            "16",
+            "19",
+            "29"
+          ],
+          "back": [
+            "04",
+            "07"
+          ]
+        }
+      ]
+    },
+    "kane": {
+      "modelVersion": "kane-adaptive-hit-model-v1",
+      "targetIssue": "26132",
+      "targetDate": "2026-11-18",
+      "results": [
+        {
+          "rank": 1,
+          "label": "Kane Main",
+          "front": [
+            "01",
+            "10",
+            "22",
+            "27",
+            "32"
+          ],
+          "back": [
+            "02",
+            "07"
+          ]
+        },
+        {
+          "rank": 2,
+          "label": "Kane Alternative 1",
+          "front": [
+            "01",
+            "03",
+            "26",
+            "28",
+            "29"
+          ],
+          "back": [
+            "03",
+            "12"
+          ]
+        },
+        {
+          "rank": 3,
+          "label": "Kane Alternative 2",
+          "front": [
+            "01",
+            "02",
+            "18",
+            "29",
+            "33"
+          ],
+          "back": [
+            "03",
+            "12"
+          ]
+        }
+      ]
+    }
+  },
+  "agentStates": {
+    "joy": {
+      "observations": 2749,
+      "weights": {
+        "front": {
+          "curve": 0.9986747538705852,
+          "transition": 0.00044174870980488945,
+          "frequency": 0.00044174870980488945,
+          "recency": 0.00044174870980488945
+        },
+        "back": {
+          "curve": 0.00098460480316063,
+          "transition": 0.0011083515435109884,
+          "frequency": 0.001005217637763384,
+          "recency": 0.9969018260155651
+        }
+      },
+      "duel": {
+        "wins": 911,
+        "losses": 924,
+        "ties": 914,
+        "opponentScoreTotal": 4669.0
+      },
+      "exploration": 0.18981366347973108,
+      "dailyTraining": {
+        "cyclesPerRun": 1000000,
+        "accepted": true,
+        "acceptedTrials": 61,
+        "trainScoreBefore": 1.643482,
+        "trainScoreAfter": 1.637252,
+        "validationScoreBefore": 1.59142,
+        "validationScoreAfter": 1.658044,
+        "untouchedTestScoreBefore": 1.566245,
+        "untouchedTestScoreAfter": 1.603601,
+        "trainingDraws": 1924,
+        "validationDraws": 550,
+        "untouchedTestDraws": 275,
+        "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
+        "updatedAt": "2026-11-18T13:14:02.605739+00:00"
+      }
+    },
+    "kane": {
+      "observations": 2749,
+      "weights": {
+        "front": {
+          "frequency": 0.0004187897802788041,
+          "interval": 0.0004187897802788041,
+          "deviation": 0.0004187897802788041,
+          "distribution": 0.9983248408788847,
+          "overdue": 0.0004187897802788041
+        },
+        "back": {
+          "frequency": 0.0008248387881873852,
+          "interval": 0.0008537858812992565,
+          "deviation": 0.0008248387881873852,
+          "distribution": 0.9966716977541386,
+          "overdue": 0.0008248387881873852
+        }
+      },
+      "duel": {
+        "wins": 924,
+        "losses": 911,
+        "ties": 914,
+        "opponentScoreTotal": 4602.0
+      },
+      "exploration": 0.1918106834423105,
+      "dailyTraining": {
+        "cyclesPerRun": 1000000,
+        "accepted": true,
+        "acceptedTrials": 60,
+        "trainScoreBefore": 1.634113,
+        "trainScoreAfter": 1.728477,
+        "validationScoreBefore": 1.623466,
+        "validationScoreAfter": 1.745135,
+        "untouchedTestScoreBefore": 1.598667,
+        "untouchedTestScoreAfter": 1.672507,
+        "trainingDraws": 1924,
+        "validationDraws": 550,
+        "untouchedTestDraws": 275,
+        "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
+        "updatedAt": "2026-11-18T13:14:18.869530+00:00"
+      }
+    }
+  },
+  "livePredictionLock": {
+    "issue": "26132",
+    "date": "2026-11-18",
+    "predictionId": "7eb4b20199a6deb5166685ac",
+    "lockedAt": "2026-11-18T13:14:18.948343+00:00"
+  },
+  "audit": {
+    "file": "data/joy-kane-audit.json",
+    "rows": 2749
+  }
+}
