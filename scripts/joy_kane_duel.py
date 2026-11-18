@@ -232,12 +232,10 @@ def weighted_sample(rng: random.Random, scores: dict[int, float], count: int, po
     return sorted(selected)
 
 
-def balance_cost(front: list[int], back: list[int], history: list[dict]) -> float:
+def balance_cost(front: list[int], back: list[int], target_sum: float) -> float:
     odd_front = sum(n % 2 for n in front)
     low_front = sum(n <= 18 for n in front)
     front_sum = sum(front)
-    historical_sums = [sum(row["front"]) for row in history[-200:]]
-    target_sum = statistics.fmean(historical_sums) if historical_sums else 90.0
     odd_back = sum(n % 2 for n in back)
     low_back = sum(n <= 6 for n in back)
     return (
@@ -258,6 +256,8 @@ def generate_tickets(
     balanced: bool,
 ) -> list[dict]:
     tickets = []
+    historical_sums = [sum(row["front"]) for row in history[-200:]]
+    target_sum = statistics.fmean(historical_sums) if historical_sums else 90.0
     front_pool = [n for n, _ in sorted(front_scores.items(), key=lambda item: item[1], reverse=True)[:20]]
     back_pool = [n for n, _ in sorted(back_scores.items(), key=lambda item: item[1], reverse=True)[:8]]
     for _ in range(PICK_COUNT):
@@ -267,7 +267,7 @@ def generate_tickets(
             back = weighted_sample(rng, back_scores, 2, 8, set(), back_pool)
             if len(front) != 5 or len(back) != 2:
                 continue
-            cost = balance_cost(front, back, history) if balanced else 0.0
+            cost = balance_cost(front, back, target_sum) if balanced else 0.0
             signal = sum(front_scores[n] for n in front) + sum(back_scores[n] for n in back)
             tie_noise = rng.random() * 0.03
             candidates.append((cost - signal * 0.08 + tie_noise, front, back))
