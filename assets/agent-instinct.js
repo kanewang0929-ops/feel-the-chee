@@ -1,7 +1,7 @@
 /* Three-source Agent display: AI + 风水 + Agent Instinct. */
-const AGENT_FORECAST_URL="./data/hybrid-forecast.json";
-const AGENT_BACKTEST_URL="./data/hybrid-backtest.json";
-const AGENT_SIMULATION_LOG_URL="./data/hybrid-simulation-log.json";
+const AGENT_FORECAST_URL="./data/walk-forward-agent.json";
+const AGENT_BACKTEST_URL="./data/walk-forward-agent.json";
+const AGENT_SIMULATION_LOG_URL="./data/walk-forward-agent.json";
 
 let agentForecastLoaded=false;
 let agentBacktestLoaded=false;
@@ -12,6 +12,62 @@ function agentFetch(url){
     if(!response.ok) throw new Error(`HTTP ${response.status}`);
     return response.json();
   });
+}
+
+function walkForwardAgentView(payload){
+  const next=payload.nextForecast||{};
+  const forecast=next.agent||{};
+  const state=next.agentState||payload.finalState?.agentLiveState||{};
+  const latest=payload.draws?.at(-1)||null;
+  const evaluation=latest?.evaluation?.agent||null;
+  return {
+    ...forecast,
+    targetIssue:next.targetIssue||forecast.targetIssue,
+    targetDate:next.targetDate||forecast.targetDate,
+    sourceWeights:forecast.sourceWeights||state.sourceWeights||{},
+    strategyWeights:forecast.strategyWeights||state.strategyWeights||{},
+    observations:state.observations||payload.summary?.drawsEvaluated||0,
+    lastEvaluation:forecast.lastEvaluation||(latest?{
+      issue:latest.issue,
+      actual:latest.actual,
+      summary:{
+        averageFrontHits:evaluation?.averageFrontHitsPerTicket,
+        averageBackHits:evaluation?.averageBackHitsPerTicket
+      }
+    }:null),
+    modelVersion:payload.modelVersion||forecast.modelVersion,
+    results:forecast.results||[]
+  };
+}
+
+function walkForwardSimulationView(payload){
+  const summary=payload.summary||{};
+  const state=payload.nextForecast?.agentState||payload.finalState?.agentLiveState||{};
+  return {
+    eventType:"agent-instinct-simulation-learning",
+    generatedAt:payload.generatedAt,
+    drawsEvaluated:summary.drawsEvaluated||0,
+    ticketsEvaluated:summary.agent?.ticketsEvaluated||summary.ticketsEvaluated||0,
+    averageFrontHits:summary.agent?.averageFrontHitsPerTicket||0,
+    averageBackHits:summary.agent?.averageBackHitsPerTicket||0,
+    weightsAfter:{source:state.sourceWeights||{},strategy:state.strategyWeights||{}}
+  };
+}
+
+function walkForwardBacktestView(payload){
+  const summary=payload.summary||{};
+  return {
+    backtestVersion:payload.modelVersion,
+    summary:{
+      drawsEvaluated:summary.drawsEvaluated||0,
+      ticketsEvaluated:summary.ticketsEvaluated||0,
+      observed:summary.observed||{},
+      theoreticalFixedTicketBaseline:summary.theoreticalFixedTicketBaseline||{},
+      comparison:summary.comparison||{}
+    },
+    learningCurve:payload.learningCurve||[],
+    method:payload.method||{}
+  };
 }
 
 function agentBall(number,back=false){
@@ -116,7 +172,7 @@ function renderAgentForecast(payload){
     card.innerHTML=`<div class="section-head">
       <div>
         <h2>融合 Agent · 下期精选</h2>
-        <div class="muted">第${payload.targetIssue}期 · AI、风水与Agent直觉三源权重共同生成2组结果。</div>
+        <div class="muted">第${payload.targetIssue}期 · 逐期模拟后更新模型，先锁定预测再揭示开奖。</div>
       </div>
       <span class="badge gold">2组结果 · Agent Instinct</span>
     </div>
@@ -228,7 +284,7 @@ function renderAgentSimulationLog(rows){
   card.innerHTML=`<div class="section-head">
     <div>
       <h2>Agent Instinct 每日模拟日志</h2>
-      <div class="muted">每天随AI回测与风水审计一起运行，并把模拟结果与权重变化写入后端数据库。</div>
+      <div class="muted">按历史期次逐期回放。每期预测先写入独立账本，开奖结果随后才进入评分与学习。</div>
     </div>
     <span class="badge gold">最近运行 ${generatedAt}</span>
   </div>
@@ -249,8 +305,8 @@ function renderAgentSimulationLog(rows){
     <div class="log">
       <div class="log-time">后端存储</div>
       <div>
-        <div class="log-title">hybrid-simulation-log.json</div>
-        <div class="log-body">保留每次Agent模拟的运行时间、模型版本、回测规模、命中均值、更新前后权重与策略权重。</div>
+        <div class="log-title">walk-forward-agent-predictions.jsonl</div>
+        <div class="log-body">只保存开奖揭示前的预测、历史数据截止期与SHA-256摘要；评分和学习结果另存于模拟记录。</div>
       </div>
     </div>
   </div>`;
@@ -274,8 +330,8 @@ function renderAgentBacktest(payload){
   card.className="card";
   card.innerHTML=`<div class="section-head">
     <div>
-      <h2>Agent Instinct 历史学习回测</h2>
-      <div class="muted">逐期先生成AI、风水和独立直觉号码，再揭示实际开奖并更新三源权重。</div>
+      <h2>Agent 严格逐期历史模拟</h2>
+      <div class="muted">每期只使用此前开奖结果生成预测。预测写入账本后，才揭示当期结果并更新后续模型。</div>
     </div>
     <span class="badge gold">${payload.backtestVersion||"直觉回测"}</span>
   </div>
@@ -315,7 +371,8 @@ async function loadAgentForecast(){
   if(agentForecastLoaded) return;
   agentForecastLoaded=true;
   try{
-    renderAgentForecast(await agentFetch(AGENT_FORECAST_URL));
+    const payload=await agentFetch(AGENT_FORECAST_URL);
+    renderAgentForecast(walkForwardAgentView(payload));
   }catch(error){
     console.warn("Agent forecast unavailable",error);
     const list=document.querySelector("#hybridAgentCard .forecast-list");
@@ -327,7 +384,8 @@ async function loadAgentSimulationLog(){
   if(agentSimulationLoaded) return;
   agentSimulationLoaded=true;
   try{
-    renderAgentSimulationLog(await agentFetch(AGENT_SIMULATION_LOG_URL));
+    const payload=await agentFetch(AGENT_SIMULATION_LOG_URL);
+    renderAgentSimulationLog([walkForwardSimulationView(payload)]);
   }catch(error){
     console.warn("Agent simulation log unavailable",error);
     renderAgentSimulationLog([]);
@@ -347,7 +405,8 @@ async function loadAgentBacktest(){
   learning.appendChild(loading);
 
   try{
-    renderAgentBacktest(await agentFetch(AGENT_BACKTEST_URL));
+    const payload=await agentFetch(AGENT_BACKTEST_URL);
+    renderAgentBacktest(walkForwardBacktestView(payload));
   }catch(error){
     console.warn("Agent backtest unavailable",error);
     loading.innerHTML=`<h2>Agent Instinct 历史学习回测</h2><div class="muted">三源模拟结果暂不可用。</div>`;
