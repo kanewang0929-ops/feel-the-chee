@@ -8,11 +8,11 @@ tabs.forEach(button=>button.addEventListener("click",()=>{
 
 const LIVE_HISTORY_URL="https://raw.githubusercontent.com/yangxb919/lottery-data/main/data/dlt.json";
 const LOCAL_HISTORY_URL="./data/draws.json";
-const WALK_FORWARD_URL="./data/walk-forward-agent.json";
-let walkForwardPayloadPromise=null;
-function loadWalkForwardPayload(){
-  if(!walkForwardPayloadPromise) walkForwardPayloadPromise=fetchJson(WALK_FORWARD_URL);
-  return walkForwardPayloadPromise;
+const DUEL_DASHBOARD_URL="./data/joy-kane-dashboard.json";
+let duelPayloadPromise=null;
+function loadDuelPayload(){
+  if(!duelPayloadPromise) duelPayloadPromise=fetchJson(DUEL_DASHBOARD_URL);
+  return duelPayloadPromise;
 }
 
 let draws=[];
@@ -137,7 +137,7 @@ function forecastCard(result){
   return `<div class="forecast">
     <div class="forecast-top">
       <strong>预测结果 ${result.rank} · ${result.label}</strong>
-      <span class="score">曲线吻合度 ${scoreText(result.fit)}</span>
+      <span class="score">开奖后按命中数评分</span>
     </div>
     <div class="numbers">
       ${(result.front||[]).map(number=>ball(number)).join("")}
@@ -216,10 +216,9 @@ function renderForecast(payload){
     :`<div class="forecast"><div class="muted">AI结果暂不可用。</div></div>`;
   card.querySelector(".section-head .muted").textContent=
     `基于 ${Number(payload.historyCount||0).toLocaleString("zh-CN")} 期数据学习开奖排序曲线，从下一期波动带中输出3组候选。`;
-  card.querySelector(".section-head .badge").textContent=`${results.length}组结果`;
+  card.querySelector(".section-head .badge").textContent=`Joy · ${results.length}组预测`;
   const next=document.querySelector(".next");
   if(next) next.textContent=`下一期开奖：${payload.targetDate} · 第${payload.targetIssue}期`;
-  renderAiLearning(payload);
 }
 
 function renderCheeFormula(payload){
@@ -287,8 +286,9 @@ function renderChee(payload){
 
 async function loadForecast(){
   try{
-    const payload=await loadWalkForwardPayload();
-    renderForecast(payload.nextForecast?.ai||payload);
+    const payload=await loadDuelPayload();
+    const joy=payload.nextForecast?.joy||{};
+    renderForecast({...joy,targetIssue:payload.nextForecast?.targetIssue,targetDate:payload.nextForecast?.targetDate,historyCount:payload.nextForecast?.historyCount});
   }catch(error){
     console.warn("Forecast unavailable",error);
     const list=document.querySelector("#aiPredictionCard .forecast-list");
@@ -298,8 +298,8 @@ async function loadForecast(){
 
 async function loadCheeForecast(){
   try{
-    const payload=await loadWalkForwardPayload();
-    renderChee(payload.nextForecast?.chee||payload);
+    const payload=await fetchJson("./data/chee-forecast.json");
+    renderChee(payload);
   }catch(error){
     console.warn("Chee forecast unavailable",error);
     const list=document.querySelector("#cheePredictionCard .forecast-list");
