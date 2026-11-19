@@ -11,8 +11,8 @@ Use Render's native services:
 - Web Service: public read-only API for the website and protected admin endpoints.
 - GitHub Actions: run the 100-simulation daily batch on a single runner; move to Render Workflows only if measured runtime or scheduling needs justify it.
 - No separate Render Cron Job is needed initially; use GitHub Actions scheduling for the daily batch.
-- Render Postgres: persistent operational database and model registry.
-- Render Key Value: optional only if a conventional background-worker queue is later needed; Workflows already manages its own task queue.
+- Render Postgres: optional later, only if durable queryable history is required by the dashboard.
+- Render Key Value: not required for the initial 100-simulation setup.
 
 For large compressed Parquet audit/summary files, use an S3-compatible object store such as Cloudflare R2 as an optional external file-storage layer. This does not move compute or the app off Render. If the requirement is absolutely no external storage vendor, start with Postgres for summaries and selected audit records, but review storage growth and query performance for a 100-simulation daily batch.
 
@@ -29,9 +29,9 @@ For large compressed Parquet audit/summary files, use an S3-compatible object st
 ## Current-state findings
 
 - Current `render.yaml` configures a static site only; there is no application backend or persistent database in the repository's Render configuration.
-- The existing GitHub Actions workflow synchronizes draws and runs the current Joy/Kane script successfully, but GitHub Actions should not host a 100-simulation daily batch.
+- The existing GitHub Actions setup is the preferred starting point for 100 simulations per daily batch; benchmark the 100-run workload before considering paid compute.
 - The current `scripts/joy_kane_duel.py` originally had `PICK_COUNT = 3`. The implementation branch changes it to `PICK_COUNT = 1` and adds contract tests.
-- Existing JSONL files should not remain the long-term storage system for large simulation output.
+- At 100 simulations per batch, existing workflow artifacts are sufficient for initial testing; introduce persistent storage only when the dashboard needs durable history.
 - The current Render site should remain live while the new backend is built and validated in parallel.
 
 ## Proposed Render architecture
@@ -43,19 +43,6 @@ For large compressed Parquet audit/summary files, use an S3-compatible object st
 5. **Artifact storage** retains compact batch summaries and selected audit traces. External object storage is unnecessary at the 100-simulation target unless actual output growth demonstrates a need.
 6. **Web API (later, if needed)** connects the existing static site to durable model and simulation data. Keep the current static site unchanged during the initial 100-simulation test.
 7. **Cost and safety controls** use GitHub Actions run history, artifact sizes, explicit batch limits, and a manual workflow trigger. Add Render monitoring only if paid Render compute is introduced.
-
-### Render Workflows limits to design around
-
-Render Workflows is currently documented as public beta. The current documentation describes:
-- Task runs can execute for up to 24 hours (default 2 hours unless configured).
-- Hundreds of concurrent task instances, subject to workspace plan and purchased concurrency.
-- Base concurrent task runs: Hobby 20, Pro 50, Scale 100; documented maximums with added concurrency: Hobby 200, Pro 200, Scale 300, Enterprise 300+.
-- Workflow task compute currently includes 0.5 CPU / 512 MB, 1 CPU / 2 GB, and 2 CPU / 4 GB plans; larger plans can be requested.
-- Added concurrency has a separate monthly charge, and task compute is billed by instance type and runtime.
-- Workflows currently supports Python and TypeScript tasks.
-- Workflows does not yet provide native scheduling; use a Render Cron Job to trigger the daily workflow.
-
-These limits and prices can change. Recheck the current Render docs and dashboard before provisioning or approving spend. Do not assume the maximum concurrency is included in the base workspace plan.
 
 ## Batch design
 
@@ -86,7 +73,7 @@ Run the 100 simulations as one bounded batch initially. Each simulation receives
 
 ### Every simulation
 
-Store one compact summary per simulation. Recommended at scale: write summaries in bulk to date-partitioned Parquet files in object storage. Keep a compact top-N ranking and daily aggregate in Postgres for fast dashboard queries.
+Store one compact summary per simulation as a GitHub Actions artifact initially. If the website later needs long-term searchable history, move summaries into Postgres.
 
 Fields:
 - batch_id, simulation_id, seed, engine_version, config_hash;
@@ -95,7 +82,7 @@ Fields:
 - Joy/Kane wins, losses, and ties;
 - training, validation, and untouched-test metrics;
 - final Joy/Kane model-state fingerprints;
-- worker/shard ID, runtime, completion status, and timestamp.
+- runner ID, runtime, completion status, and timestamp.
 
 ### Selected full traces
 
@@ -172,7 +159,7 @@ Until this protocol exists and passes its own tests, the full-history ten-run re
 ## Security and reliability
 
 - Keep database credentials and object-storage keys in Render secret environment variables.
-- Use Render private networking for service-to-database communication.
+- If a database is added later, use private networking for service-to-database communication.
 - Make writes idempotent with unique keys such as (batch_id, simulation_id).
 - A retried batch must not duplicate summaries or overwrite a newer published model.
 - Write batch outputs atomically and preserve a clear failed/completed status.
@@ -182,11 +169,11 @@ Until this protocol exists and passes its own tests, the full-history ten-run re
 ## Rollout
 
 1. Correct the one-ticket contract and add tests for prediction sealing, chronological cutoff, independent states, scoring, and reproducibility.
-2. Refactor the simulation engine into a reusable workflow task and benchmark one complete replay.
+2. Refactor the simulation engine into a reusable batch runner and benchmark the 100-simulation batch.
 3. Run the 100-simulation batch locally or through GitHub Actions and measure actual runtime, memory, artifact size, and failure recovery.
 4. Add Postgres and an API only if the dashboard needs persistent queryable history beyond what the existing static site and workflow artifacts can provide.
 5. Enable a daily GitHub Actions schedule after the 100-simulation test is reliable.
-6. Run 100, 1,000, and 10,000-run pilots. Measure runtime, CPU, memory, storage, retry behavior, and cost.
+6. Do not increase the target above 100 without a new cost and performance review.
 7. Enable the 100-simulation daily schedule only after the benchmark and spend review.
 
 ## Before provisioning or scaling
@@ -194,7 +181,7 @@ Until this protocol exists and passes its own tests, the full-history ten-run re
 Confirm:
 - the existing Render workspace plan and region;
 - the approved daily/monthly spend ceiling;
-- whether external S3-compatible object storage (recommended for bulk Parquet and full audit files) is acceptable.
+- whether long-term external object storage is needed at all; it is not part of the initial plan.
 
 No paid services should be created or scaled until the user approves the cost and configuration.
 
