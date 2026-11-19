@@ -210,7 +210,7 @@ function renderAiLearning(payload){
 function renderForecast(payload){
   const card=document.getElementById("aiPredictionCard");
   if(!card) return;
-  const results=Array.isArray(payload.results)?payload.results.slice(0,3):[];
+  const results=Array.isArray(payload.results)?payload.results.slice(0,1):[];
   card.querySelector(".forecast-list").innerHTML=results.length
     ?results.map(forecastCard).join("")
     :`<div class="forecast"><div class="muted">AI结果暂不可用。</div></div>`;

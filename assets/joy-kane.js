@@ -39,7 +39,7 @@ function renderKaneForecast(payload){
   const card=document.getElementById("kanePredictionCard");
   if(!card) return;
   const forecast=payload.nextForecast?.kane||{};
-  const picks=(forecast.results||[]).slice(0,3);
+  const picks=(forecast.results||[]).slice(0,1);
   card.querySelector(".section-head .muted").textContent=
     `第${payload.nextForecast?.targetIssue||"-"}期 · Kane 使用独立统计模型挑战 Joy。`;
   card.querySelector(".section-head .badge").textContent=`Kane · ${picks.length}组挑战预测`;
