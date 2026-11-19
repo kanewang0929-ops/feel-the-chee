@@ -9,8 +9,8 @@ Keep the Feel the Chee frontend and application backend on Render. Do not provis
 Use Render's native services:
 - Static Site: existing website.
 - Web Service: public read-only API for the website and protected admin endpoints.
-- Render Workflows: distributed simulation orchestration and task execution.
-- Cron Job: daily trigger for the workflow (Workflows does not currently provide native scheduling).
+- GitHub Actions: run the 100-simulation daily batch on a single runner; move to Render Workflows only if measured runtime or scheduling needs justify it.
+- No separate Render Cron Job is needed initially; use GitHub Actions scheduling for the daily batch.
 - Render Postgres: persistent operational database and model registry.
 - Render Key Value: optional only if a conventional background-worker queue is later needed; Workflows already manages its own task queue.
 
@@ -36,13 +36,13 @@ For large compressed Parquet audit/summary files, use an S3-compatible object st
 
 ## Proposed Render architecture
 
-1. **Render Cron Job** starts once daily and triggers the workflow through the Render SDK/API. The cron command should submit the batch and exit quickly. Render Cron Jobs have a single-run guarantee and a 12-hour maximum, so the heavy computation belongs in Workflows, not in the cron process.
-2. **Render Workflows** orchestrates the daily batch. It manages task queuing, on-demand task instances, retries, and task lifecycle.
-3. **Parallel workflow tasks** process deterministic shards. At this workload, begin with a single bounded batch job rather than distributed shards. Keep the batch size fixed at 100 simulations and measure runtime before considering additional concurrency.
-4. **Render Postgres** stores batch metadata, shard status, model registry, promotion decisions, official predictions, and selected dashboard summaries.
-5. **S3-compatible object storage (optional but recommended at scale)** stores date-partitioned Parquet summaries for all runs, immutable draw archive snapshots, and compressed full audit files for selected simulations/models.
-6. **Render Web Service** exposes the API to the existing static site over HTTPS. Services in the same Render region can use private networking for database and internal service connections.
-7. **Cloud monitoring and budget controls** use Render service/workflow metrics, run history, alerts where available, workspace limits, and billing usage. Add application-level limits and a manual kill switch.
+1. **GitHub Actions schedule** starts the 100-simulation batch once daily. Keep manual dispatch available for controlled testing.
+2. **One GitHub Actions job** runs the batch on a standard hosted runner, with deterministic seeds and a bounded execution timeout.
+3. **Single batch runner** processes all 100 deterministic simulations sequentially at first. Add parallelism only if measured runtime requires it.
+4. **Persistent storage (later, if needed)** stores batch metadata, model versions, promotion decisions, official predictions, and dashboard summaries. Do not provision a database until the website needs durable cross-run data.
+5. **Artifact storage** retains compact batch summaries and selected audit traces. External object storage is unnecessary at the 100-simulation target unless actual output growth demonstrates a need.
+6. **Web API (later, if needed)** connects the existing static site to durable model and simulation data. Keep the current static site unchanged during the initial 100-simulation test.
+7. **Cost and safety controls** use GitHub Actions run history, artifact sizes, explicit batch limits, and a manual workflow trigger. Add Render monitoring only if paid Render compute is introduced.
 
 ### Render Workflows limits to design around
 
@@ -72,14 +72,14 @@ Run the 100 simulations as one bounded batch initially. Each simulation receives
 
 1. Freeze a versioned draw archive and calculate its SHA-256 digest.
 2. Create a batch record with engine version, archive digest, warm-up count, run count, and configuration.
-3. Dispatch independent simulation IDs to workflow shard tasks.
+3. Run simulation IDs 1 through 100 in the batch runner, each with its own deterministic seed.
 4. For each historical target draw, expose only the chronological prefix to the prediction function.
 5. Generate one Joy ticket and one Kane ticket.
 6. Persist/seal the prediction event before loading the target outcome into the scoring step.
 7. Reveal and score the actual result; update the two agent states independently.
 8. Continue to the next draw.
 9. Write one compact summary per simulation, including seed, configuration, scores, head-to-head record, model-state fingerprints, and runtime.
-10. Each shard may stage its local champion trace temporarily. A final aggregation task selects the global champion and removes non-winning temporary traces.
+10. Retain the documented representative trace and compact summaries. There is no shard-level champion aggregation at this scale.
 11. Aggregate daily metrics, evaluate the promotion policy, and publish the selected model through the API.
 
 ## Option B storage policy
@@ -104,13 +104,13 @@ Retain full draw-level prediction/result/learning records only for:
 - canonical audits for each promoted/published Joy model;
 - canonical audits for each promoted/published Kane model.
 
-Shard-local champion traces are temporary staging objects and are deleted after global aggregation. Do not commit bulk simulation output to Git.
+At 100 simulations per batch, retain compact summaries and only the audit traces needed for verification. Do not commit bulky generated output to Git.
 
 ## Database design
 
 Postgres tables:
 - `simulation_batches`: batch ID, date, requested/completed/failed runs, status, archive digest, engine version, configuration, timestamps.
-- `simulation_shards`: shard ID, batch ID, workflow run ID, run range, status, attempts, output object key, runtime.
+- `simulation_runs`: batch ID, simulation ID, deterministic seed, status, score summary, runtime, and audit reference.
 - `simulation_top_runs`: top-ranked run summaries for dashboard display.
 - `daily_aggregates`: daily batch metrics and agent comparison.
 - `model_versions`: agent, version, configuration hash, model-state reference, validation metrics, test metrics, promotion status.
@@ -124,7 +124,7 @@ Use bulk inserts/upserts and partitioning for high-volume relational data. Avoid
 
 - `draw-archives/YYYY-MM-DD/<archive-digest>.json.gz`
 - `simulation-summaries/date=YYYY-MM-DD/batch=<batch-id>/part-*.parquet`
-- `simulation-staging/<batch-id>/<shard-id>/champion-trace.jsonl.gz`
+- `simulation-audits/<batch-id>/<simulation-id>/trace.jsonl.gz`
 - `simulation-champions/<batch-id>/<simulation-id>/trace.jsonl.gz`
 - `model-audits/<agent>/<model-version>/walk-forward.jsonl.gz`
 
@@ -173,9 +173,9 @@ Until this protocol exists and passes its own tests, the full-history ten-run re
 
 - Keep database credentials and object-storage keys in Render secret environment variables.
 - Use Render private networking for service-to-database communication.
-- Make writes idempotent with unique keys such as (batch_id, simulation_id) and (batch_id, shard_id).
-- A retried shard must not duplicate summaries or overwrite a newer published model.
-- Checkpoint at shard boundaries and write outputs atomically.
+- Make writes idempotent with unique keys such as (batch_id, simulation_id).
+- A retried batch must not duplicate summaries or overwrite a newer published model.
+- Write batch outputs atomically and preserve a clear failed/completed status.
 - Add explicit maximum batch size, maximum concurrency, daily spend ceiling, and a manual kill switch.
 - Keep the live prediction service isolated from heavy simulation tasks so the website remains responsive.
 
@@ -183,9 +183,9 @@ Until this protocol exists and passes its own tests, the full-history ten-run re
 
 1. Correct the one-ticket contract and add tests for prediction sealing, chronological cutoff, independent states, scoring, and reproducibility.
 2. Refactor the simulation engine into a reusable workflow task and benchmark one complete replay.
-3. Run local/container pilots with a small number of shards.
-4. Add Render Postgres schema and API service while leaving the existing static site unchanged.
-5. Add Render Workflow and a daily Render Cron trigger with conservative concurrency.
+3. Run the 100-simulation batch locally or through GitHub Actions and measure actual runtime, memory, artifact size, and failure recovery.
+4. Add Postgres and an API only if the dashboard needs persistent queryable history beyond what the existing static site and workflow artifacts can provide.
+5. Enable a daily GitHub Actions schedule after the 100-simulation test is reliable.
 6. Run 100, 1,000, and 10,000-run pilots. Measure runtime, CPU, memory, storage, retry behavior, and cost.
 7. Enable the 100-simulation daily schedule only after the benchmark and spend review.
 
