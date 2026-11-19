@@ -3,7 +3,7 @@
   var FEED_URL = "https://raw.githubusercontent.com/kanewang0929-ops/feel-the-chee/simulation-data/data/simulation-dashboard-history.json";
   var RANDOM_EXPECTED = 1.047619;
   var $ = function (id) { return document.getElementById(id); };
-  var fmt = function (value, digits) { var n = Number(value); return Number.isFinite(n) ? n.toFixed(digits == null ? 3 : digits) : "—"; };
+  var fmt = function (value, digits) { if (value === null || value === undefined || value === "") return "—"; var n = Number(value); return Number.isFinite(n) ? n.toFixed(digits == null ? 3 : digits) : "—"; };
   var fmtInt = function (value) { var n = Number(value); return Number.isFinite(n) ? Math.round(n).toLocaleString("en-US") : "—"; };
   var fmtDate = function (value) {
     if (!value) return "—";
