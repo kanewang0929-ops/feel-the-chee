@@ -234,3 +234,18 @@ The evaluator writes `holdout-evaluation-summary.json` and `holdout-final-test-t
 A manual GitHub Actions workflow, `.github/workflows/holdout-evaluation.yml`, runs the unit tests and evaluator and uploads these files as an artifact. It is manual-only to avoid triggering a costly historical evaluation on every push.
 
 The output is an empirical historical evaluation, not a claim that past draw patterns predict future independent lottery outcomes. Do not promote or publish a model based solely on the highest score from this holdout.
+
+### First full-archive execution (2026-11-19)
+
+The first completed holdout run used 2,949 valid archive draws with normalized archive SHA-256 `38efd092c5f943b256b52a1f20a1941da90159478b1ece6dca01c69a92119a7c`:
+
+- Warm-up: 200 draws, 2007-05-30 through 2008-09-13.
+- Training: 1,649 draws, 2008-09-15 through 2019-06-12.
+- Validation: 549 draws, 2019-06-15 through 2023-03-25.
+- Untouched final test: 551 draws, 2023-03-27 through 2026-11-16.
+
+Validation selected `conservative_adaptation` for Joy and `fast_adaptation` for Kane. On the final test, Joy averaged 1.019964 total hits per ticket and Kane averaged 1.029038. The 1,000-series matched random baseline averaged 1.046886, with a 2.5th-97.5th percentile range of 0.974592-1.121642.
+
+The empirical one-sided random-series p-values were 0.753247 for Joy and 0.681319 for Kane. Both agent averages were below the random mean and inside the random-series interval. This run provides no evidence that either agent outperformed random selection on the held-out dates. Do not promote either configuration on these results.
+
+The run passed all nine unit tests, completed the full evaluation, and uploaded the summary and final-test trace as artifact `chronological-holdout-evaluation` in GitHub Actions run [44483218592](https://github.com/kanewang0929-ops/feel-the-chee/actions/runs/44483218592).
