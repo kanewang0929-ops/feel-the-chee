@@ -1,20 +1,7 @@
 name: Lean pilot benchmark
 
 on:
-  push:
-    branches:
-      - feat/render-simulation-platform
-    paths:
-      - ".github/workflows/lean-pilot-benchmark.yml"
-      - "scripts/joy_kane_duel.py"
-      - "data/draws.json"
-  pull_request:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/lean-pilot-benchmark.yml"
-      - "scripts/joy_kane_duel.py"
-      - "data/draws.json"
+  workflow_dispatch:
 
 permissions:
   contents: read
