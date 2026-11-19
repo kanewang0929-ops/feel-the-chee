@@ -1,0 +1,47 @@
+name: Ten-simulation pilot
+
+on:
+  push:
+    branches:
+      - feat/render-simulation-platform
+    paths:
+      - ".github/workflows/ten-simulation-pilot.yml"
+      - "scripts/joy_kane_duel.py"
+      - "scripts/run_simulation_batch.py"
+      - "tests/test_joy_kane_single_ticket.py"
+      - "data/draws.json"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/ten-simulation-pilot.yml"
+      - "scripts/joy_kane_duel.py"
+      - "scripts/run_simulation_batch.py"
+      - "tests/test_joy_kane_single_ticket.py"
+      - "data/draws.json"
+
+permissions:
+  contents: read
+
+jobs:
+  ten-simulation-pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout pilot branch
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run contract tests
+        run: python -m unittest discover -s tests -v
+      - name: Run ten isolated full-history simulations
+        run: python scripts/run_simulation_batch.py --count 10 --output-dir simulation-artifacts
+      - name: Upload compact summaries and representative trace
+        uses: actions/upload-artifact@v4
+        with:
+          name: ten-simulation-pilot
+          path: simulation-artifacts/
+          if-no-files-found: error
+          retention-days: 14
