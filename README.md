@@ -29,7 +29,7 @@
 ## Simulation dashboard and daily run
 
 - Dashboard: [Simulation Dashboard](./simulation.html)
-- Schedule: daily at 03:20 Asia/Seoul (18:20 UTC)
+- Schedule: daily at 18:00 Asia/Shanghai (10:00 UTC)
 - Workload: 100 independent full-history simulations per batch
 - Results: the latest 30 batch summaries are published to the `simulation-data` branch and read by the static dashboard
 - Compute: GitHub Actions hosted runner; no additional Render service or database is required
