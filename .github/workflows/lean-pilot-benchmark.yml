@@ -1,0 +1,48 @@
+name: Lean pilot benchmark
+
+on:
+  push:
+    branches:
+      - feat/render-simulation-platform
+    paths:
+      - ".github/workflows/lean-pilot-benchmark.yml"
+      - "scripts/joy_kane_duel.py"
+      - "data/draws.json"
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DUEL_WARMUP_DRAWS: "200"
+      DUEL_CYCLES: "1"
+      MIN_HOURS_BETWEEN_DUEL_TRAINING: "999999"
+    steps:
+      - name: Checkout pilot branch
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run one complete historical replay
+        shell: bash
+        run: |
+          set -o pipefail
+          /usr/bin/time -v python scripts/joy_kane_duel.py 2>&1 | tee lean-pilot-benchmark.log
+      - name: Upload isolated benchmark outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: lean-pilot-benchmark
+          path: |
+            lean-pilot-benchmark.log
+            data/joy-kane-dashboard.json
+            data/joy-kane-audit.json
+            data/joy-kane-predictions.jsonl
+            data/joy-kane-results.jsonl
+            data/joy-kane-model-state.json
+            data/joy-kane-training-log.jsonl
+          if-no-files-found: error
+          retention-days: 7
