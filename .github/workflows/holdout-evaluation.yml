@@ -18,6 +18,15 @@ on:
         required: true
         default: "20261119"
         type: string
+  push:
+    branches:
+      - feat/render-simulation-platform
+    paths:
+      - ".github/workflows/holdout-evaluation.yml"
+      - "scripts/evaluate_chronological_holdout.py"
+      - "scripts/joy_kane_duel.py"
+      - "tests/test_chronological_holdout.py"
+      - "data/draws.json"
 
 permissions:
   contents: read
