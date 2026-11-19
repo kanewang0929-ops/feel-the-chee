@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1120">
+  <title>Simulation Dashboard · Feel the Chee</title>
+  <link rel="stylesheet" href="./assets/simulation-dashboard.css?v=20261119-1">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="Back to Feel the Chee home">
+        <span class="brand-mark">FC</span>
+        <span><strong>FEEL THE CHEE</strong><small>JOY & KANE RESEARCH LAB</small></span>
+      </a>
+      <div class="topbar-right">
+        <span class="live-indicator"><i></i> SYSTEM MONITOR</span>
+        <a class="back-link" href="./index.html">← Prediction Lab</a>
+      </div>
+    </header>
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">SIMULATION CONTROL / 001</p>
+          <h1>Every draw.<br><span>One hundred possible histories.</span></h1>
+          <p class="hero-subtitle">A daily, independently seeded replay of the complete historical archive. Joy and Kane each make one sealed ticket per draw, then learn only after the result is revealed.</p>
+          <div class="hero-meta">
+            <span class="schedule-pill"><span class="pulse"></span> DAILY BATCH ACTIVE</span>
+            <span class="schedule-text">100 simulations · 03:20 Asia/Seoul</span>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+          <div class="core"><span>100</span><small>RUNS / DAY</small></div>
+          <div class="orbit-dot dot-a"></div><div class="orbit-dot dot-b"></div><div class="orbit-dot dot-c"></div>
+        </div>
+      </section>
+      <section class="section-heading">
+        <div><p class="eyebrow">01 / BATCH TELEMETRY</p><h2>Latest batch</h2></div>
+        <div class="updated-label" id="updatedAt">Connecting to simulation feed…</div>
+      </section>
+      <section class="kpi-grid">
+        <article class="metric-card"><div class="metric-label">LATEST BATCH STATUS</div><div class="metric-value status-value" id="batchStatus">WAITING</div><div class="metric-foot" id="batchTime">The first production batch will appear here.</div></article>
+        <article class="metric-card"><div class="metric-label">INDEPENDENT SIMULATIONS</div><div class="metric-value" id="runCount">0<span class="metric-unit"> / 100</span></div><div class="metric-foot" id="seedCheck">Unique seeds are checked before a batch passes.</div></article>
+        <article class="metric-card"><div class="metric-label">DRAWS AUDITED / SIMULATION</div><div class="metric-value" id="drawCount">—</div><div class="metric-foot" id="dateRange">Complete historical walk-forward replay.</div></article>
+        <article class="metric-card"><div class="metric-label">BATCH RUNTIME</div><div class="metric-value" id="runtime">—</div><div class="metric-foot">Measured end-to-end on the hosted runner.</div></article>
+      </section>
+      <section class="performance-grid">
+        <article class="panel chart-panel">
+          <div class="panel-heading"><div><p class="eyebrow">02 / SCORE TRAJECTORY</p><h2>Across daily batches</h2></div><div class="legend"><span class="legend-joy">Joy</span><span class="legend-kane">Kane</span><span class="legend-baseline">Random expectation</span></div></div>
+          <div id="historyChart" class="chart-wrap"><div class="empty-state">The chart will appear after the first 100-run batch is complete.</div></div>
+          <p class="chart-note">Average best-ticket total hits per draw. The reference line is the theoretical random-ticket expectation of 1.047619 hits.</p>
+        </article>
+        <article class="panel benchmark-panel">
+          <p class="eyebrow">03 / LATEST BATCH AVERAGES</p><h2>Joy vs Kane</h2>
+          <div id="agentScores" class="agent-scores"><div class="empty-state">Waiting for the first completed batch…</div></div>
+          <div class="benchmark-line"><span>Random-ticket expectation</span><strong>1.047619</strong></div>
+          <p class="caveat">These are historical replay scores across different seeds on the same archive. They are not independent lottery datasets and do not demonstrate a predictive advantage.</p>
+        </article>
+      </section>
+      <section class="section-heading history-heading">
+        <div><p class="eyebrow">04 / EXECUTION LOG</p><h2>Recent batches</h2></div>
+        <a class="github-link" href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/daily-simulation-batch.yml" target="_blank" rel="noopener">Open workflow ↗</a>
+      </section>
+      <section class="panel table-panel">
+        <div class="table-scroll"><table><thead><tr><th>Batch</th><th>Started (KST)</th><th>Status</th><th>Runs</th><th>Joy avg.</th><th>Kane avg.</th><th>Runtime</th><th></th></tr></thead><tbody id="batchRows"><tr><td colspan="8" class="empty-cell">No completed batches have been published yet.</td></tr></tbody></table></div>
+        <p class="table-foot" id="historyMeta">The dashboard retains the 30 most recent batches.</p>
+      </section>
+      <section class="method-grid">
+        <article class="method-card">
+          <p class="eyebrow">05 / REPLAY PROTOCOL</p><h2>Same archive. Separate minds.</h2>
+          <ol>
+            <li><b>Seed independence</b><span>Each of the 100 simulations receives a unique deterministic seed and starts from isolated agent state.</span></li>
+            <li><b>Chronological integrity</b><span>Predictions are sealed before the target draw is revealed. No future draw may enter the training prefix.</span></li>
+            <li><b>One official ticket</b><span>Joy and Kane each submit exactly five front numbers and two back numbers per draw.</span></li>
+            <li><b>Audit every replay</b><span>Prediction, result and audit ledgers are cross-checked for every historical draw in every simulation.</span></li>
+          </ol>
+        </article>
+        <article class="method-card guardrail-card">
+          <p class="eyebrow">06 / SAFETY RAILS</p><h2>What this dashboard does not claim</h2>
+          <ul>
+            <li>Past frequency or overdue numbers do not increase a number’s probability in a fair independent draw.</li>
+            <li>The highest-scoring simulation is not automatically a better model.</li>
+            <li>Daily batches do not alter the live prediction lock or live model state.</li>
+            <li>No model is promoted from these full-history replay scores alone.</li>
+          </ul>
+          <div class="guardrail-note">Simulation mode is isolated from live prediction mode.</div>
+        </article>
+      </section>
+    </main>
+    <footer class="footer"><span>FEEL THE CHEE · JOY & KANE</span><span id="feedStatus">Dashboard feed: checking…</span></footer>
+  </div>
+  <script src="./assets/simulation-dashboard.js?v=20261119-1"></script>
+</body>
+</html>
