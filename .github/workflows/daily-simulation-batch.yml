@@ -2,13 +2,12 @@ name: Daily 100-simulation batch
 
 on:
   schedule:
-    - cron: "20 18 * * *"
+    - cron: "0 10 * * *"
   workflow_dispatch:
   push:
     branches:
       - main
     paths:
-      - ".github/workflows/daily-simulation-batch.yml"
       - "scripts/run_simulation_batch.py"
       - "scripts/joy_kane_duel.py"
       - "scripts/publish_simulation_dashboard.py"

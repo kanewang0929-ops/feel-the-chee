@@ -7,7 +7,7 @@ The static dashboard is served by the existing Render Static Site at `/simulatio
 ## Daily schedule
 
 - Workload: 100 independently seeded complete historical simulations per batch.
-- Schedule: `20 18 * * *" UTC, equal to 03:20 Asia/Seoul.
+- Schedule: `0 10 * * *` UTC, equal to 18:00 Asia/Shanghai (Beijing time).
 - First batch: automatically triggered by the production merge push.
 - Other triggers: manual `workflow_dispatch" and the daily schedule.
 - Runner: one GitHub Actions hosted Ubuntu runner, sequential execution, 180-minute job limit.
