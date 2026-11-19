@@ -27,7 +27,7 @@
           <p class="hero-subtitle">A daily, independently seeded replay of the complete historical archive. Joy and Kane each make one sealed ticket per draw, then learn only after the result is revealed.</p>
           <div class="hero-meta">
             <span class="schedule-pill"><span class="pulse"></span> DAILY BATCH ACTIVE</span>
-            <span class="schedule-text">100 simulations · 03:20 Asia/Seoul</span>
+            <span class="schedule-text">100 simulations · Daily 18:00 Beijing time</span>
           </div>
         </div>
         <div class="hero-visual" aria-hidden="true">
@@ -36,7 +36,22 @@
           <div class="orbit-dot dot-a"></div><div class="orbit-dot dot-b"></div><div class="orbit-dot dot-c"></div>
         </div>
       </section>
-      <section class="section-heading">
+        <nav class="ops-tabs" aria-label="Model operations sections">
+        <button class="ops-tab active" type="button" data-ops-tab="evaluation">Evaluation</button><button class="ops-tab" type="button" data-ops-tab="training">Training</button><button class="ops-tab" type="button" data-ops-tab="deployment">Deployment</button>
+      </nav>
+      <section class="ops-panel" id="ops-training" hidden>
+        <div class="section-heading"><div><p class="eyebrow">01 / LIVE MODEL TELEMETRY</p><h2>Training operations</h2></div><div class="updated-label" id="trainingUpdated">Loading live model state…</div></div>
+        <div class="ops-kpi-grid"><article class="metric-card"><div class="metric-label">MODEL VERSION</div><div class="metric-value ops-value" id="trainModelVersion">—</div><div class="metric-foot">Current live production model</div></article><article class="metric-card"><div class="metric-label">HISTORICAL OBSERVATIONS</div><div class="metric-value" id="trainObservations">—</div><div class="metric-foot">Chronological draws processed</div></article><article class="metric-card"><div class="metric-label">OPTIMIZER CYCLES / AGENT</div><div class="metric-value" id="trainCycles">—</div><div class="metric-foot">Configured candidate-weight search</div></article><article class="metric-card"><div class="metric-label">LAST TRAINING UPDATE</div><div class="metric-value ops-value" id="trainLastRun">—</div><div class="metric-foot" id="trainRunState">Reading training record</div></article></div>
+        <div class="ops-two-col"><article class="panel"><div class="panel-heading"><div><p class="eyebrow">JOY / ADAPTIVE HIT MODEL</p><h2>Joy training state</h2></div><span class="ops-chip joy-chip">JOY</span></div><div id="joyTrainingCard" class="ops-agent-state"></div></article><article class="panel"><div class="panel-heading"><div><p class="eyebrow">KANE / ADAPTIVE HIT MODEL</p><h2>Kane training state</h2></div><span class="ops-chip kane-chip">KANE</span></div><div id="kaneTrainingCard" class="ops-agent-state"></div></article></div>
+        <article class="panel ops-explainer"><p class="eyebrow">HOW LIVE TRAINING WORKS</p><h2>Learning is separate from simulation</h2><p>The live prediction workflow scores sealed historical predictions after each reveal and updates each agent's independent signal weights. The daily optimizer searches up to one million candidate weight combinations per agent, subject to its 23-hour minimum interval. Simulation replays do not write to these live states.</p><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/sync-draws.yml" target="_blank" rel="noopener">Open live training workflow ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/blob/main/data/joy-kane-model-state.json" target="_blank" rel="noopener">Inspect model-state file ↗</a></div></article>
+      </section>
+      <section class="ops-panel" id="ops-deployment" hidden>
+        <div class="section-heading"><div><p class="eyebrow">03 / RELEASE GOVERNANCE</p><h2>Model deployment</h2></div><div class="updated-label" id="deploymentUpdated">Checking active production model…</div></div>
+        <div class="ops-kpi-grid"><article class="metric-card"><div class="metric-label">ACTIVE LIVE VERSION</div><div class="metric-value ops-value" id="deployVersion">—</div><div class="metric-foot">Currently serving prediction workflow</div></article><article class="metric-card"><div class="metric-label">LIVE PREDICTION LOCK</div><div class="metric-value ops-value" id="deployIssue">—</div><div class="metric-foot" id="deployLockDate">No lock information</div></article><article class="metric-card"><div class="metric-label">CANDIDATE STATUS</div><div class="metric-value ops-value" id="candidateStatus">NOT READY</div><div class="metric-foot" id="candidateDetail">No approved candidate package has been published.</div></article><article class="metric-card"><div class="metric-label">AUTO-PROMOTION</div><div class="metric-value ops-value">DISABLED</div><div class="metric-foot">Simulation scores never replace live models automatically.</div></article></div>
+        <article class="panel deployment-guard"><p class="eyebrow">EXPLICIT APPROVAL REQUIRED</p><h2>Promotion gate</h2><p>A candidate must have a traceable model-state package, pass chronological and leakage checks, include a matched random-baseline evaluation, and receive human approval. No simulation batch can promote a model by itself.</p><ol class="promotion-steps"><li><b>Prepare</b><span>Produce a candidate model-state package from a documented training run.</span></li><li><b>Evaluate</b><span>Run chronological holdout evaluation and compare against the matched random baseline.</span></li><li><b>Review</b><span>Inspect the evidence, weight changes and prediction-lock compatibility.</span></li><li><b>Approve</b><span>Approve a dedicated promotion change before it is merged into the live model files.</span></li></ol><div class="approval-status" id="approvalStatus">No candidate is currently eligible for promotion. The active live model remains unchanged.</div><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/holdout-evaluation.yml" target="_blank" rel="noopener">Run chronological evaluation ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/sync-draws.yml" target="_blank" rel="noopener">Inspect live workflow ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/pulls" target="_blank" rel="noopener">Review promotion changes ↗</a></div></article>
+      </section>
+      <section class="ops-panel active" id="ops-evaluation">
+    <section class="section-heading">
         <div><p class="eyebrow">01 / BATCH TELEMETRY</p><h2>Latest batch</h2></div>
         <div class="updated-label" id="updatedAt">Connecting to simulation feed…</div>
       </section>
@@ -88,9 +103,11 @@
           <div class="guardrail-note">Simulation mode is isolated from live prediction mode.</div>
         </article>
       </section>
+      </section>
     </main>
     <footer class="footer"><span>FEEL THE CHEE · JOY & KANE</span><span id="feedStatus">Dashboard feed: checking…</span></footer>
   </div>
-  <script src="./assets/simulation-dashboard.js?v=20261119-1"></script>
+  <script src="./assets/simulation-dashboard.js?v=20261119-ops1"></script>
+  <script src="./assets/model-operations.js?v=20261119-ops1"></script>
 </body>
 </html>

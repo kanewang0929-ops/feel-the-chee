@@ -35,3 +35,11 @@
 - Compute: GitHub Actions hosted runner; no additional Render service or database is required
 
 The daily workflow runs contract tests before simulations, validates every chronological replay, stores a representative trace and compact run summaries as a 30-day GitHub Actions artifact, and publishes a compact dashboard feed. Simulation runs do not write to live prediction locks or live model state.
+
+
+## Model Operations Center
+
+The Simulation Dashboard is the central operations view with three areas:
+- Training: reads the live model-state and dashboard JSON to show Joy and Kane's observations, optimizer results, and signal weights.
+- Evaluation: shows daily 100-run batch metrics and the latest chronological holdout report. Running the holdout workflow publishes its summary to the `simulation-data` branch.
+- Deployment: shows the active live model version and prediction lock, and documents the explicit human review gate. Simulation batches never promote or overwrite live models.
