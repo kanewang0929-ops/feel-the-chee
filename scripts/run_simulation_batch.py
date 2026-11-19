@@ -68,7 +68,8 @@ def normalized_archive(run_data: Path) -> list[dict]:
 
 
 def validate_run(run_data: Path, dashboard: dict) -> tuple[list[dict], str]:
-    archive = normalized_archive(run_data)\n    predictions = read_jsonl(run_data / "joy-kane-predictions.jsonl")
+    archive = normalized_archive(run_data)
+    predictions = read_jsonl(run_data / "joy-kane-predictions.jsonl")
     results = read_jsonl(run_data / "joy-kane-results.jsonl")
     audit_payload = json.loads((run_data / "joy-kane-audit.json").read_text(encoding="utf-8"))
     audit = audit_payload.get("rows", [])
