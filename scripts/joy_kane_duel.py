@@ -19,7 +19,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "data"
+DATA = Path(os.environ.get("DUEL_DATA_DIR", str(ROOT / "data")))
 DRAW_FILE = DATA / "draws.json"
 DASHBOARD_FILE = DATA / "joy-kane-dashboard.json"
 AUDIT_FILE = DATA / "joy-kane-audit.json"
@@ -32,7 +32,7 @@ TRAINING_LOG = DATA / "joy-kane-training-log.jsonl"
 WARMUP = max(100, int(os.environ.get("DUEL_WARMUP_DRAWS", "200")))
 CYCLES = max(1, int(os.environ.get("DUEL_CYCLES", "1000000")))
 MIN_HOURS = max(0.0, float(os.environ.get("MIN_HOURS_BETWEEN_DUEL_TRAINING", "23")))
-PICK_COUNT = 3
+PICK_COUNT = 1
 JOY_SIGNALS = ("curve", "transition", "frequency", "recency")
 KANE_SIGNALS = ("frequency", "interval", "deviation", "distribution", "overdue")
 AGENTS = {"joy": JOY_SIGNALS, "kane": KANE_SIGNALS}
@@ -295,9 +295,12 @@ def signal_ticket_bundles(name: str, feature_maps: dict, history: list[dict], se
     return output
 
 
-def make_agent_prediction(name: str, history: list[dict], state: dict, target_issue: str, target_date: str):
+def make_agent_prediction(name: str, history: list[dict], state: dict, target_issue: str, target_date: str, simulation_seed: int | None = None):
     features = {area: number_signals(history, area) for area in AREAS}
-    seed = int(digest([name, target_issue, target_date, digest(history)])[:16], 16)
+    seed_material = [name, target_issue, target_date, digest(history)]
+    if simulation_seed is not None:
+        seed_material.append(int(simulation_seed))
+    seed = int(digest(seed_material)[:16], 16)
     exploration = float(state.get("exploration", 0.08) or 0.08)
     signal_bundles = signal_ticket_bundles(name, features, history, seed, exploration)
     combined = {
@@ -500,6 +503,20 @@ def latest_training_age(logs: list[dict]) -> float | None:
         return None
 
 
+def live_lock_metadata(simulation_mode: bool, live_lock: dict) -> dict:
+    """Expose lock metadata only for a real live run, never for archive simulations."""
+    if simulation_mode:
+        return {}
+    return {
+        "livePredictionLock": {
+            "issue": live_lock["issue"],
+            "date": live_lock["date"],
+            "predictionId": live_lock["predictionId"],
+            "lockedAt": live_lock["predictionLockedAt"],
+        }
+    }
+
+
 def next_target(latest_draw: dict) -> tuple[str, str]:
     last_date = date.fromisoformat(latest_draw["date"])
     target = last_date + timedelta(days=1)
@@ -515,6 +532,8 @@ def next_target(latest_draw: dict) -> tuple[str, str]:
 
 
 def main() -> None:
+    simulation_mode = os.environ.get("DUEL_SIMULATION_MODE") == "1"
+    simulation_seed = int(os.environ.get("DUEL_SIMULATION_SEED", "0")) if simulation_mode else None
     draws = load_draws()
     metadata = [{"issue": row["issue"], "date": row["date"]} for row in draws]
     outcomes = [{"front": row["front"], "back": row["back"]} for row in draws]
@@ -526,7 +545,7 @@ def main() -> None:
         name: {"front": 0, "back": 0, "total": 0, "draws": 0}
         for name in AGENTS
     }
-    prior_live_lock = read_json(LIVE_LOCK_FILE, {})
+    prior_live_lock = {} if simulation_mode else read_json(LIVE_LOCK_FILE, {})
 
     PREDICTION_LEDGER.parent.mkdir(parents=True, exist_ok=True)
     with PREDICTION_LEDGER.open("w", encoding="utf-8") as prediction_log, RESULT_LEDGER.open("w", encoding="utf-8") as result_log:
@@ -540,7 +559,8 @@ def main() -> None:
                 for row in history
             ])
             use_live_lock = (
-                prior_live_lock.get("issue") == issue
+                not simulation_mode
+                and prior_live_lock.get("issue") == issue
                 and prior_live_lock.get("date") == target_date
                 and prior_live_lock.get("historyDigest") == history_hash
                 and isinstance(prior_live_lock.get("agents"), dict)
@@ -562,9 +582,9 @@ def main() -> None:
                     for name in AGENTS
                 }
             else:
-                joy_prediction, joy_signals = make_agent_prediction("joy", history, states["joy"], issue, target_date)
-                kane_prediction, kane_signals = make_agent_prediction("kane", history, states["kane"], issue, target_date)
-                prediction_id = digest(["joy-kane-v1", issue, target_date, history_hash])[:24]
+                joy_prediction, joy_signals = make_agent_prediction("joy", history, states["joy"], issue, target_date, simulation_seed)
+                kane_prediction, kane_signals = make_agent_prediction("kane", history, states["kane"], issue, target_date, simulation_seed)
+                prediction_id = digest(["joy-kane-v1", simulation_seed, issue, target_date, history_hash])[:24]
                 locked_at = stamp()
                 sealed_agents = {
                     "joy": {"modelVersion": joy_prediction["modelVersion"], "weights": clone(states["joy"]["weights"]), "tickets": joy_prediction["results"]},
@@ -663,7 +683,7 @@ def main() -> None:
             except json.JSONDecodeError:
                 continue
     age = latest_training_age(training_logs)
-    should_train = age is None or age >= MIN_HOURS or os.environ.get("FORCE_DUEL_TRAINING") == "1"
+    should_train = (not simulation_mode) and (age is None or age >= MIN_HOURS or os.environ.get("FORCE_DUEL_TRAINING") == "1")
     training_results = {}
     if should_train:
         run_stamp = stamp()
@@ -688,7 +708,7 @@ def main() -> None:
             training_results[name] = {
                 **(prior.get("dailyTraining") or {}),
                 "skipped": True,
-                "reason": f"Daily million-cycle search already ran {age:.1f} hours ago.",
+                "reason": "Simulation replay disables daily optimizer." if simulation_mode else f"Daily million-cycle search already ran {age:.1f} hours ago.",
             }
 
     # Keep the upcoming draw's prediction immutable until its result is published.
@@ -699,7 +719,8 @@ def main() -> None:
         for row in draws
     ])
     reuse_live_lock = (
-        prior_live_lock.get("issue") == target_issue
+        not simulation_mode
+        and prior_live_lock.get("issue") == target_issue
         and prior_live_lock.get("date") == target_date
         and prior_live_lock.get("historyDigest") == live_history_hash
         and isinstance(prior_live_lock.get("agents"), dict)
@@ -709,7 +730,7 @@ def main() -> None:
     else:
         live_agents = {}
         for name in AGENTS:
-            prediction, signal_bundles = make_agent_prediction(name, draws, states[name], target_issue, target_date)
+            prediction, signal_bundles = make_agent_prediction(name, draws, states[name], target_issue, target_date, simulation_seed)
             live_agents[name] = {
                 "modelVersion": prediction["modelVersion"],
                 "weights": clone(states[name]["weights"]),
@@ -734,29 +755,30 @@ def main() -> None:
         name: clone(live_lock["agents"][name]["prediction"])
         for name in AGENTS
     }
-    write_json(LIVE_LOCK_FILE, live_lock)
-    with PREDICTION_LEDGER.open("a", encoding="utf-8") as prediction_log:
-        append_jsonl(prediction_log, {
+    if not simulation_mode:
+        write_json(LIVE_LOCK_FILE, live_lock)
+        with PREDICTION_LEDGER.open("a", encoding="utf-8") as prediction_log:
+            append_jsonl(prediction_log, {
             "eventType": "prediction_locked",
-            "predictionId": live_lock["predictionId"],
-            "issue": live_lock["issue"],
-            "date": live_lock["date"],
-            "trainingDrawCount": live_lock["trainingDrawCount"],
-            "trainingThroughIssue": live_lock["trainingThroughIssue"],
-            "trainingThroughDate": live_lock["trainingThroughDate"],
-            "historyDigest": live_lock["historyDigest"],
-            "predictionLockedAt": live_lock["predictionLockedAt"],
-            "livePredictionLock": True,
-            "agents": {
-                name: {
-                    "modelVersion": live_lock["agents"][name]["modelVersion"],
-                    "weights": live_lock["agents"][name]["weights"],
-                    "tickets": live_lock["agents"][name]["prediction"]["results"],
-                }
-                for name in AGENTS
-            },
-            "futureLeakage": False,
-        })
+                "predictionId": live_lock["predictionId"],
+                "issue": live_lock["issue"],
+                "date": live_lock["date"],
+                "trainingDrawCount": live_lock["trainingDrawCount"],
+                "trainingThroughIssue": live_lock["trainingThroughIssue"],
+                "trainingThroughDate": live_lock["trainingThroughDate"],
+                "historyDigest": live_lock["historyDigest"],
+                "predictionLockedAt": live_lock["predictionLockedAt"],
+                "livePredictionLock": True,
+                "agents": {
+                    name: {
+                        "modelVersion": live_lock["agents"][name]["modelVersion"],
+                        "weights": live_lock["agents"][name]["weights"],
+                        "tickets": live_lock["agents"][name]["prediction"]["results"],
+                    }
+                    for name in AGENTS
+                },
+                "futureLeakage": False,
+            })
 
     def averages(name):
         row = score_totals[name]
@@ -796,7 +818,7 @@ def main() -> None:
             for name in AGENTS
         },
         "crossLearning": "Agents compare their best-ticket hit counts after each reveal. Their model weights remain independent; each adjusts its own exploration rate from the head-to-head outcome.",
-        "livePredictionLock": {"issue": live_lock["issue"], "date": live_lock["date"], "predictionId": live_lock["predictionId"], "lockedAt": live_lock["predictionLockedAt"]},
+        **live_lock_metadata(simulation_mode, live_lock),
     }
     write_json(STATE_FILE, state_payload)
 
@@ -822,9 +844,12 @@ def main() -> None:
             "scoreDefinition": summary["scoreDefinition"],
             "predictionLedger": "data/joy-kane-predictions.jsonl",
             "resultLedger": "data/joy-kane-results.jsonl",
-            "liveLock": "data/joy-kane-live-lock.json",
+            "liveLock": None if simulation_mode else "data/joy-kane-live-lock.json",
+            "lockIsolation": "Live lock reads and writes are disabled in simulation mode.",
             "auditFile": "data/joy-kane-audit.json",
             "dailyTraining": {
+                "simulationMode": simulation_mode,
+                "simulationSeed": simulation_seed,
                 "cyclesPerAgent": CYCLES if should_train else 0,
                 "ranToday": should_train,
                 "minimumHoursBetweenRuns": MIN_HOURS,
@@ -835,6 +860,7 @@ def main() -> None:
         "nextForecast": {
             "targetIssue": target_issue,
             "targetDate": target_date,
+            "forecastScope": "archive_next_draw_not_live" if simulation_mode else "upcoming_live_draw",
             "historyCount": len(draws),
             "joy": next_forecasts["joy"],
             "kane": next_forecasts["kane"],
@@ -849,7 +875,7 @@ def main() -> None:
             }
             for name in AGENTS
         },
-        "livePredictionLock": {"issue": live_lock["issue"], "date": live_lock["date"], "predictionId": live_lock["predictionId"], "lockedAt": live_lock["predictionLockedAt"]},
+        **live_lock_metadata(simulation_mode, live_lock),
         "audit": {"file": "data/joy-kane-audit.json", "rows": len(audit_rows)},
     }
     write_json(DASHBOARD_FILE, dashboard)
@@ -861,6 +887,8 @@ def main() -> None:
     })
     print(json.dumps({
         "modelVersion": dashboard["modelVersion"],
+        "simulationMode": simulation_mode,
+        "simulationSeed": simulation_seed,
         "drawsEvaluated": len(audit_rows),
         "warmupDraws": WARMUP,
         "targetIssue": target_issue,

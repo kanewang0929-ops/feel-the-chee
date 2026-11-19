@@ -1,0 +1,67 @@
+name: Chronological holdout evaluation
+
+on:
+  workflow_dispatch:
+    inputs:
+      warmup_draws:
+        description: "Chronological warm-up draws (excluded from scoring)"
+        required: true
+        default: "200"
+        type: string
+      random_series:
+        description: "Matched random-ticket series"
+        required: true
+        default: "1000"
+        type: string
+      seed:
+        description: "Reproducible evaluation seed"
+        required: true
+        default: "20261119"
+        type: string
+  push:
+    branches:
+      - feat/render-simulation-platform
+    paths:
+      - ".github/workflows/holdout-evaluation.yml"
+      - "scripts/evaluate_chronological_holdout.py"
+      - "scripts/joy_kane_duel.py"
+      - "tests/test_chronological_holdout.py"
+      - "data/draws.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: chronological-holdout-evaluation
+  cancel-in-progress: false
+
+jobs:
+  holdout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      DUEL_CYCLES: "1"
+      MIN_HOURS_BETWEEN_DUEL_TRAINING: "999999"
+    steps:
+      - name: Checkout evaluation branch
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run unit and leakage tests
+        run: python -m unittest discover -s tests -v
+      - name: Run chronological holdout and matched random baseline
+        run: >-
+          python scripts/evaluate_chronological_holdout.py
+          --warmup "${{ inputs.warmup_draws || '200' }}"
+          --random-series "${{ inputs.random_series || '1000' }}"
+          --seed "${{ inputs.seed || '20261119' }}"
+          --output-dir holdout-artifacts
+      - name: Upload holdout report and final-test trace
+        uses: actions/upload-artifact@v4
+        with:
+          name: chronological-holdout-evaluation
+          path: holdout-artifacts/
+          if-no-files-found: error
+          retention-days: 30
