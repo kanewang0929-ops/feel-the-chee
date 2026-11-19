@@ -29,7 +29,7 @@ on:
       - "data/draws.json"
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: chronological-holdout-evaluation
@@ -45,6 +45,8 @@ jobs:
     steps:
       - name: Checkout evaluation branch
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -65,3 +67,21 @@ jobs:
           path: holdout-artifacts/
           if-no-files-found: error
           retention-days: 30
+      - name: Publish holdout summary to simulation-data
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git fetch origin simulation-data
+          git worktree add --detach /tmp/simulation-data origin/simulation-data
+          mkdir -p /tmp/simulation-data/data
+          cp holdout-artifacts/holdout-evaluation-summary.json /tmp/simulation-data/data/chronological-holdout-report.json
+          cd /tmp/simulation-data
+          git config user.name "feel-the-chee-learning-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/chronological-holdout-report.json
+          if git diff --cached --quiet; then
+            echo "Holdout report is unchanged."
+            exit 0
+          fi
+          git commit -m "data: publish chronological holdout evaluation"
+          git push origin HEAD:refs/heads/simulation-data
