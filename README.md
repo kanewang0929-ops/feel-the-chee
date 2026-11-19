@@ -25,3 +25,13 @@
 5. 确认创建服务。
 
 该版本是静态前端演示。自动抓取、数据库持久化、定时同步和真实模型学习需要后端服务版本。
+
+## Simulation dashboard and daily run
+
+- Dashboard: [Simulation Dashboard](./simulation.html)
+- Schedule: daily at 03:20 Asia/Seoul (18:20 UTC)
+- Workload: 100 independent full-history simulations per batch
+- Results: the latest 30 batch summaries are published to the `simulation-data` branch and read by the static dashboard
+- Compute: GitHub Actions hosted runner; no additional Render service or database is required
+
+The daily workflow runs contract tests before simulations, validates every chronological replay, stores a representative trace and compact run summaries as a 30-day GitHub Actions artifact, and publishes a compact dashboard feed. Simulation runs do not write to live prediction locks or live model state.
