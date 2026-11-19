@@ -34,15 +34,18 @@
   function loadTraining(state, dashboard) {
     var agents = state.agents || {};
     var joy = agents.joy || {}, kane = agents.kane || {};
-    var trainJoy = joy.dailyTraining || {}, trainKane = kane.dailyTraining || {};
+    var dashAgents = dashboard.agentStates || {};
+    var trainJoy = (dashAgents.joy && dashAgents.joy.dailyTraining) || joy.dailyTraining || {};
+    var trainKane = (dashAgents.kane && dashAgents.kane.dailyTraining) || kane.dailyTraining || {};
     var latest = [trainJoy.updatedAt,trainKane.updatedAt].filter(Boolean).sort().pop();
     $("trainingUpdated").textContent = "Model state refreshed "+date(state.generatedAt || dashboard.generatedAt);
     $("trainModelVersion").textContent = state.modelVersion || dashboard.modelVersion || "—";
     $("trainObservations").textContent = count(Math.min(Number(joy.observations||0),Number(kane.observations||0)));
     $("trainCycles").textContent = count(Math.max(Number(trainJoy.cyclesPerRun||0),Number(trainKane.cyclesPerRun||0)));
     $("trainLastRun").textContent = latest ? date(latest).split(" ").slice(0,3).join(" ") : "—";
-    var ran = trainJoy.accepted || trainKane.accepted;
-    $("trainRunState").textContent = ran ? "At least one agent has an accepted optimizer result" : (trainJoy.reason || trainKane.reason || "No accepted optimizer run recorded");
+    var skipped = trainJoy.skipped === true && trainKane.skipped === true;
+    var ran = trainJoy.ranToday === true || trainKane.ranToday === true;
+    $("trainRunState").textContent = skipped ? (trainJoy.reason || trainKane.reason || "Optimizer skipped by the minimum interval guard") : ran ? "Optimizer ran in the latest live workflow" : (trainJoy.reason || trainKane.reason || "Latest optimizer execution status is not recorded");
     $("joyTrainingCard").innerHTML = agentCard("Joy",joy);
     $("kaneTrainingCard").innerHTML = agentCard("Kane",kane);
     $("deployVersion").textContent = state.modelVersion || "—";
