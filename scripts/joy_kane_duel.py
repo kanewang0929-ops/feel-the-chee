@@ -503,6 +503,20 @@ def latest_training_age(logs: list[dict]) -> float | None:
         return None
 
 
+def live_lock_metadata(simulation_mode: bool, live_lock: dict) -> dict:
+    """Expose lock metadata only for a real live run, never for archive simulations."""
+    if simulation_mode:
+        return {}
+    return {
+        "livePredictionLock": {
+            "issue": live_lock["issue"],
+            "date": live_lock["date"],
+            "predictionId": live_lock["predictionId"],
+            "lockedAt": live_lock["predictionLockedAt"],
+        }
+    }
+
+
 def next_target(latest_draw: dict) -> tuple[str, str]:
     last_date = date.fromisoformat(latest_draw["date"])
     target = last_date + timedelta(days=1)
@@ -804,7 +818,7 @@ def main() -> None:
             for name in AGENTS
         },
         "crossLearning": "Agents compare their best-ticket hit counts after each reveal. Their model weights remain independent; each adjusts its own exploration rate from the head-to-head outcome.",
-        "livePredictionLock": {"issue": live_lock["issue"], "date": live_lock["date"], "predictionId": live_lock["predictionId"], "lockedAt": live_lock["predictionLockedAt"]},
+        **live_lock_metadata(simulation_mode, live_lock),
     }
     write_json(STATE_FILE, state_payload)
 
@@ -830,7 +844,8 @@ def main() -> None:
             "scoreDefinition": summary["scoreDefinition"],
             "predictionLedger": "data/joy-kane-predictions.jsonl",
             "resultLedger": "data/joy-kane-results.jsonl",
-            "liveLock": "data/joy-kane-live-lock.json",
+            "liveLock": None if simulation_mode else "data/joy-kane-live-lock.json",
+            "lockIsolation": "Live lock reads and writes are disabled in simulation mode.",
             "auditFile": "data/joy-kane-audit.json",
             "dailyTraining": {
                 "simulationMode": simulation_mode,
@@ -845,6 +860,7 @@ def main() -> None:
         "nextForecast": {
             "targetIssue": target_issue,
             "targetDate": target_date,
+            "forecastScope": "archive_next_draw_not_live" if simulation_mode else "upcoming_live_draw",
             "historyCount": len(draws),
             "joy": next_forecasts["joy"],
             "kane": next_forecasts["kane"],
@@ -859,7 +875,7 @@ def main() -> None:
             }
             for name in AGENTS
         },
-        "livePredictionLock": {"issue": live_lock["issue"], "date": live_lock["date"], "predictionId": live_lock["predictionId"], "lockedAt": live_lock["predictionLockedAt"]},
+        **live_lock_metadata(simulation_mode, live_lock),
         "audit": {"file": "data/joy-kane-audit.json", "rows": len(audit_rows)},
     }
     write_json(DASHBOARD_FILE, dashboard)
