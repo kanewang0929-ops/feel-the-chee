@@ -268,7 +268,7 @@ def main() -> None:
             "detailedTracePolicy": "One representative trace (run 01); compact summaries and full-row validation for every run.",
         },
     }
-    (output / "ten-simulation-summary.json").write_text(
+    (output / "simulation-batch-summary.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     if distinct < args.count:
@@ -278,7 +278,7 @@ def main() -> None:
     print(json.dumps({
         "simulationCount": args.count,
         "independentFirstPredictions": distinct,
-        "summaryFile": str(output / "ten-simulation-summary.json"),
+        "summaryFile": str(output / "simulation-batch-summary.json"),
     }, indent=2))
 
 
