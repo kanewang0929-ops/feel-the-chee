@@ -15,10 +15,13 @@ import json
 import random
 import statistics
 from pathlib import Path
-
-from scripts import joy_kane_duel as duel
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts import joy_kane_duel as duel
 DRAW_FILE = ROOT / "data" / "draws.json"
 
 # Predeclared before looking at validation or test outcomes.
