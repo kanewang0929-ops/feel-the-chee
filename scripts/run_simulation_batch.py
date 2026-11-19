@@ -47,8 +47,28 @@ def validate_ticket_list(tickets: list[dict], label: str) -> None:
         raise RuntimeError(f"{label} has an invalid back selection: {back}.")
 
 
+def normalized_archive(run_data: Path) -> list[dict]:
+    payload = json.loads((run_data / "draws.json").read_text(encoding="utf-8"))
+    raw = payload.get("draws", []) if isinstance(payload, dict) else payload
+    rows = []
+    for row in raw:
+        front = [int(value) for value in str(row.get("front", "")).replace(",", " ").split()]
+        back = [int(value) for value in str(row.get("back", "")).replace(",", " ").split()]
+        if len(front) != 5 or len(set(front)) != 5 or any(value < 1 or value > 35 for value in front):
+            continue
+        if len(back) != 2 or len(set(back)) != 2 or any(value < 1 or value > 12 for value in back):
+            continue
+        rows.append({
+            "issue": str(row.get("issue", "")),
+            "date": str(row.get("date", "")),
+            "front": sorted(front),
+            "back": sorted(back),
+        })
+    return sorted(rows, key=lambda row: (row["date"], int(row["issue"] or 0)))
+
+
 def validate_run(run_data: Path, dashboard: dict) -> tuple[list[dict], str]:
-    predictions = read_jsonl(run_data / "joy-kane-predictions.jsonl")
+    archive = normalized_archive(run_data)\n    predictions = read_jsonl(run_data / "joy-kane-predictions.jsonl")
     results = read_jsonl(run_data / "joy-kane-results.jsonl")
     audit_payload = json.loads((run_data / "joy-kane-audit.json").read_text(encoding="utf-8"))
     audit = audit_payload.get("rows", [])
@@ -84,6 +104,15 @@ def validate_run(run_data: Path, dashboard: dict) -> tuple[list[dict], str]:
         if not prediction_id or prediction_id in seen_ids:
             raise RuntimeError(f"Missing or duplicate prediction ID at replay row {index + 1}.")
         seen_ids.add(prediction_id)
+        archive_target_index = WARMUP_DRAWS + index
+        if archive_target_index >= len(archive):
+            raise RuntimeError("Replay contains more predictions than eligible archive draws.")
+        expected_target = archive[archive_target_index]
+        expected_training = archive[archive_target_index - 1]
+        if prediction.get("issue") != expected_target["issue"] or prediction.get("date") != expected_target["date"]:
+            raise RuntimeError(f"Prediction target does not match the frozen archive at replay row {index + 1}.")
+        if prediction.get("trainingThroughIssue") != expected_training["issue"] or prediction.get("trainingThroughDate") != expected_training["date"]:
+            raise RuntimeError(f"Training prefix does not match the exact prior archive at replay row {index + 1}.")
         target_date = date.fromisoformat(prediction["date"])
         training_date = date.fromisoformat(prediction["trainingThroughDate"])
         if previous_date is not None and target_date <= previous_date:
@@ -121,9 +150,16 @@ def validate_run(run_data: Path, dashboard: dict) -> tuple[list[dict], str]:
 
         actual = result.get("actual", {})
         validate_ticket_list([actual], f"row {index + 1} revealed result")
-        if audit_row.get("actual") != actual:
-            raise RuntimeError(f"Audit actual result mismatch at replay row {index + 1}.")
+        expected_actual = {
+            "front": [f"{value:02d}" for value in expected_target["front"]],
+            "back": [f"{value:02d}" for value in expected_target["back"]],
+        }
+        if actual != expected_actual or audit_row.get("actual") != actual:
+            raise RuntimeError(f"Revealed result does not match the frozen archive at replay row {index + 1}.")
         previous_date = target_date
+
+    if len(predictions) != len(archive) - WARMUP_DRAWS:
+        raise RuntimeError("Replay did not cover every eligible historical archive draw.")
 
     first_prediction = predictions[0]
     fingerprint = hashlib.sha256(
