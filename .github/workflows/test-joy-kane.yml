@@ -1,0 +1,32 @@
+name: Joy and Kane contract tests
+
+on:
+  push:
+    branches:
+      - main
+      - feat/aws-simulation-platform
+    paths:
+      - "scripts/joy_kane_duel.py"
+      - "tests/**"
+      - ".github/workflows/test-joy-kane.yml"
+  pull_request:
+    paths:
+      - "scripts/joy_kane_duel.py"
+      - "tests/**"
+      - ".github/workflows/test-joy-kane.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run Joy and Kane contract tests
+        run: python -m unittest discover -s tests -v
