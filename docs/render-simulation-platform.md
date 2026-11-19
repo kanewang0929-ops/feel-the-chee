@@ -197,3 +197,40 @@ Confirm:
 - whether external S3-compatible object storage (recommended for bulk Parquet and full audit files) is acceptable.
 
 No paid services should be created or scaled until the user approves the cost and configuration.
+
+## Implemented chronological holdout evaluator
+
+The implementation is in `scripts/evaluate_chronological_holdout.py`. It is separate from the full-history engineering replay and does not write to the live prediction ledger, dashboard, model state, or live-lock file.
+
+### Exact evaluation protocol
+
+- The first 200 valid, chronologically sorted archive draws are warm-up context and are not scored.
+- The remaining eligible draws are split in order: earliest 60% for adaptive training, next 20% for validation, and latest 20% for the final test. Integer boundaries are derived from the frozen archive; the final segment receives any rounding remainder.
+- Four predeclared learning configurations are compared: baseline EMA learning, faster EMA adaptation, slower EMA adaptation, and higher weight sensitivity. Joy and Kane are evaluated independently.
+- Candidate configurations are ranked only by their validation average total hits, with front hits, back hits, and then the predeclared candidate order as deterministic tie-breakers.
+- The selected candidate continues from its own post-validation state into the final test. It makes one ticket per test draw and updates only after that draw is revealed. No candidate selection or hyperparameter tuning uses final-test outcomes.
+- Candidate configurations share the same per-agent random seed stream so the comparison isolates the declared learning-rate and weight-sensitivity differences.
+- The agent update in this evaluator is independent: Joy's learning is not rewarded or penalized based on Kane's score, and vice versa.
+
+### Matched random-ticket baseline
+
+The default run generates 1,000 random series. Each series contains exactly one valid DLT ticket for every final-test draw date, using the same actual draw outcomes and scoring rules as Joy and Kane. Each ticket has five unique front numbers from 1-35 and two unique back numbers from 1-12.
+
+The report includes the mean random score, the 2.5th and 97.5th percentiles across random-series average scores, the agent's difference from the random mean, and an empirical one-sided p-value. The theoretical expected hit count for a uniformly random ticket is 1.047619 total hits (5×5/35 front hits plus 2×2/12 back hits).
+
+The random interval is conditional on the historical final-test dates. It describes variation among random tickets on those dates; it is not a confidence interval for all future lottery draws and cannot establish a persistent predictive edge.
+
+### Run and output
+
+Run locally from the repository root:
+
+```bash
+python -m unittest discover -s tests -v
+python scripts/evaluate_chronological_holdout.py --warmup 200 --random-series 1000 --seed 20261119
+```
+
+The evaluator writes `holdout-evaluation-summary.json` and `holdout-final-test-trace.jsonl` to `holdout-artifacts/`. The summary records the normalized archive SHA-256, exact issue/date boundaries, training and validation metrics for every candidate, selected configurations, final-test metrics, matched-random statistics, and protocol guardrails. The final-test trace contains one prediction and its revealed outcome per agent and draw.
+
+A manual GitHub Actions workflow, `.github/workflows/holdout-evaluation.yml`, runs the unit tests and evaluator and uploads these files as an artifact. It is manual-only to avoid triggering a costly historical evaluation on every push.
+
+The output is an empirical historical evaluation, not a claim that past draw patterns predict future independent lottery outcomes. Do not promote or publish a model based solely on the highest score from this holdout.
