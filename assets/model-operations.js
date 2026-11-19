@@ -34,7 +34,7 @@
   function loadTraining(state, dashboard) {
     var agents = state.agents || {};
     var joy = agents.joy || {}, kane = agents.kane || {};
-    var trainJoy = joy.dailyTraining || {}, trainKane = kane.dailyTraining || {};
+    var dashAgents = dashboard.agentStates || {};\n    var trainJoy = (dashAgents.joy && dashAgents.joy.dailyTraining) || joy.dailyTraining || {};\n    var trainKane = (dashAgents.kane && dashAgents.kane.dailyTraining) || kane.dailyTraining || {};
     var latest = [trainJoy.updatedAt,trainKane.updatedAt].filter(Boolean).sort().pop();
     $("trainingUpdated").textContent = "Model state refreshed "+date(state.generatedAt || dashboard.generatedAt);
     $("trainModelVersion").textContent = state.modelVersion || dashboard.modelVersion || "—";
