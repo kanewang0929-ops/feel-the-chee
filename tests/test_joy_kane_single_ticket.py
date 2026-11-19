@@ -43,6 +43,22 @@ class SingleTicketContractTests(unittest.TestCase):
     def test_ticket_count_is_one(self):
         self.assertEqual(duel.PICK_COUNT, 1)
 
+    def test_same_simulation_seed_is_reproducible(self):
+        history = sample_history()
+        for agent in ("joy", "kane"):
+            state = duel.default_state(agent)
+            first, _ = duel.make_agent_prediction(agent, history, state, "26061", "2026-03-01", 12345)
+            repeated, _ = duel.make_agent_prediction(agent, history, state, "26061", "2026-03-01", 12345)
+            self.assertEqual(first, repeated)
+
+    def test_different_simulation_seeds_change_prediction_stream(self):
+        history = sample_history()
+        for agent in ("joy", "kane"):
+            state = duel.default_state(agent)
+            first, _ = duel.make_agent_prediction(agent, history, state, "26061", "2026-03-01", 12345)
+            second, _ = duel.make_agent_prediction(agent, history, state, "26061", "2026-03-01", 67890)
+            self.assertNotEqual(first["results"], second["results"])
+
 
 if __name__ == "__main__":
     unittest.main()
