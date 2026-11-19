@@ -54,9 +54,9 @@ jobs:
       - name: Run chronological holdout and matched random baseline
         run: >-
           python scripts/evaluate_chronological_holdout.py
-          --warmup "${{ inputs.warmup_draws }}"
-          --random-series "${{ inputs.random_series }}"
-          --seed "${{ inputs.seed }}"
+          --warmup "${{ inputs.warmup_draws || '200' }}"
+          --random-series "${{ inputs.random_series || '1000' }}"
+          --seed "${{ inputs.seed || '20261119' }}"
           --output-dir holdout-artifacts
       - name: Upload holdout report and final-test trace
         uses: actions/upload-artifact@v4
