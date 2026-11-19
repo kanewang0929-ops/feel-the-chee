@@ -23,7 +23,7 @@ For large compressed Parquet audit/summary files, use an S3-compatible object st
 - Run 1,000,000 independent complete chronological historical replays per daily batch.
 - Each agent emits exactly one official ticket per draw: 5 front numbers (1-35) and 2 back numbers (1-12).
 - Seal both agents' predictions before revealing the target draw, then score and update each agent independently.
-- Store a compact summary for every run; retain full draw-level traces only for the global best run and canonical published-model audits.
+- Store a compact summary for every run; during the current ten-run engineering pilot retain one clearly labelled representative trace. After holdout evaluation is implemented, retain full draw-level traces only for the validation-selected candidate and canonical published-model audits.
 - Make jobs deterministic, retryable, observable, and safe to run in parallel.
 
 ## Current-state findings
@@ -152,6 +152,22 @@ Administrative batch creation and model promotion endpoints require authenticati
 - Use chronological training, validation, and untouched-test periods. Candidate selection may use validation only. Test metrics are reported but never used to select or promote a candidate.
 - Do not promote a model simply because it is the highest-scoring one among one million trials. Use predeclared promotion thresholds, compare against a random-ticket baseline, and report uncertainty and the number of candidates tested.
 - After candidate configuration is frozen, generate the canonical published model by a clean chronological replay through the available archive. Preserve that replay as the model's official audit.
+
+## Pilot evaluation protocol before any model-selection claim
+
+The ten-run pilot is an engineering and reproducibility check, not a model tournament. Its runs replay the same historical draw sequence with different random seeds. They are not ten independent lottery datasets, and the highest historical score must not be called a winning model.
+
+The next evaluation stage must use a chronological, date-ordered split after the initial warm-up prefix:
+
+1. **Warm-up and training period (earliest 60% of eligible draws):** establish the agents' initial learning history and allow candidate configurations to learn. No later draw may enter a prediction's feature history.
+2. **Validation period (next 20%):** compare predeclared candidate configurations and choose the configuration using validation results only. Do not use the final test segment to tune weights, choose seeds, or select a champion.
+3. **Untouched final test period (latest 20%):** freeze the selected configuration and evaluate it once, chronologically, against a random-ticket baseline over the exact same draw dates. Report the test score and uncertainty, but do not feed the test score back into candidate selection or promotion decisions.
+
+Within validation and test, walk-forward predictions may use earlier revealed outcomes from the same segment when updating an agent, because those outcomes would be known at that point in a real deployment. The model-selection rules and configuration must remain frozen before the first test prediction. The final test results must not be used to revise the model and then be reported as an independent test.
+
+The split boundaries must be derived from the frozen archive and recorded by issue, date, and archive digest. Do not shuffle draws. Do not compare random seeds as if they were different model architectures. Use a random-ticket baseline with equivalent one-ticket-per-agent-per-draw constraints and identical target dates.
+
+Until this protocol exists and passes its own tests, the full-history ten-run results are useful only for checking seed independence, replay determinism, event integrity, and runtime. The current pilot's retained trace is run 01 as a representative audit trace, not the best-performing or validation-selected simulation.
 
 ## Security and reliability
 
