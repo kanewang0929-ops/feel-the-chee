@@ -16,9 +16,15 @@ Status: architecture approved for implementation planning. No AWS resources are 
 
 - Render currently serves a static site only (`render.yaml`); it has no application backend or persistent database.
 - The existing GitHub Actions workflow synchronizes draws and runs the current Joy/Kane script successfully, but it is not a suitable host for the million-replay workload.
-- The current `scripts/joy_kane_duel.py` has `PICK_COUNT = 3`. This must be corrected before the new one-ticket baseline is accepted.
+- The current `main` branch still has `PICK_COUNT = 3`; the feature branch changes this to `PICK_COUNT = 1` and adds passing contract tests. The one-ticket change must be merged before the new baseline is used.
 - Existing Joy/Kane audit and JSONL files are already large enough that they should not remain the long-term storage system.
 - The latest scheduled workflow checked during planning completed successfully. The current `main` branch was left unchanged.
+
+## AWS deployment region
+
+- Initial target region: **US East (N. Virginia), `us-east-1`**.
+- Keep the AWS region configurable through Terraform variables and deployment environment settings.
+- The region is a planning default; actual provisioning remains blocked until the AWS account, access, and spending ceiling are confirmed.
 
 ## Proposed AWS architecture
 
@@ -142,7 +148,8 @@ Administrative batch creation and model promotion endpoints must require authent
 ## Open deployment inputs
 
 Before provisioning AWS resources, confirm:
-- the AWS account and target region;
+- the AWS account ID and confirmation that the user can authorize deployments;
+- confirmation of `us-east-1` as the initial region (already selected as the default);
 - the approved monthly/daily spend ceiling;
 - who will hold AWS billing and IAM administrator access.
 
