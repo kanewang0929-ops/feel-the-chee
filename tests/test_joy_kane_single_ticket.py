@@ -51,6 +51,19 @@ class SingleTicketContractTests(unittest.TestCase):
             repeated, _ = duel.make_agent_prediction(agent, history, state, "26061", "2026-03-01", 12345)
             self.assertEqual(first, repeated)
 
+
+    def test_simulation_mode_suppresses_live_lock_metadata(self):
+        fake_lock = {
+            "issue": "26132",
+            "date": "2026-11-18",
+            "predictionId": "archive-only-id",
+            "predictionLockedAt": "2026-11-17T00:00:00+00:00",
+        }
+        self.assertEqual(duel.live_lock_metadata(True, fake_lock), {})
+        live_metadata = duel.live_lock_metadata(False, fake_lock)
+        self.assertEqual(live_metadata["livePredictionLock"]["issue"], "26132")
+        self.assertEqual(live_metadata["livePredictionLock"]["date"], "2026-11-18")
+
     def test_different_simulation_seeds_change_prediction_stream(self):
         history = sample_history()
         for agent in ("joy", "kane"):
