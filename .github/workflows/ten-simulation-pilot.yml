@@ -23,6 +23,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ten-simulation-pilot-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ten-simulation-pilot:
     runs-on: ubuntu-latest
