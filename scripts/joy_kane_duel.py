@@ -694,7 +694,7 @@ def main() -> None:
             training_results[name] = {
                 **(prior.get("dailyTraining") or {}),
                 "skipped": True,
-                "reason": f"Daily million-cycle search already ran {age:.1f} hours ago.",
+                "reason": "Simulation replay disables daily optimizer." if simulation_mode else f"Daily million-cycle search already ran {age:.1f} hours ago.",
             }
 
     # Keep the upcoming draw's prediction immutable until its result is published.
