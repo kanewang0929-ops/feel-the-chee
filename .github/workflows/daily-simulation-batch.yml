@@ -34,7 +34,7 @@ concurrency:
 
 jobs:
   pull-request-tests:
-    if: "${{ github.event_name }}" == 'pull_request'
+    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -48,7 +48,7 @@ jobs:
         run: python -m unittest discover -s tests -v
 
   daily-batch:
-    if: "${{ github.event_name }}" != 'pull_request'
+    if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     timeout-minutes: 180
     steps:
