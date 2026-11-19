@@ -14,13 +14,13 @@ Use Render's native services:
 - Render Postgres: persistent operational database and model registry.
 - Render Key Value: optional only if a conventional background-worker queue is later needed; Workflows already manages its own task queue.
 
-For large compressed Parquet audit/summary files, use an S3-compatible object store such as Cloudflare R2 as an optional external file-storage layer. This does not move compute or the app off Render. If the requirement is absolutely no external storage vendor, start with Postgres for summaries and selected audit records, but review storage growth and query performance before scaling to one million runs every day.
+For large compressed Parquet audit/summary files, use an S3-compatible object store such as Cloudflare R2 as an optional external file-storage layer. This does not move compute or the app off Render. If the requirement is absolutely no external storage vendor, start with Postgres for summaries and selected audit records, but review storage growth and query performance for a 100-simulation daily batch.
 
 ## Goals
 
 - Preserve the current Render-hosted website and URL.
 - Keep the current draw synchronization and live prediction workflow operating during migration.
-- Run 1,000,000 independent complete chronological historical replays per daily batch.
+- Run 100 independent complete chronological historical replays per daily batch.
 - Each agent emits exactly one official ticket per draw: 5 front numbers (1-35) and 2 back numbers (1-12).
 - Seal both agents' predictions before revealing the target draw, then score and update each agent independently.
 - Store a compact summary for every run; during the current ten-run engineering pilot retain one clearly labelled representative trace. After holdout evaluation is implemented, retain full draw-level traces only for the validation-selected candidate and canonical published-model audits.
@@ -29,7 +29,7 @@ For large compressed Parquet audit/summary files, use an S3-compatible object st
 ## Current-state findings
 
 - Current `render.yaml` configures a static site only; there is no application backend or persistent database in the repository's Render configuration.
-- The existing GitHub Actions workflow synchronizes draws and runs the current Joy/Kane script successfully, but GitHub Actions should not host the million-replay workload.
+- The existing GitHub Actions workflow synchronizes draws and runs the current Joy/Kane script successfully, but GitHub Actions should not host a 100-simulation daily batch.
 - The current `scripts/joy_kane_duel.py` originally had `PICK_COUNT = 3`. The implementation branch changes it to `PICK_COUNT = 1` and adds contract tests.
 - Existing JSONL files should not remain the long-term storage system for large simulation output.
 - The current Render site should remain live while the new backend is built and validated in parallel.
@@ -38,7 +38,7 @@ For large compressed Parquet audit/summary files, use an S3-compatible object st
 
 1. **Render Cron Job** starts once daily and triggers the workflow through the Render SDK/API. The cron command should submit the batch and exit quickly. Render Cron Jobs have a single-run guarantee and a 12-hour maximum, so the heavy computation belongs in Workflows, not in the cron process.
 2. **Render Workflows** orchestrates the daily batch. It manages task queuing, on-demand task instances, retries, and task lifecycle.
-3. **Parallel workflow tasks** process deterministic shards. Do not create one million individual task runs. Each task handles a configurable chunk of simulation IDs, for example 500-2,000 runs per task during initial benchmarking. Chunk size must be tuned from real throughput.
+3. **Parallel workflow tasks** process deterministic shards. At this workload, begin with a single bounded batch job rather than distributed shards. Keep the batch size fixed at 100 simulations and measure runtime before considering additional concurrency.
 4. **Render Postgres** stores batch metadata, shard status, model registry, promotion decisions, official predictions, and selected dashboard summaries.
 5. **S3-compatible object storage (optional but recommended at scale)** stores date-partitioned Parquet summaries for all runs, immutable draw archive snapshots, and compressed full audit files for selected simulations/models.
 6. **Render Web Service** exposes the API to the existing static site over HTTPS. Services in the same Render region can use private networking for database and internal service connections.
@@ -59,14 +59,14 @@ These limits and prices can change. Recheck the current Render docs and dashboar
 
 ## Batch design
 
-A daily batch contains one million independent simulations. Each simulation has:
+A daily batch contains 100 independent simulations. Each simulation has:
 - unique simulation ID;
 - deterministic seed derived from batch ID, simulation ID, and engine version;
 - independent initial Joy and Kane states;
 - immutable engine/configuration version;
 - fixed archive digest and warm-up setting.
 
-The workflow creates a bounded number of shard tasks. Each shard processes a range of simulation IDs and writes output in bulk. Shard size should be selected after benchmark runs. The first pilots should use 100, 1,000, and 10,000 simulations before testing larger batches.
+Run the 100 simulations as one bounded batch initially. Each simulation receives a deterministic ID and seed. Avoid shard orchestration, extra worker services, and high-concurrency settings unless measured runtime later justifies them.
 
 ## Strict chronological simulation flow
 
@@ -150,7 +150,7 @@ Administrative batch creation and model promotion endpoints require authenticati
 - Prediction and result events remain separate. The outcome cannot be passed into ticket-generation functions.
 - Every run is reproducible from its seed, engine version, configuration hash, and archive digest.
 - Use chronological training, validation, and untouched-test periods. Candidate selection may use validation only. Test metrics are reported but never used to select or promote a candidate.
-- Do not promote a model simply because it is the highest-scoring one among one million trials. Use predeclared promotion thresholds, compare against a random-ticket baseline, and report uncertainty and the number of candidates tested.
+- Do not promote a model simply because it is the highest-scoring one among 100 trials. Use predeclared promotion thresholds, compare against a random-ticket baseline, and report uncertainty and the number of candidates tested.
 - After candidate configuration is frozen, generate the canonical published model by a clean chronological replay through the available archive. Preserve that replay as the model's official audit.
 
 ## Pilot evaluation protocol before any model-selection claim
@@ -187,7 +187,7 @@ Until this protocol exists and passes its own tests, the full-history ten-run re
 4. Add Render Postgres schema and API service while leaving the existing static site unchanged.
 5. Add Render Workflow and a daily Render Cron trigger with conservative concurrency.
 6. Run 100, 1,000, and 10,000-run pilots. Measure runtime, CPU, memory, storage, retry behavior, and cost.
-7. Enable the million-run daily schedule only after the benchmark and spend review.
+7. Enable the 100-simulation daily schedule only after the benchmark and spend review.
 
 ## Before provisioning or scaling
 
