@@ -1,0 +1,123 @@
+name: Daily 100-simulation batch
+
+on:
+  schedule:
+    - cron: "20 18 * * *"
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/daily-simulation-batch.yml"
+      - "scripts/run_simulation_batch.py"
+      - "scripts/joy_kane_duel.py"
+      - "scripts/publish_simulation_dashboard.py"
+      - "tests/**"
+      - "data/draws.json"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/daily-simulation-batch.yml"
+      - "scripts/run_simulation_batch.py"
+      - "scripts/joy_kane_duel.py"
+      - "scripts/publish_simulation_dashboard.py"
+      - "tests/**"
+      - "data/draws.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-100-simulation-batch
+  cancel-in-progress: false
+
+jobs:
+  pull-request-tests:
+    if: "${{ github.event_name }}" == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run unit and simulation contract tests
+        run: python -m unittest discover -s tests -v
+
+  daily-batch:
+    if: "${{ github.event_name }}" != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Check out main branch
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run unit and simulation contract tests
+        run: python -m unittest discover -s tests -v
+      - name: Run 100 independent full-history simulations
+        id: simulations
+        env:
+          DUEL_BATCH_SEED: "${{ github.run_id }}-${{ github.run_attempt }}"
+        run: |
+          python scripts/run_simulation_batch.py \
+            --count 100 \
+            --batch-seed "$DUEL_BATCH_SEED" \
+            --output-dir simulation-artifacts
+      - name: Read previous dashboard history
+        if: always() && steps.checkout.outcome == 'success'
+        shell: bash
+        run: |
+          git fetch origin simulation-data
+          git show origin/simulation-data:data/simulation-dashboard-history.json > /tmp/simulation-dashboard-history.json
+      - name: Build dashboard feed
+        id: publish_feed
+        if: always() && steps.checkout.outcome == 'success'
+        env:
+          BATCH_OUTCOME: "${{ steps.simulations.outcome }}"
+          RUN_ID: "${{ github.run_id }}"
+          RUN_ATTEMPT: "${{ github.run_attempt }}"
+          RUN_NUMBER: "${{ github.run_number }}"
+          RUN_STARTED_AT: "${{ github.run_started_at }}"
+          RUN_URL: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        run: |
+          python scripts/publish_simulation_dashboard.py \
+            --summary simulation-artifacts/simulation-batch-summary.json \
+            --existing-feed /tmp/simulation-dashboard-history.json \
+            --output /tmp/simulation-dashboard-history-next.json \
+            --archive data/draws.json \
+            --status "$BATCH_OUTCOME" \
+            --run-id "$RUN_ID" \
+            --run-attempt "$RUN_ATTEMPT" \
+            --run-number "$RUN_NUMBER" \
+            --run-url "$RUN_URL" \
+            --started-at "$RUN_STARTED_AT"
+      - name: Publish dashboard history to data branch
+        if: always() && steps.publish_feed.outcome == 'success'
+        shell: bash
+        run: |
+          git worktree add --detach /tmp/simulation-data origin/simulation-data
+          mkdir -p /tmp/simulation-data/data
+          cp /tmp/simulation-dashboard-history-next.json /tmp/simulation-data/data/simulation-dashboard-history.json
+          cd /tmp/simulation-data
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/simulation-dashboard-history.json
+          git commit -m "Publish simulation batch $GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT"
+          git push origin HEAD:refs/heads/simulation-data
+      - name: Upload batch summaries and representative audit trace
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-simulation-batch-${{ github.run_number }}
+          path: simulation-artifacts/
+          if-no-files-found: warn
+          retention-days: 30
