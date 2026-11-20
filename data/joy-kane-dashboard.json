@@ -1,6 +1,6 @@
 {
   "modelVersion": "v1.0-joy-kane-duel",
-  "generatedAt": "2026-11-19T09:21:42.840277+00:00",
+  "generatedAt": "2026-11-20T08:36:13.427045+00:00",
   "walkForward": true,
   "futureLeakage": false,
   "method": {
@@ -37,8 +37,8 @@
     "dailyTraining": {
       "simulationMode": false,
       "simulationSeed": null,
-      "cyclesPerAgent": 0,
-      "ranToday": false,
+      "cyclesPerAgent": 1000000,
+      "ranToday": true,
       "minimumHoursBetweenRuns": 23.0,
       "objective": "Exact best-ticket front plus back hit counts only."
     }
@@ -189,16 +189,16 @@
       "observations": 2750,
       "weights": {
         "front": {
-          "curve": 0.9986747538705852,
-          "transition": 0.00044174870980488945,
-          "frequency": 0.00044174870980488945,
-          "recency": 0.00044174870980488945
+          "curve": 0.239313701219384,
+          "transition": 0.23489774164414706,
+          "frequency": 0.28764747217071995,
+          "recency": 0.23814108496574904
         },
         "back": {
-          "curve": 0.00098460480316063,
-          "transition": 0.0011083515435109884,
-          "frequency": 0.001005217637763384,
-          "recency": 0.9969018260155651
+          "curve": 0.25982282804075074,
+          "transition": 0.2552216093818048,
+          "frequency": 0.24441176754017963,
+          "recency": 0.24054379503726483
         }
       },
       "duel": {
@@ -210,39 +210,37 @@
       "exploration": 0.19190670774416743,
       "dailyTraining": {
         "cyclesPerRun": 1000000,
-        "accepted": true,
-        "acceptedTrials": 61,
-        "trainScoreBefore": 1.643482,
-        "trainScoreAfter": 1.637252,
-        "validationScoreBefore": 1.59142,
-        "validationScoreAfter": 1.658044,
-        "untouchedTestScoreBefore": 1.566245,
-        "untouchedTestScoreAfter": 1.603601,
+        "accepted": false,
+        "acceptedTrials": 71,
+        "trainScoreBefore": 1.104647,
+        "trainScoreAfter": 1.104647,
+        "validationScoreBefore": 1.038262,
+        "validationScoreAfter": 1.038262,
+        "untouchedTestScoreBefore": 1.00506,
+        "untouchedTestScoreAfter": 1.00506,
         "trainingDraws": 1924,
-        "validationDraws": 550,
+        "validationDraws": 551,
         "untouchedTestDraws": 275,
         "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
-        "updatedAt": "2026-11-18T13:14:02.605739+00:00",
-        "skipped": true,
-        "reason": "Daily million-cycle search already ran 20.1 hours ago."
+        "updatedAt": "2026-11-20T08:35:57.309240+00:00"
       }
     },
     "kane": {
       "observations": 2750,
       "weights": {
         "front": {
-          "frequency": 0.0004187897802788041,
-          "interval": 0.0004187897802788041,
-          "deviation": 0.0004187897802788041,
-          "distribution": 0.9983248408788847,
-          "overdue": 0.0004187897802788041
+          "frequency": 0.000400968863891728,
+          "interval": 0.998396124544433,
+          "deviation": 0.000400968863891728,
+          "distribution": 0.000400968863891728,
+          "overdue": 0.000400968863891728
         },
         "back": {
-          "frequency": 0.0008248387881873852,
-          "interval": 0.0008537858812992565,
-          "deviation": 0.0008248387881873852,
-          "distribution": 0.9966716977541386,
-          "overdue": 0.0008248387881873852
+          "frequency": 0.9968366342056388,
+          "interval": 0.0008129651181420802,
+          "deviation": 0.0007991410827125564,
+          "distribution": 0.0007668611276533015,
+          "overdue": 0.000784398465853276
         }
       },
       "duel": {
@@ -255,20 +253,18 @@
       "dailyTraining": {
         "cyclesPerRun": 1000000,
         "accepted": true,
-        "acceptedTrials": 60,
-        "trainScoreBefore": 1.634113,
-        "trainScoreAfter": 1.728477,
-        "validationScoreBefore": 1.623466,
-        "validationScoreAfter": 1.745135,
-        "untouchedTestScoreBefore": 1.598667,
-        "untouchedTestScoreAfter": 1.672507,
+        "acceptedTrials": 83,
+        "trainScoreBefore": 1.076236,
+        "trainScoreAfter": 1.09142,
+        "validationScoreBefore": 1.050535,
+        "validationScoreAfter": 1.115978,
+        "untouchedTestScoreBefore": 1.036278,
+        "untouchedTestScoreAfter": 1.043623,
         "trainingDraws": 1924,
-        "validationDraws": 550,
+        "validationDraws": 551,
         "untouchedTestDraws": 275,
         "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
-        "updatedAt": "2026-11-18T13:14:18.869530+00:00",
-        "skipped": true,
-        "reason": "Daily million-cycle search already ran 20.1 hours ago."
+        "updatedAt": "2026-11-20T08:36:13.418723+00:00"
       }
     }
   },
