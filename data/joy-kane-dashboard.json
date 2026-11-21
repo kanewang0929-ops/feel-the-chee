@@ -1,6 +1,6 @@
 {
   "modelVersion": "v1.0-joy-kane-duel",
-  "generatedAt": "2026-11-21T08:19:15.261148+00:00",
+  "generatedAt": "2026-11-21T20:30:53.865901+00:00",
   "walkForward": true,
   "futureLeakage": false,
   "method": {
@@ -37,33 +37,33 @@
     "dailyTraining": {
       "simulationMode": false,
       "simulationSeed": null,
-      "cyclesPerAgent": 1000000,
-      "ranToday": true,
+      "cyclesPerAgent": 0,
+      "ranToday": false,
       "minimumHoursBetweenRuns": 23.0,
       "objective": "Exact best-ticket front plus back hit counts only."
     }
   },
   "summary": {
-    "drawsEvaluated": 2750,
+    "drawsEvaluated": 2751,
     "warmupDraws": 200,
     "dateRange": {
       "earliest": "2008-09-15",
-      "latest": "2026-11-18"
+      "latest": "2026-11-21"
     },
     "joy": {
-      "draws": 2750,
-      "averageBestFrontHits": 0.762182,
-      "averageBestBackHits": 0.325455,
-      "averageBestTotalHits": 1.087636
+      "draws": 2751,
+      "averageBestFrontHits": 0.762632,
+      "averageBestBackHits": 0.3257,
+      "averageBestTotalHits": 1.088332
     },
     "kane": {
-      "draws": 2750,
-      "averageBestFrontHits": 0.719273,
-      "averageBestBackHits": 0.342909,
-      "averageBestTotalHits": 1.062182
+      "draws": 2751,
+      "averageBestFrontHits": 0.719375,
+      "averageBestBackHits": 0.342784,
+      "averageBestTotalHits": 1.062159
     },
     "duelWins": {
-      "joy": 1100,
+      "joy": 1101,
       "kane": 1051,
       "tie": 599
     },
@@ -75,110 +75,50 @@
     }
   },
   "nextForecast": {
-    "targetIssue": "26133",
-    "targetDate": "2026-11-21",
+    "targetIssue": "26134",
+    "targetDate": "2026-11-23",
     "forecastScope": "upcoming_live_draw",
-    "historyCount": 2950,
+    "historyCount": 2951,
     "joy": {
       "modelVersion": "joy-adaptive-hit-model-v1",
-      "targetIssue": "26133",
-      "targetDate": "2026-11-21",
+      "targetIssue": "26134",
+      "targetDate": "2026-11-23",
       "results": [
         {
           "rank": 1,
           "label": "Joy Main",
           "front": [
-            "07",
-            "11",
-            "23",
-            "24",
-            "30"
+            "10",
+            "13",
+            "25",
+            "29",
+            "32"
           ],
           "back": [
             "04",
-            "12"
-          ]
-        },
-        {
-          "rank": 2,
-          "label": "Joy Alternative 1",
-          "front": [
-            "10",
-            "18",
-            "22",
-            "29",
-            "30"
-          ],
-          "back": [
-            "07",
-            "09"
-          ]
-        },
-        {
-          "rank": 3,
-          "label": "Joy Alternative 2",
-          "front": [
-            "11",
-            "13",
-            "22",
-            "24",
-            "31"
-          ],
-          "back": [
-            "07",
-            "09"
+            "07"
           ]
         }
       ]
     },
     "kane": {
       "modelVersion": "kane-adaptive-hit-model-v1",
-      "targetIssue": "26133",
-      "targetDate": "2026-11-21",
+      "targetIssue": "26134",
+      "targetDate": "2026-11-23",
       "results": [
         {
           "rank": 1,
           "label": "Kane Main",
           "front": [
-            "03",
-            "07",
-            "16",
-            "31",
-            "32"
-          ],
-          "back": [
-            "03",
-            "08"
-          ]
-        },
-        {
-          "rank": 2,
-          "label": "Kane Alternative 1",
-          "front": [
-            "03",
+            "08",
             "12",
-            "16",
-            "29",
-            "32"
+            "14",
+            "21",
+            "31"
           ],
           "back": [
             "02",
             "07"
-          ]
-        },
-        {
-          "rank": 3,
-          "label": "Kane Alternative 2",
-          "front": [
-            "03",
-            "06",
-            "19",
-            "27",
-            "32"
-          ],
-          "back": [
-            "03",
-            "12"
           ]
         }
       ]
@@ -186,7 +126,7 @@
   },
   "agentStates": {
     "joy": {
-      "observations": 2750,
+      "observations": 2751,
       "weights": {
         "front": {
           "curve": 0.239313701219384,
@@ -202,12 +142,12 @@
         }
       },
       "duel": {
-        "wins": 950,
+        "wins": 951,
         "losses": 903,
         "ties": 897,
-        "opponentScoreTotal": 2921.0
+        "opponentScoreTotal": 2922.0
       },
-      "exploration": 0.19190670774416743,
+      "exploration": 0.1909471742054466,
       "dailyTraining": {
         "cyclesPerRun": 1000000,
         "accepted": false,
@@ -222,11 +162,13 @@
         "validationDraws": 551,
         "untouchedTestDraws": 275,
         "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
-        "updatedAt": "2026-11-21T08:19:04.736600+00:00"
+        "updatedAt": "2026-11-21T08:19:04.736600+00:00",
+        "skipped": true,
+        "reason": "Daily million-cycle search already ran 12.2 hours ago."
       }
     },
     "kane": {
-      "observations": 2750,
+      "observations": 2751,
       "weights": {
         "front": {
           "frequency": 0.0005662836782680074,
@@ -245,11 +187,11 @@
       },
       "duel": {
         "wins": 903,
-        "losses": 950,
+        "losses": 951,
         "ties": 897,
-        "opponentScoreTotal": 2991.0
+        "opponentScoreTotal": 2994.0
       },
-      "exploration": 0.19164669048799787,
+      "exploration": 0.19264669048799787,
       "dailyTraining": {
         "cyclesPerRun": 1000000,
         "accepted": true,
@@ -264,18 +206,20 @@
         "validationDraws": 551,
         "untouchedTestDraws": 275,
         "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
-        "updatedAt": "2026-11-21T08:19:15.254616+00:00"
+        "updatedAt": "2026-11-21T08:19:15.254616+00:00",
+        "skipped": true,
+        "reason": "Daily million-cycle search already ran 12.2 hours ago."
       }
     }
   },
   "livePredictionLock": {
-    "issue": "26133",
-    "date": "2026-11-21",
-    "predictionId": "a4fca6b50c752c98c598a0b5",
-    "lockedAt": "2026-11-18T21:55:50.603557+00:00"
+    "issue": "26134",
+    "date": "2026-11-23",
+    "predictionId": "1af16ceb5dee9dd8343f9b27",
+    "lockedAt": "2026-11-21T20:30:53.864996+00:00"
   },
   "audit": {
     "file": "data/joy-kane-audit.json",
-    "rows": 2750
+    "rows": 2751
   }
 }

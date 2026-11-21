@@ -1,13 +1,13 @@
 {
   "modelVersion": "v1.0-joy-kane-duel",
-  "generatedAt": "2026-11-21T08:19:15.260796+00:00",
+  "generatedAt": "2026-11-21T20:30:53.865597+00:00",
   "walkForward": true,
   "futureLeakage": false,
   "agents": {
     "joy": {
       "name": "Joy",
       "modelVersion": "joy-adaptive-hit-model-v1",
-      "observations": 2750,
+      "observations": 2751,
       "weights": {
         "front": {
           "curve": 0.239313701219384,
@@ -24,26 +24,40 @@
       },
       "signalEma": {
         "front": {
-          "curve": 0.643236907723471,
-          "transition": 0.6213251769214587,
-          "frequency": 0.859660939160706,
-          "recency": 0.63745813516809
+          "curve": 0.6557236159531495,
+          "transition": 0.6695787957292076,
+          "frequency": 0.8995728062900812,
+          "recency": 0.685147100437207
         },
         "back": {
-          "curve": 0.3286648706775046,
-          "transition": 0.30764399541059856,
-          "frequency": 0.256728878567001,
-          "recency": 0.23796158219634794
+          "curve": 0.35216160020379195,
+          "transition": 0.2968764555712276,
+          "frequency": 0.24774336781715595,
+          "recency": 0.26463292681947576
         }
       },
-      "exploration": 0.19190670774416743,
+      "exploration": 0.1909471742054466,
       "duel": {
-        "wins": 950,
+        "wins": 951,
         "losses": 903,
         "ties": 897,
-        "opponentScoreTotal": 2921.0
+        "opponentScoreTotal": 2922.0
       },
-      "updatedAt": "2026-11-21T08:18:56.052143+00:00",
+      "updatedAt": "2026-11-21T20:30:53.834262+00:00",
+      "optimizedWeights": {
+        "front": {
+          "curve": 0.239313701219384,
+          "transition": 0.23489774164414706,
+          "frequency": 0.28764747217071995,
+          "recency": 0.23814108496574904
+        },
+        "back": {
+          "curve": 0.25982282804075074,
+          "transition": 0.2552216093818048,
+          "frequency": 0.24441176754017963,
+          "recency": 0.24054379503726483
+        }
+      },
       "dailyTraining": {
         "cyclesPerRun": 1000000,
         "accepted": false,
@@ -58,27 +72,15 @@
         "validationDraws": 551,
         "untouchedTestDraws": 275,
         "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
-        "updatedAt": "2026-11-21T08:19:04.736600+00:00"
-      },
-      "optimizedWeights": {
-        "front": {
-          "curve": 0.239313701219384,
-          "transition": 0.23489774164414706,
-          "frequency": 0.28764747217071995,
-          "recency": 0.23814108496574904
-        },
-        "back": {
-          "curve": 0.25982282804075074,
-          "transition": 0.2552216093818048,
-          "frequency": 0.24441176754017963,
-          "recency": 0.24054379503726483
-        }
+        "updatedAt": "2026-11-21T08:19:04.736600+00:00",
+        "skipped": true,
+        "reason": "Daily million-cycle search already ran 12.2 hours ago."
       }
     },
     "kane": {
       "name": "Kane",
       "modelVersion": "kane-adaptive-hit-model-v1",
-      "observations": 2750,
+      "observations": 2751,
       "weights": {
         "front": {
           "frequency": 0.0005662836782680074,
@@ -97,44 +99,28 @@
       },
       "signalEma": {
         "front": {
-          "frequency": 0.8647432357513296,
-          "interval": 0.8071241309939371,
-          "deviation": 0.6533891414000141,
-          "distribution": 0.7107773991181277,
-          "overdue": 0.6830394946800515
+          "frequency": 0.8694772225000331,
+          "interval": 0.8488747864091493,
+          "deviation": 0.6655205214510137,
+          "distribution": 0.7209001901489932,
+          "overdue": 0.6591331123662497
         },
         "back": {
-          "frequency": 0.2685211879603396,
-          "interval": 0.3355159070679877,
-          "deviation": 0.38300419049781714,
-          "distribution": 0.3984099426038319,
-          "overdue": 0.2502392215660837
+          "frequency": 0.25912294638172767,
+          "interval": 0.3587728503206081,
+          "deviation": 0.36959904383039355,
+          "distribution": 0.38446559461269775,
+          "overdue": 0.2764808488112708
         }
       },
-      "exploration": 0.19164669048799787,
+      "exploration": 0.19264669048799787,
       "duel": {
         "wins": 903,
-        "losses": 950,
+        "losses": 951,
         "ties": 897,
-        "opponentScoreTotal": 2991.0
+        "opponentScoreTotal": 2994.0
       },
-      "updatedAt": "2026-11-21T08:18:56.052181+00:00",
-      "dailyTraining": {
-        "cyclesPerRun": 1000000,
-        "accepted": true,
-        "acceptedTrials": 66,
-        "trainScoreBefore": 1.076236,
-        "trainScoreAfter": 1.091431,
-        "validationScoreBefore": 1.050535,
-        "validationScoreAfter": 1.115975,
-        "untouchedTestScoreBefore": 1.036278,
-        "untouchedTestScoreAfter": 1.043607,
-        "trainingDraws": 1924,
-        "validationDraws": 551,
-        "untouchedTestDraws": 275,
-        "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
-        "updatedAt": "2026-11-21T08:19:15.254616+00:00"
-      },
+      "updatedAt": "2026-11-21T20:30:53.834300+00:00",
       "optimizedWeights": {
         "front": {
           "frequency": 0.0005662836782680074,
@@ -150,14 +136,32 @@
           "distribution": 0.0005241665069985159,
           "overdue": 0.0005241665069985159
         }
+      },
+      "dailyTraining": {
+        "cyclesPerRun": 1000000,
+        "accepted": true,
+        "acceptedTrials": 66,
+        "trainScoreBefore": 1.076236,
+        "trainScoreAfter": 1.091431,
+        "validationScoreBefore": 1.050535,
+        "validationScoreAfter": 1.115975,
+        "untouchedTestScoreBefore": 1.036278,
+        "untouchedTestScoreAfter": 1.043607,
+        "trainingDraws": 1924,
+        "validationDraws": 551,
+        "untouchedTestDraws": 275,
+        "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
+        "updatedAt": "2026-11-21T08:19:15.254616+00:00",
+        "skipped": true,
+        "reason": "Daily million-cycle search already ran 12.2 hours ago."
       }
     }
   },
   "crossLearning": "Agents compare their best-ticket hit counts after each reveal. Their model weights remain independent; each adjusts its own exploration rate from the head-to-head outcome.",
   "livePredictionLock": {
-    "issue": "26133",
-    "date": "2026-11-21",
-    "predictionId": "a4fca6b50c752c98c598a0b5",
-    "lockedAt": "2026-11-18T21:55:50.603557+00:00"
+    "issue": "26134",
+    "date": "2026-11-23",
+    "predictionId": "1af16ceb5dee9dd8343f9b27",
+    "lockedAt": "2026-11-21T20:30:53.864996+00:00"
   }
 }
