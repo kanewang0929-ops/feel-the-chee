@@ -97,8 +97,8 @@ def update_feed(existing: dict[str, Any] | None, batch: dict[str, Any]) -> dict[
     feed["schemaVersion"] = 1
     feed["updatedAt"] = utc_now()
     feed["schedule"] = {
-        "enabled": True, "simulationsPerBatch": 100, "cronUtc": "20 18 * * *",
-        "timeZone": "Asia/Seoul", "localTime": "03:20",
+        "enabled": True, "simulationsPerBatch": 100, "cronUtc": "0 10 * * *",
+        "timeZone": "Asia/Shanghai", "localTime": "18:00",
         "description": "Daily 100-simulation full-history replay.",
     }
     batches = [row for row in list(feed.get("batches") or []) if row.get("batchId") != batch["batchId"]]
