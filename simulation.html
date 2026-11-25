@@ -43,6 +43,7 @@
         <div class="section-heading"><div><p class="eyebrow">01 / LIVE MODEL TELEMETRY</p><h2>Training operations</h2></div><div class="updated-label" id="trainingUpdated">Loading live model state…</div></div>
         <div class="ops-kpi-grid"><article class="metric-card"><div class="metric-label">MODEL VERSION</div><div class="metric-value ops-value" id="trainModelVersion">—</div><div class="metric-foot">Current live production model</div></article><article class="metric-card"><div class="metric-label">HISTORICAL OBSERVATIONS</div><div class="metric-value" id="trainObservations">—</div><div class="metric-foot">Chronological draws processed</div></article><article class="metric-card"><div class="metric-label">OPTIMIZER CYCLES / AGENT</div><div class="metric-value" id="trainCycles">—</div><div class="metric-foot">Configured candidate-weight search</div></article><article class="metric-card"><div class="metric-label">LAST TRAINING UPDATE</div><div class="metric-value ops-value" id="trainLastRun">—</div><div class="metric-foot" id="trainRunState">Reading training record</div></article></div>
         <div class="ops-two-col"><article class="panel"><div class="panel-heading"><div><p class="eyebrow">JOY / ADAPTIVE HIT MODEL</p><h2>Joy training state</h2></div><span class="ops-chip joy-chip">JOY</span></div><div id="joyTrainingCard" class="ops-agent-state"></div></article><article class="panel"><div class="panel-heading"><div><p class="eyebrow">KANE / ADAPTIVE HIT MODEL</p><h2>Kane training state</h2></div><span class="ops-chip kane-chip">KANE</span></div><div id="kaneTrainingCard" class="ops-agent-state"></div></article></div>
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">RESEARCH REGISTRY</p><h2>Experiment memory</h2></div><span class="ops-chip" id="researchStatus">WAITING</span></div><div id="researchSummary" class="ops-agent-state">Waiting for the first published research cycle.</div><div class="table-scroll"><table><thead><tr><th>Agent</th><th>Configuration</th><th>Historical hits</th><th>Research baseline</th><th>Decision</th><th>Package</th></tr></thead><tbody id="researchRows"><tr><td colspan="6">No experiments published.</td></tr></tbody></table></div><p class="caveat">Exploratory scores on previously observed data, not independent evidence. Each configuration is tested once per archive and engine version.</p></article>
         <article class="panel ops-explainer"><p class="eyebrow">HOW LIVE TRAINING WORKS</p><h2>Learning is separate from simulation</h2><p>The live prediction workflow scores sealed historical predictions after each reveal and updates each agent's independent signal weights. The daily optimizer searches up to one million candidate weight combinations per agent, subject to its 23-hour minimum interval. Simulation replays do not write to these live states.</p><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/sync-draws.yml" target="_blank" rel="noopener">Open live training workflow ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/blob/main/data/joy-kane-model-state.json" target="_blank" rel="noopener">Inspect model-state file ↗</a></div></article>
       </section>
       <section class="ops-panel" id="ops-deployment" hidden>
@@ -82,6 +83,7 @@
         <div class="table-scroll"><table><thead><tr><th>Batch</th><th>Started (KST)</th><th>Status</th><th>Runs</th><th>Joy avg.</th><th>Kane avg.</th><th>Runtime</th><th></th></tr></thead><tbody id="batchRows"><tr><td colspan="8" class="empty-cell">No completed batches have been published yet.</td></tr></tbody></table></div>
         <p class="table-foot" id="historyMeta">The dashboard retains the 30 most recent batches.</p>
       </section>
+      <article class="panel"><p class="eyebrow">CHRONOLOGICAL EVALUATION</p><h2>Published holdout report</h2><p id="holdoutMeta">Checking report…</p><div id="holdoutMetrics" class="ops-agent-state"></div><p class="caveat">Previously inspected holdout data is not a fresh test for future candidates.</p></article>
       <section class="method-grid">
         <article class="method-card">
           <p class="eyebrow">05 / REPLAY PROTOCOL</p><h2>Same archive. Separate minds.</h2>
@@ -108,6 +110,6 @@
     <footer class="footer"><span>FEEL THE CHEE · JOY & KANE</span><span id="feedStatus">Dashboard feed: checking…</span></footer>
   </div>
   <script src="./assets/simulation-dashboard.js?v=20261119-ops1"></script>
-  <script src="./assets/model-operations.js?v=20261119-ops1"></script>
+  <script src="./assets/model-operations.js?v=20261125-research1"></script>
 </body>
 </html>
