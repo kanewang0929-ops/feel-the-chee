@@ -1,0 +1,67 @@
+{
+  "adaptationStart": "2024-11-18",
+  "agent": "kane",
+  "archiveDrawCount": 2949,
+  "archiveId": "38efd092c5f943b256b52a1f20a1941da90159478b1ece6dca01c69a92119a7c",
+  "archiveThrough": "2026-11-16",
+  "configuration": {
+    "ema_rate": 0.0175,
+    "name": "conservative_adaptation",
+    "weight_sensitivity": 0.85
+  },
+  "engineId": "91c2e53ee12204ca42d33c310025b912baafc2a00e30894f3c0aef9ab9e8b9f9",
+  "parent": "default research state (not production snapshot)",
+  "promotionEligible": false,
+  "researchState": {
+    "duel": {
+      "losses": 0,
+      "opponentScoreTotal": 0.0,
+      "ties": 0,
+      "wins": 0
+    },
+    "exploration": 0.08,
+    "modelVersion": "kane-adaptive-hit-model-v1",
+    "name": "Kane",
+    "observations": 300,
+    "signalEma": {
+      "back": {
+        "deviation": 0.33167499769520503,
+        "distribution": 0.31285376203287296,
+        "frequency": 0.31387786827139,
+        "interval": 0.36109586014078576,
+        "overdue": 0.3361573267174549
+      },
+      "front": {
+        "deviation": 0.7334001391693571,
+        "distribution": 0.7450105890429759,
+        "frequency": 0.6813201521041303,
+        "interval": 0.662181876669291,
+        "overdue": 0.7791964338849724
+      }
+    },
+    "updatedAt": null,
+    "weights": {
+      "back": {
+        "deviation": 0.2000697914741078,
+        "distribution": 0.1968945315897713,
+        "frequency": 0.19706600099058033,
+        "interval": 0.20513616868658419,
+        "overdue": 0.2008335072589564
+      },
+      "front": {
+        "deviation": 0.20211942269942113,
+        "distribution": 0.20412399066452327,
+        "frequency": 0.1933671542187824,
+        "interval": 0.19024699489673408,
+        "overdue": 0.21014243752053904
+      }
+    }
+  },
+  "researchVersion": "research-v1",
+  "schemaVersion": 1,
+  "scope": "exploratory historical research only",
+  "scoringDraws": 200,
+  "scoringStart": "2025-07-21",
+  "seed": 14454208638746166344,
+  "sourceCommit": "9929bd68f5fa7c75717b11ba7dac5eb3e0f6bb95"
+}

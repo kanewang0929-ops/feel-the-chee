@@ -1,0 +1,63 @@
+{
+  "adaptationStart": "2024-11-18",
+  "agent": "joy",
+  "archiveDrawCount": 2949,
+  "archiveId": "38efd092c5f943b256b52a1f20a1941da90159478b1ece6dca01c69a92119a7c",
+  "archiveThrough": "2026-11-16",
+  "configuration": {
+    "ema_rate": 0.0175,
+    "name": "conservative_adaptation",
+    "weight_sensitivity": 0.85
+  },
+  "engineId": "91c2e53ee12204ca42d33c310025b912baafc2a00e30894f3c0aef9ab9e8b9f9",
+  "parent": "default research state (not production snapshot)",
+  "promotionEligible": false,
+  "researchState": {
+    "duel": {
+      "losses": 0,
+      "opponentScoreTotal": 0.0,
+      "ties": 0,
+      "wins": 0
+    },
+    "exploration": 0.08,
+    "modelVersion": "joy-adaptive-hit-model-v1",
+    "name": "Joy",
+    "observations": 300,
+    "signalEma": {
+      "back": {
+        "curve": 0.27503285710066205,
+        "frequency": 0.2580372918518962,
+        "recency": 0.3957388728199683,
+        "transition": 0.3195310472619123
+      },
+      "front": {
+        "curve": 0.6926878958181387,
+        "frequency": 0.7823887347518919,
+        "recency": 0.6477017965789201,
+        "transition": 0.6624878707134211
+      }
+    },
+    "updatedAt": null,
+    "weights": {
+      "back": {
+        "curve": 0.24199869340635785,
+        "frequency": 0.2385278551364045,
+        "recency": 0.2681462231143559,
+        "transition": 0.2513272283428817
+      },
+      "front": {
+        "curve": 0.24898116661067543,
+        "frequency": 0.26870737725297067,
+        "recency": 0.23964030576487225,
+        "transition": 0.24267115037148163
+      }
+    }
+  },
+  "researchVersion": "research-v1",
+  "schemaVersion": 1,
+  "scope": "exploratory historical research only",
+  "scoringDraws": 200,
+  "scoringStart": "2025-07-21",
+  "seed": 11651618223924877526,
+  "sourceCommit": "9929bd68f5fa7c75717b11ba7dac5eb3e0f6bb95"
+}
