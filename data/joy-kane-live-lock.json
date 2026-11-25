@@ -1,47 +1,47 @@
 {
   "eventType": "prediction_locked",
-  "predictionId": "e651738b8b926edea454ab61",
-  "issue": "26135",
-  "date": "2026-11-25",
-  "trainingDrawCount": 2952,
-  "trainingThroughIssue": "26134",
-  "trainingThroughDate": "2026-11-23",
-  "historyDigest": "3561bb8e9d051cb17bde0f1640e55ebf8769e55929f6621bf0959ac0c952812a",
-  "predictionLockedAt": "2026-11-24T01:39:51.761541+00:00",
+  "predictionId": "36acf3355c920e913f1ab28c",
+  "issue": "26136",
+  "date": "2026-11-28",
+  "trainingDrawCount": 2953,
+  "trainingThroughIssue": "26135",
+  "trainingThroughDate": "2026-11-25",
+  "historyDigest": "c64c318f0150193626019b5cd2be99df6d0e387d061e2f278f41913b1a4db4bc",
+  "predictionLockedAt": "2026-11-25T23:04:36.270846+00:00",
   "agents": {
     "joy": {
       "modelVersion": "joy-adaptive-hit-model-v1",
       "weights": {
         "front": {
-          "curve": 0.24173817640869644,
-          "transition": 0.2374322044094569,
-          "frequency": 0.28023457956460635,
-          "recency": 0.24059503961724032
+          "curve": 0.24588768514596437,
+          "transition": 0.24205842431222765,
+          "frequency": 0.2741772849873417,
+          "recency": 0.23787660555446627
         },
         "back": {
-          "curve": 0.25749380067251787,
-          "transition": 0.2607346625982279,
-          "frequency": 0.24273981443722134,
-          "recency": 0.23903172229203293
+          "curve": 0.26463631248751623,
+          "transition": 0.25253381048916507,
+          "frequency": 0.24314526989869292,
+          "recency": 0.2396846071246258
         }
       },
       "prediction": {
         "modelVersion": "joy-adaptive-hit-model-v1",
-        "targetIssue": "26135",
-        "targetDate": "2026-11-25",
+        "targetIssue": "26136",
+        "targetDate": "2026-11-28",
         "results": [
           {
             "rank": 1,
             "label": "Joy Main",
             "front": [
-              "10",
-              "14",
+              "11",
               "18",
+              "22",
               "25",
-              "29"
+              "26"
             ],
             "back": [
-              "05",
+              "04",
               "09"
             ]
           }
@@ -51,14 +51,14 @@
         "curve": [
           {
             "front": [
-              12,
-              17,
-              28,
-              29,
-              30
+              5,
+              16,
+              22,
+              23,
+              31
             ],
             "back": [
-              4,
+              5,
               8
             ]
           }
@@ -66,14 +66,14 @@
         "transition": [
           {
             "front": [
-              2,
               20,
               22,
               29,
-              30
+              30,
+              32
             ],
             "back": [
-              7,
+              9,
               10
             ]
           }
@@ -81,30 +81,30 @@
         "frequency": [
           {
             "front": [
-              3,
-              10,
+              12,
+              13,
               14,
-              21,
-              26
+              26,
+              29
             ],
             "back": [
-              1,
-              7
+              9,
+              12
             ]
           }
         ],
         "recency": [
           {
             "front": [
-              2,
+              6,
               11,
+              12,
               17,
-              25,
-              29
+              25
             ],
             "back": [
-              7,
-              12
+              4,
+              9
             ]
           }
         ]
@@ -114,38 +114,38 @@
       "modelVersion": "kane-adaptive-hit-model-v1",
       "weights": {
         "front": {
-          "frequency": 0.0004935346855534232,
-          "interval": 0.9980258612577863,
-          "deviation": 0.0004935346855534232,
-          "distribution": 0.0004935346855534232,
-          "overdue": 0.0004935346855534232
+          "frequency": 0.000447562936939488,
+          "interval": 0.9982097482522421,
+          "deviation": 0.000447562936939488,
+          "distribution": 0.000447562936939488,
+          "overdue": 0.000447562936939488
         },
         "back": {
-          "frequency": 0.9976570867056742,
-          "interval": 0.0005857283235814585,
-          "deviation": 0.0005857283235814585,
-          "distribution": 0.0005857283235814585,
-          "overdue": 0.0005857283235814585
+          "frequency": 0.997210691265262,
+          "interval": 0.0006973271836845089,
+          "deviation": 0.0006973271836845089,
+          "distribution": 0.0006973271836845089,
+          "overdue": 0.0006973271836845089
         }
       },
       "prediction": {
         "modelVersion": "kane-adaptive-hit-model-v1",
-        "targetIssue": "26135",
-        "targetDate": "2026-11-25",
+        "targetIssue": "26136",
+        "targetDate": "2026-11-28",
         "results": [
           {
             "rank": 1,
             "label": "Kane Main",
             "front": [
               "03",
-              "07",
-              "21",
-              "22",
-              "28"
+              "06",
+              "23",
+              "28",
+              "29"
             ],
             "back": [
-              "05",
-              "12"
+              "02",
+              "07"
             ]
           }
         ]
@@ -154,26 +154,26 @@
         "frequency": [
           {
             "front": [
-              8,
-              12,
-              13,
+              2,
+              11,
+              14,
               21,
-              26
+              32
             ],
             "back": [
-              2,
-              9
+              1,
+              8
             ]
           }
         ],
         "interval": [
           {
             "front": [
-              6,
-              8,
+              5,
+              14,
+              19,
               21,
-              22,
-              27
+              28
             ],
             "back": [
               5,
@@ -184,26 +184,26 @@
         "deviation": [
           {
             "front": [
-              4,
-              15,
+              7,
+              16,
               17,
               20,
               30
             ],
             "back": [
               3,
-              10
+              11
             ]
           }
         ],
         "distribution": [
           {
             "front": [
-              2,
-              10,
+              3,
+              6,
               12,
-              27,
-              29
+              29,
+              35
             ],
             "back": [
               6,
@@ -214,10 +214,10 @@
         "overdue": [
           {
             "front": [
-              5,
-              8,
+              3,
+              13,
               21,
-              23,
+              22,
               28
             ],
             "back": [
