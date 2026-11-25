@@ -11,13 +11,16 @@ on:
       - "scripts/run_simulation_batch.py"
       - "scripts/joy_kane_duel.py"
       - "scripts/publish_simulation_dashboard.py"
-      - "tests/**"
       - "data/draws.json"
   pull_request:
     branches:
       - main
     paths:
       - ".github/workflows/daily-simulation-batch.yml"
+      - "scripts/closed_loop_research.py"
+      - "scripts/evaluate_chronological_holdout.py"
+      - "assets/model-operations.js"
+      - "simulation.html"
       - "scripts/run_simulation_batch.py"
       - "scripts/joy_kane_duel.py"
       - "scripts/publish_simulation_dashboard.py"
@@ -112,6 +115,26 @@ jobs:
           git add data/simulation-dashboard-history.json
           git commit -m "Publish simulation batch $GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT"
           git push origin HEAD:refs/heads/simulation-data
+      - name: Run and publish isolated research registry
+        if: steps.simulations.outcome == 'success' && steps.publish_feed.outcome == 'success' && success()
+        shell: bash
+        run: |
+          git fetch origin simulation-data
+          git worktree add --detach /tmp/research-data origin/simulation-data
+          python scripts/closed_loop_research.py \
+            --archive data/draws.json \
+            --batch simulation-artifacts/simulation-batch-summary.json \
+            --live-state data/joy-kane-model-state.json \
+            --source-commit "$GITHUB_SHA" \
+            --output /tmp/research-data/data/research
+          cd /tmp/research-data
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/research
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish research registry $GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT"
+            git push origin HEAD:refs/heads/simulation-data
+          fi
       - name: Upload batch summaries and representative audit trace
         if: always()
         uses: actions/upload-artifact@v4
