@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import random
 import statistics
 import sys
 from pathlib import Path
@@ -103,15 +102,16 @@ def build_registry(draws, batch, live, registry, source_commit, engine_id, outpu
             continue
         seed = evaluation.agent_seed(BASE_SEED, agent)
         baseline_config = evaluation.CANDIDATES[0]
-        baseline, _ = replay(agent, draws, baseline_config, seed, start, score_start)
+        baseline, baseline_state = replay(agent, draws, baseline_config, seed, start, score_start)
         if config == baseline_config:
-            score, state = replay(agent, draws, config, seed, start, score_start)
+            score, state = baseline, baseline_state
         else:
             score, state = replay(agent, draws, config, seed, start, score_start)
         package = {
             "schemaVersion": 1, "researchVersion": VERSION, "agent": agent,
             "sourceCommit": source_commit, "engineId": engine_id, "archiveId": archive_id,
             "archiveThrough": draws[-1]["date"], "configuration": config, "seed": seed,
+            "archiveDrawCount": len(draws), "parent": "default research state (not production snapshot)",
             "researchState": state, "adaptationStart": draws[start]["date"],
             "scoringStart": draws[score_start]["date"], "scoringDraws": WINDOW,
             "scope": "exploratory historical research only", "promotionEligible": False,
@@ -143,6 +143,8 @@ def build_registry(draws, batch, live, registry, source_commit, engine_id, outpu
         snapshot = live["agents"][agent]
         snapshot_id = digest(snapshot)
         snapshot_path = output / "production-snapshots" / (snapshot_id + ".json")
+        if snapshot_path.exists() and load_json(snapshot_path) != snapshot:
+            raise ValueError("Immutable snapshot collision")
         if not snapshot_path.exists():
             write_json(snapshot_path, snapshot)
         production[agent] = {"version": snapshot["modelVersion"], "snapshotId": snapshot_id,
@@ -161,7 +163,7 @@ def main():
     parser.add_argument("--source-commit", required=True)
     args = parser.parse_args()
     output = args.output.resolve()
-    if output == ROOT / "data" or (ROOT / "data") in output.parents:
+    if output == ROOT or output in ROOT.parents or output == ROOT / "data" or (ROOT / "data") in output.parents:
         raise ValueError("Research output must be outside the live data directory")
     registry_path = output / "registry.json"
     registry = load_json(registry_path) if registry_path.exists() else {}
