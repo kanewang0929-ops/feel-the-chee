@@ -1,0 +1,83 @@
+{
+  "batches": [
+    {
+      "archiveId": "38efd092c5f943b256b52a1f20a1941da90159478b1ece6dca01c69a92119a7c",
+      "archiveThrough": "2026-11-16",
+      "candidateIds": [
+        "e6dd1331d57a2c8c36d5bf87102a28a270daf2a2e200937c5ea0e8f008646360",
+        "7567390565b79329fcc0ff53a1be21a9443812d5a4dfa0fc1f679c7d496bc2ce"
+      ],
+      "id": "45570845044-1",
+      "replayMeans": {
+        "joy": 1.09944708,
+        "kane": 1.0547835399999999
+      },
+      "sourceCommit": "96187d644b1bf1daeddaae2dc270fb85f333443d"
+    }
+  ],
+  "experiments": [
+    {
+      "agent": "joy",
+      "archiveId": "38efd092c5f943b256b52a1f20a1941da90159478b1ece6dca01c69a92119a7c",
+      "archiveThrough": "2026-11-16",
+      "batchId": "45570845044-1",
+      "configuration": {
+        "ema_rate": 0.035,
+        "name": "baseline",
+        "weight_sensitivity": 0.85
+      },
+      "decision": "not_improved",
+      "deltaVsResearchBaseline": 0.0,
+      "engineId": "91c2e53ee12204ca42d33c310025b912baafc2a00e30894f3c0aef9ab9e8b9f9",
+      "id": "e6dd1331d57a2c8c36d5bf87102a28a270daf2a2e200937c5ea0e8f008646360",
+      "package": "candidates/e6dd1331d57a2c8c36d5bf87102a28a270daf2a2e200937c5ea0e8f008646360.json",
+      "promotionEligible": false,
+      "randomExpectation": 1.0476190476190477,
+      "reason": "Did not outperform the matched research baseline",
+      "researchBaseline": 0.985,
+      "score": 0.985,
+      "scoringDraws": 200,
+      "seed": 11651618223924877526
+    },
+    {
+      "agent": "kane",
+      "archiveId": "38efd092c5f943b256b52a1f20a1941da90159478b1ece6dca01c69a92119a7c",
+      "archiveThrough": "2026-11-16",
+      "batchId": "45570845044-1",
+      "configuration": {
+        "ema_rate": 0.035,
+        "name": "baseline",
+        "weight_sensitivity": 0.85
+      },
+      "decision": "not_improved",
+      "deltaVsResearchBaseline": 0.0,
+      "engineId": "91c2e53ee12204ca42d33c310025b912baafc2a00e30894f3c0aef9ab9e8b9f9",
+      "id": "7567390565b79329fcc0ff53a1be21a9443812d5a4dfa0fc1f679c7d496bc2ce",
+      "package": "candidates/7567390565b79329fcc0ff53a1be21a9443812d5a4dfa0fc1f679c7d496bc2ce.json",
+      "promotionEligible": false,
+      "randomExpectation": 1.0476190476190477,
+      "reason": "Did not outperform the matched research baseline",
+      "researchBaseline": 0.98,
+      "score": 0.98,
+      "scoringDraws": 200,
+      "seed": 14454208638746166344
+    }
+  ],
+  "production": {
+    "joy": {
+      "observations": 2752,
+      "snapshot": "production-snapshots/cba71c1c83f90c227c123d59f4fae9ccf3b08d3f9ff2af7360e5d1799bff9f5f.json",
+      "snapshotId": "cba71c1c83f90c227c123d59f4fae9ccf3b08d3f9ff2af7360e5d1799bff9f5f",
+      "version": "joy-adaptive-hit-model-v1"
+    },
+    "kane": {
+      "observations": 2752,
+      "snapshot": "production-snapshots/a52eab540e834de8d2129528636b9a357e72e348f0714690caee58632c28890b.json",
+      "snapshotId": "a52eab540e834de8d2129528636b9a357e72e348f0714690caee58632c28890b",
+      "version": "kane-adaptive-hit-model-v1"
+    }
+  },
+  "promotionEnabled": false,
+  "researchVersion": "research-v1",
+  "schemaVersion": 1
+}

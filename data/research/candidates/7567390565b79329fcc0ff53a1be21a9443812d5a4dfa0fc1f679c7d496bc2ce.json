@@ -1,0 +1,67 @@
+{
+  "adaptationStart": "2024-11-18",
+  "agent": "kane",
+  "archiveDrawCount": 2949,
+  "archiveId": "38efd092c5f943b256b52a1f20a1941da90159478b1ece6dca01c69a92119a7c",
+  "archiveThrough": "2026-11-16",
+  "configuration": {
+    "ema_rate": 0.035,
+    "name": "baseline",
+    "weight_sensitivity": 0.85
+  },
+  "engineId": "91c2e53ee12204ca42d33c310025b912baafc2a00e30894f3c0aef9ab9e8b9f9",
+  "parent": "default research state (not production snapshot)",
+  "promotionEligible": false,
+  "researchState": {
+    "duel": {
+      "losses": 0,
+      "opponentScoreTotal": 0.0,
+      "ties": 0,
+      "wins": 0
+    },
+    "exploration": 0.08,
+    "modelVersion": "kane-adaptive-hit-model-v1",
+    "name": "Kane",
+    "observations": 300,
+    "signalEma": {
+      "back": {
+        "deviation": 0.3344763874907997,
+        "distribution": 0.32011280641604645,
+        "frequency": 0.29292628523173736,
+        "interval": 0.3615181035707644,
+        "overdue": 0.3122633139224911
+      },
+      "front": {
+        "deviation": 0.7257970549740907,
+        "distribution": 0.7824765007403309,
+        "frequency": 0.6632568417271497,
+        "interval": 0.6688865160399765,
+        "overdue": 0.7825039528941455
+      }
+    },
+    "updatedAt": null,
+    "weights": {
+      "back": {
+        "deviation": 0.201705961878739,
+        "distribution": 0.19925829715971205,
+        "frequency": 0.19470652321627005,
+        "interval": 0.20639596032369018,
+        "overdue": 0.19793325742158882
+      },
+      "front": {
+        "deviation": 0.20001020739837475,
+        "distribution": 0.2098820971986752,
+        "frequency": 0.1896554909861188,
+        "interval": 0.19056520970274324,
+        "overdue": 0.20988699471408806
+      }
+    }
+  },
+  "researchVersion": "research-v1",
+  "schemaVersion": 1,
+  "scope": "exploratory historical research only",
+  "scoringDraws": 200,
+  "scoringStart": "2025-07-21",
+  "seed": 14454208638746166344,
+  "sourceCommit": "96187d644b1bf1daeddaae2dc270fb85f333443d"
+}
