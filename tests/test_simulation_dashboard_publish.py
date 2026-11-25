@@ -29,8 +29,8 @@ class SimulationDashboardPublishTests(unittest.TestCase):
         updated = update_feed(None, {"batchId": "new-2"})
         self.assertTrue(updated["schedule"]["enabled"])
         self.assertEqual(updated["schedule"]["simulationsPerBatch"], 100)
-        self.assertEqual(updated["schedule"]["localTime"], "03:20")
-        self.assertEqual(updated["schedule"]["timeZone"], "Asia/Seoul")
+        self.assertEqual(updated["schedule"]["localTime"], "18:00")
+        self.assertEqual(updated["schedule"]["timeZone"], "Asia/Shanghai")
 
 
 if __name__ == "__main__":

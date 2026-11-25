@@ -1,0 +1,9 @@
+# Closed-loop research foundation
+
+The existing 18:00 Beijing 100-replay workflow publishes its usual dashboard feed first. After a successful audited batch, the research module reads the same checkout archive and the production state at that commit. It writes only to `simulation-data:data/research/` using a separate worktree. The live prediction workflow and lock are unchanged.
+
+Each agent explores one of four predeclared configurations per batch, at most once per archive and engine digest. Research starts from default state with 100 adaptation draws and scores the final 200 historical draws chronologically. The baseline is the matched research configuration, NOT the live champion. Earlier experiments prioritize future configurations; 100-run batch scores are recorded as context, not independent evidence. Candidate packages and production snapshots are content-addressed. The registry retains experiment decisions, including failures, and batch IDs. Git history provides a record, not tamper-proof storage.
+
+All candidates are explicitly ineligible for promotion. The historical window is exploratory and reused; it is not a fresh holdout. Prospective evaluation against a frozen champion, statistical validation, approval and rollback are future work. Live training still runs independently. The archive is the version checked out by the batch, not necessarily the latest official draw. GitHub Actions schedules may be delayed. A research failure after batch publication leaves the batch feed intact; inspect the workflow log. A concurrent data-branch push can fail safely rather than overwrite history.
+
+Tests: `python -m unittest discover -s tests -v`. The Training panel shows the registry after the first successful publication; the Deployment panel remains blocked. No new paid infrastructure is required.

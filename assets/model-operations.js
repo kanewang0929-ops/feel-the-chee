@@ -3,8 +3,8 @@
   var ROOT = "https://raw.githubusercontent.com/kanewang0929-ops/feel-the-chee/main/data/";
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]; }); };
-  var number = function (v, d) { var n = Number(v); return Number.isFinite(n) ? n.toFixed(d == null ? 3 : d) : "—"; };
-  var count = function (v) { var n = Number(v); return Number.isFinite(n) ? Math.round(n).toLocaleString("en-US") : "—"; };
+  var number = function (v, d) { var n = v == null ? NaN : Number(v); return Number.isFinite(n) ? n.toFixed(d == null ? 3 : d) : "—"; };
+  var count = function (v) { var n = v == null ? NaN : Number(v); return Number.isFinite(n) ? Math.round(n).toLocaleString("en-US") : "—"; };
   var date = function (v) { if (!v) return "—"; var d = new Date(v); return Number.isFinite(d.getTime()) ? new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Shanghai",dateStyle:"medium",timeStyle:"short"}).format(d)+" Beijing" : "—"; };
   function row(label, value) { return "<div class='ops-data-row'><span>"+esc(label)+"</span><strong>"+esc(value)+"</strong></div>"; }
   function weightBars(weights) {
@@ -74,6 +74,36 @@
       $("holdoutMeta").textContent="No published holdout report";
     });
   }
+  function loadResearch() {
+    var base = "https://raw.githubusercontent.com/kanewang0929-ops/feel-the-chee/simulation-data/data/research/";
+    var browse = "https://github.com/kanewang0929-ops/feel-the-chee/blob/simulation-data/data/research/";
+    fetch(base+"registry.json?v="+Date.now(),{cache:"no-store"}).then(function(r){
+      if(!r.ok)throw new Error("Registry unavailable (HTTP "+r.status+")");
+      return r.json();
+    }).then(function(registry){
+      if(registry.schemaVersion!==1 || registry.promotionEnabled!==false || !Array.isArray(registry.experiments) || !Array.isArray(registry.batches))throw new Error("Invalid registry");
+      var experiments=registry.experiments, batches=registry.batches, last=batches[batches.length-1]||{};
+      $("researchStatus").textContent="RESEARCH ONLY";
+      var html=row("Recorded experiments",count(experiments.length))+row("Research batches",count(batches.length))+
+        row("Research archive through",last.archiveThrough||"—")+row("Last batch",last.id||"—");
+      ["joy","kane"].forEach(function(agent){
+        var p=(registry.production||{})[agent]||{};
+        html+=row(agent.toUpperCase()+" production snapshot",p.snapshotId?p.snapshotId.slice(0,12):"—");
+      });
+      $("researchSummary").innerHTML=html;
+      $("researchRows").innerHTML=experiments.slice(-30).reverse().map(function(r){
+        var id=String(r.id||"");
+        var link=/^[a-f0-9]{64}$/.test(id)?"<a href='"+browse+"candidates/"+id+".json' target='_blank' rel='noopener'>"+id.slice(0,10)+" ↗</a>":"—";
+        return "<tr><td>"+esc(r.agent)+"</td><td>"+esc((r.configuration||{}).name)+"</td><td>"+number(r.score,4)+"</td><td>"+number(r.researchBaseline,4)+"</td><td>"+esc(r.decision)+"</td><td>"+link+"</td></tr>";
+      }).join("")||"<tr><td colspan='6'>No experiments recorded.</td></tr>";
+      $("candidateStatus").textContent=experiments.length?"RESEARCH ONLY":"NOT READY";
+      $("candidateDetail").textContent=experiments.length+" experimental packages; none eligible for promotion.";
+      $("approvalStatus").textContent="Promotion blocked. Fresh prospective evidence, production comparison and approval are required.";
+    }).catch(function(e){
+      $("researchStatus").textContent="UNAVAILABLE";
+      $("researchSummary").textContent="Research registry not published or unavailable. "+e.message;
+    });
+  }
   function initTabs() {
     var buttons=[].slice.call(document.querySelectorAll("[data-ops-tab]"));
     buttons.forEach(function(button){button.addEventListener("click",function(){
@@ -94,4 +124,5 @@
     $("kaneTrainingCard").textContent="Unable to load Kane model state.";
   });
   loadHoldout();
+  loadResearch();
 }());
