@@ -1,13 +1,13 @@
 {
   "modelVersion": "legacy-locked-prediction",
   "runtimeVersion": "v2.0-quantum-chronological",
-  "generatedAt": "2026-11-26T14:52:05.027359+00:00",
+  "generatedAt": "2026-11-26T15:14:59.920476+00:00",
   "walkForward": true,
   "futureLeakage": false,
   "predictionGate": {
     "requiredCycleCount": 100,
-    "packageStatus": "missing",
-    "batchId": null,
+    "packageStatus": "ready",
+    "batchId": "45843133409-1",
     "waitingForIssue": "26136",
     "lastScoredIssue": null,
     "publicationCutoff": "2026-11-28T21:00:00+08:00",
@@ -17,8 +17,40 @@
     "reason": "Waiting for the actual result before another prediction can be issued."
   },
   "trainedBatch": {
-    "status": "missing",
-    "reason": "Waiting for a completed 100-cycle model package."
+    "status": "ready",
+    "reason": "The full 100-cycle batch matches the latest archive and engine.",
+    "packageId": "e87a3f6d98c6b0986dbba31229e914e87949a6aaec5b0cf5abdd33ba438755d7",
+    "id": "45843133409-1",
+    "cycleCount": 100,
+    "completedCycles": 100,
+    "selectedCycle": 100,
+    "selectionPolicy": "fixed_final_cycle",
+    "modelVersion": "v2.0-quantum-chronological",
+    "engineVersion": "joy-kane-quantum-sim-v2",
+    "engineDigest": "7f5b4624cfeeceba53de16a9a02f64b924807e528007faf680c66346e02f71a5",
+    "generatedAt": "2026-11-26T15:13:51.634943+00:00",
+    "archive": {
+      "sha256": "c64c318f0150193626019b5cd2be99df6d0e387d061e2f278f41913b1a4db4bc",
+      "validDrawCount": 2953,
+      "lastIssue": "26135",
+      "lastDate": "2026-11-25"
+    },
+    "agents": {
+      "joy": {
+        "name": "joy",
+        "modelVersion": "v2.0-quantum-chronological",
+        "modelFamily": "quantum-circuit-born-machine",
+        "backend": "classical_statevector",
+        "observations": 2953
+      },
+      "kane": {
+        "name": "kane",
+        "modelVersion": "v2.0-quantum-chronological",
+        "modelFamily": "split-step-quantum-walk",
+        "backend": "classical_statevector",
+        "observations": 2953
+      }
+    }
   },
   "dataCoverage": {
     "latestIssue": "26135",
@@ -43,17 +75,17 @@
       "modelFamily": "legacy-adaptive-hit-model",
       "backend": "legacy_classical",
       "weights": {
-        "front": {
-          "curve": 0.24588768514596437,
-          "transition": 0.24205842431222765,
-          "frequency": 0.2741772849873417,
-          "recency": 0.23787660555446627
-        },
         "back": {
           "curve": 0.26463631248751623,
-          "transition": 0.25253381048916507,
           "frequency": 0.24314526989869292,
-          "recency": 0.2396846071246258
+          "recency": 0.2396846071246258,
+          "transition": 0.25253381048916507
+        },
+        "front": {
+          "curve": 0.24588768514596437,
+          "frequency": 0.2741772849873417,
+          "recency": 0.23787660555446627,
+          "transition": 0.24205842431222765
         }
       },
       "observations": null,
@@ -71,19 +103,19 @@
       "modelFamily": "legacy-adaptive-hit-model",
       "backend": "legacy_classical",
       "weights": {
-        "front": {
-          "frequency": 0.000447562936939488,
-          "interval": 0.9982097482522421,
-          "deviation": 0.000447562936939488,
-          "distribution": 0.000447562936939488,
-          "overdue": 0.000447562936939488
-        },
         "back": {
-          "frequency": 0.997210691265262,
-          "interval": 0.0006973271836845089,
           "deviation": 0.0006973271836845089,
           "distribution": 0.0006973271836845089,
+          "frequency": 0.997210691265262,
+          "interval": 0.0006973271836845089,
           "overdue": 0.0006973271836845089
+        },
+        "front": {
+          "deviation": 0.000447562936939488,
+          "distribution": 0.000447562936939488,
+          "frequency": 0.000447562936939488,
+          "interval": 0.9982097482522421,
+          "overdue": 0.000447562936939488
         }
       },
       "observations": null,
