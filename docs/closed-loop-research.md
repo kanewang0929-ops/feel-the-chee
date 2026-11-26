@@ -1,3 +1,5 @@
+> Historical reference: the active architecture is now described in [Joy and Kane quantum direction](joy-kane-quantum-direction.md). Standalone legacy training and research workflows are retired; production training uses only the 100-cycle quantum batch.
+
 # Closed-loop research foundation
 
 The existing 18:00 Beijing 100-replay workflow publishes its usual dashboard feed first. After a successful audited batch, the research module reads the same checkout archive and the production state at that commit. It writes only to `simulation-data:data/research/` using a separate worktree. The live prediction workflow and lock are unchanged.

@@ -36,57 +36,18 @@ function jkTicketCard(ticket,agentName,targetDate){
 }
 
 function renderKaneForecast(payload){
-  const card=document.getElementById("kanePredictionCard");
-  if(!card) return;
-  const forecast=payload.nextForecast?.kane||{};
-  const picks=(forecast.results||[]).filter(validTicket).slice(0,1);
-  card.querySelector(".section-head .muted").textContent=
-    "使用独立信号与权重，与 Joy 在同一期次比较实际命中。";
-  card.querySelector(".forecast-meta").textContent=`第 ${payload.nextForecast?.targetIssue||"—"} 期 · 目标开奖 ${payload.nextForecast?.targetDate||"未记录"}`;
-  card.querySelector(".forecast-meta").classList.toggle("is-stale",isPastTarget(payload.nextForecast?.targetDate));
-  card.querySelector(".section-head .badge").textContent=`Kane · ${picks.length}组挑战预测`;
-  card.querySelector(".forecast-list").innerHTML=picks.length
-    ?picks.map(ticket=>jkTicketCard(ticket,"Kane",payload.nextForecast?.targetDate)).join("")
-    :`<div class="forecast"><div class="muted">Kane 的预测暂不可用。</div></div>`;
+  renderAgentForecast(payload,"kane");
 }
 
-function signalWeightHtml(weights){
-  return Object.entries(weights||{}).map(([name,value])=>
-    `<span class="signal-weight">${name} ${(Number(value)*100).toFixed(1)}%</span>`
-  ).join("");
-}
-
-function agentLearningHtml(name,state={},stats){
+function agentLearningHtml(name,state={}){
   const title=name==="joy"?"Joy":"Kane";
-  const avg=stats||{};
-  const wins=state.duel||{};
+  const label=modelDescriptor(state);
+  const observations=Number.isInteger(state.observations)?state.observations.toLocaleString("zh-CN"):"未记录";
   return `<div class="card duel-agent-learning">
-    <div class="section-head">
-      <div>
-        <h3>${title} · 独立模型状态</h3>
-        <div class="muted">${escapeText(state.modelVersion||"-")} · 已逐期学习 ${Number(state.observations||0).toLocaleString("zh-CN")} 期</div>
-      </div>
-      <span class="badge ${name==="joy"?"blue":"gold"}">${title}</span>
-    </div>
+    <div class="section-head"><div><h3>${title} · 当前封存模型</h3><div class="muted">${escapeText(label)} · ${escapeText(state.modelVersion||"未记录")}</div></div></div>
     <div class="weight-grid">
-      <div class="weight"><span class="muted">历史单票平均命中</span><strong>${jkNumber(avg.averageBestTotalHits)}</strong></div>
-      <div class="weight"><span class="muted">对决胜 / 负 / 平</span><strong>${wins.wins||0} / ${wins.losses||0} / ${wins.ties||0}</strong></div>
-      <div class="weight"><span class="muted">探索强度</span><strong>${jkNumber(state.exploration)}</strong></div>
-      <div class="weight"><span class="muted">最近回放更新 · 北京时间</span><strong>${escapeText(formatBeijing(state.updatedAt))}</strong></div>
-    </div>
-    <div class="log-list">
-      <div class="log">
-        <div class="log-time">前区信号权重</div>
-        <div class="signal-weights">${signalWeightHtml(state.weights?.front)}</div>
-      </div>
-      <div class="log">
-        <div class="log-time">后区信号权重</div>
-        <div class="signal-weights">${signalWeightHtml(state.weights?.back)}</div>
-      </div>
-      <div class="log">
-        <div class="log-time">自我学习</div>
-        <div class="log-body">按时间顺序回放历史开奖：先封存一组预测，再揭示真实结果、计算命中并更新模型状态。百万次参数搜索已移除。</div>
-      </div>
+      <div class="weight"><span class="muted">训练观察数</span><strong>${observations}</strong></div>
+      <div class="weight"><span class="muted">执行方式</span><strong>${escapeText(state.backend==="classical_statevector"?"经典计算机模拟":state.backend==="legacy_classical"?"既有经典模型":"未记录")}</strong></div>
     </div>
   </div>`;
 }
@@ -94,55 +55,16 @@ function agentLearningHtml(name,state={},stats){
 function renderJoyKaneLearning(payload){
   const root=document.getElementById("joyKaneLearning");
   if(!root) return;
-  const summary=payload.summary||{};
-  const states=payload.agentStates||{};
-  const wins=summary.duelWins||{};
-  root.innerHTML=`<div class="section-head">
-    <div>
-      <h2>Joy & Kane · 双智能体学习中心</h2>
-      <div class="muted">这里展示已发布的模型状态。100-simulation 指完整回放历史开奖记录 100 轮；每轮按时间顺序推进，每期先封存双方各一组预测，再揭示结果、评分并分别学习。</div>
-    </div>
-    <span class="badge gold">${payload.modelVersion||"Joy vs Kane"}</span>
-  </div>
-  <div class="weight-grid duel-overview">
-    <div class="weight"><span class="muted">逐期样本</span><strong>${Number(summary.drawsEvaluated||0).toLocaleString("zh-CN")}</strong></div>
-    <div class="weight"><span class="muted">Joy 获胜</span><strong>${Number(wins.joy||0).toLocaleString("zh-CN")}</strong></div>
-    <div class="weight"><span class="muted">Kane 获胜</span><strong>${Number(wins.kane||0).toLocaleString("zh-CN")}</strong></div>
-    <div class="weight"><span class="muted">平局</span><strong>${Number(wins.tie||0).toLocaleString("zh-CN")}</strong></div>
-  </div>
-  <div class="duel-agent-grid">
-    ${agentLearningHtml("joy",states.joy,summary.joy)}
-    ${agentLearningHtml("kane",states.kane,summary.kane)}
-  </div>
+  const states=payload.agentStates||{}, batch=payload.trainedBatch||{};
+  root.innerHTML=`<div class="section-head"><div>
+    <h2>Joy & Kane · 100 轮历史学习</h2>
+    <div class="muted">100-simulation 指完整回放历史开奖记录 100 轮。每轮从独立初始状态开始，先预测、封存，再揭示结果、评分和更新。固定使用第 100 轮的最终状态生成后续预测。</div>
+  </div></div>
+  <div class="duel-agent-grid">${agentLearningHtml("joy",states.joy)}${agentLearningHtml("kane",states.kane)}</div>
   <div class="log-list">
-    <div class="log">
-      <div class="log-time">下期预测已封存</div>
-      <div class="log-body">第${payload.livePredictionLock?.issue||payload.nextForecast?.targetIssue||"-"}期 · ${payload.livePredictionLock?.date||payload.nextForecast?.targetDate||"-"} · 封存时间 ${payload.livePredictionLock?.lockedAt||"-"}。开奖结果公布前不会改写这组号码。</div>
-    </div>
-    <div class="log">
-      <div class="log-time">唯一评分标准</div>
-      <div class="log-body">每期比较 Joy 与 Kane 各自提前封存的唯一一组号码。前区精确命中数 + 后区精确命中数 = 本期得分。没有曲线拟合分、和值奖励、冷热号奖励或平衡奖励。</div>
-    </div>
-    <div class="log">
-      <div class="log-time">Kane 的方法</div>
-      <div class="log-body">Kane 使用近200期频率、出现间隔、理论频率偏差、分布均匀度和 OVERDUE NUMBERS 指标。平衡结构只用于生成候选组合，不计入开奖得分。</div>
-    </div>
-    <div class="log">
-      <div class="log-time">双方协同</div>
-      <div class="log-body">每次历史结果揭示后，双方都会看到对手的命中结果，并据此调整自己的探索强度。Joy 与 Kane 的模型权重和训练状态始终分开保存。</div>
-    </div>
-    <div class="log">
-      <div class="log-time">防止未来信息泄漏</div>
-      <div class="log-body">每条历史预测均保存训练截止期、SHA-256 历史摘要和封存时间。预测账本与开奖结果账本分开保存，目标期开奖号码只在预测封存后用于评分。</div>
-    </div>
-    <div class="log">
-      <div class="log-time">OVERDUE NUMBERS 注意事项</div>
-      <div class="log-body">${payload.method?.overdueCaveat||"遗漏期数描述历史间隔，并不意味着下一期概率提高。公平独立开奖中，遗漏号码不会因为等待更久而变得更容易出现。"}</div>
-    </div>
-    <div class="log">
-      <div class="log-time">历史记录</div>
-      <div class="log-body">旧优化日志仅保留为历史记录。当前学习记录以逐期封存预测、真实结果与命中比较为准。</div>
-    </div>
+    <div class="log"><div class="log-time">训练批次</div><div class="log-body">${escapeText(batch.status==="ready"?`${batch.id} · 已完成 ${batch.completedCycles} 轮 · 使用第 ${batch.selectedCycle} 轮`:"尚无符合条件的完整训练批次")}</div></div>
+    <div class="log"><div class="log-time">训练目标与评分</div><div class="log-body">只在仿真中揭示实际结果后，按无序整票的负对数似然更新参数。公开预测得分仍为前区命中数加后区命中数。</div></div>
+    <div class="log"><div class="log-time">发布顺序</div><div class="log-body">核对当前封存预测与实际结果，记录比较，再等待包含该结果的完整 100 轮训练，最后生成并封存下一期号码。等待时不会生成替代号码。</div></div>
   </div>`;
 }
 

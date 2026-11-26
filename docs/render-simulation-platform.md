@@ -1,3 +1,5 @@
+> Historical reference: the active architecture is now described in [Joy and Kane quantum direction](joy-kane-quantum-direction.md). Standalone legacy training and research workflows are retired; production training uses only the 100-cycle quantum batch.
+
 # Render-Native Simulation Platform: Joy & Kane
 
 Status: implementation design. No paid services have been created or scaled.

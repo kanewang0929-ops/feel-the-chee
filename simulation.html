@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0b1120">
-  <meta name="description" content="Follow Joy and Kane's historical evaluations, live training and research candidates. Check archive freshness, batch results and model release status.">
+  <meta name="description" content="Follow Joy and Kane’s 100-cycle historical training, sealed predictions, actual draw comparisons and model publication gate.">
   <title>Model Operations · Feel the Chee</title>
   <link rel="stylesheet" href="./assets/simulation-dashboard.css?v=20261126-1">
 </head>
@@ -14,7 +14,7 @@
     <header class="topbar">
       <a class="brand" href="./index.html" aria-label="Back to Feel the Chee home">
         <span class="brand-mark">FC</span>
-        <span><strong>FEEL THE CHEE</strong><small>JOY & KANE RESEARCH LAB</small></span>
+        <span><strong>FEEL THE CHEE</strong><small>JOY & KANE MODEL LAB</small></span>
       </a>
       <div class="topbar-right">
         <span class="live-indicator"><i></i> SYSTEM MONITOR</span>
@@ -26,7 +26,7 @@
         <div class="hero-copy">
           <p class="eyebrow">MODEL OPERATIONS</p>
           <h1>Follow the learning.<br><span>Check the evidence.</span></h1>
-          <p class="hero-subtitle">Track historical replays, published model states and research in one place. Each daily batch runs 100 full chronological cycles over the same draw history, with one sealed ticket per agent per draw.</p>
+          <p class="hero-subtitle">Joy and Kane learn only inside 100 complete chronological cycles over the draw archive. Current tickets stay sealed until their actual result is recorded. Quantum mathematics is simulated on ordinary computers.</p>
           <div class="hero-meta">
             <span class="schedule-pill" id="scheduleStatus" role="status">CHECKING FEED</span>
             <span class="schedule-text">Scheduled daily at 18:00 Beijing · start times may vary</span>
@@ -41,9 +41,9 @@
       <section class="freshness-panel" aria-labelledby="freshnessHeading">
         <div class="freshness-heading"><div><p class="eyebrow">DATA COVERAGE</p><h2 id="freshnessHeading">Which draw has each stage reached?</h2></div><button type="button" class="refresh-button" id="refreshData">Refresh data <span aria-hidden="true">↻</span></button></div>
         <dl class="freshness-grid">
-          <div><dt>Live models through</dt><dd id="liveArchiveDate" data-state="loading">Checking…</dd></div>
-          <div><dt>Latest replay through</dt><dd id="batchArchiveDate" data-state="loading">Checking…</dd></div>
-          <div><dt>Research through</dt><dd id="researchArchiveDate" data-state="loading">Checking…</dd></div>
+          <div><dt>Sealed prediction trained through</dt><dd id="liveArchiveDate" data-state="loading">Checking…</dd></div>
+          <div><dt>Latest published batch through</dt><dd id="batchArchiveDate" data-state="loading">Checking…</dd></div>
+          <div><dt>Verified archive through</dt><dd id="verifiedArchiveDate" data-state="loading">Checking…</dd></div>
         </dl>
         <p class="freshness-note" id="archiveFreshness" role="status">Checking the latest published data for each stage…</p>
       </section>
@@ -53,16 +53,29 @@
         <button class="ops-tab" id="tab-deployment" type="button" role="tab" aria-selected="false" aria-controls="ops-deployment" tabindex="-1" data-ops-tab="deployment">Deployment</button>
       </div>
       <section class="ops-panel" id="ops-training" role="tabpanel" aria-labelledby="tab-training" tabindex="0" hidden>
-        <div class="section-heading"><div><p class="eyebrow">01 / LIVE MODEL TELEMETRY</p><h2>Training operations</h2></div><div class="updated-label" id="trainingUpdated">Loading live model state…</div></div>
-        <div class="ops-kpi-grid"><article class="metric-card"><div class="metric-label">MODEL VERSION</div><div class="metric-value ops-value" id="trainModelVersion">—</div><div class="metric-foot">Current published model state</div></article><article class="metric-card"><div class="metric-label">HISTORICAL OBSERVATIONS</div><div class="metric-value" id="trainObservations">—</div><div class="metric-foot">Chronological draws processed</div></article><article class="metric-card"><div class="metric-label">LEARNING METHOD</div><div class="metric-value ops-value" id="trainMode">—</div><div class="metric-foot">Predict, reveal, score, then update</div></article><article class="metric-card"><div class="metric-label">LAST REPLAY UPDATE</div><div class="metric-value ops-value" id="trainLastRun">—</div><div class="metric-foot" id="trainRunState">Reading replay record</div></article></div>
-        <div class="ops-two-col"><article class="panel"><div class="panel-heading"><div><p class="eyebrow">JOY / ADAPTIVE HIT MODEL</p><h2>Joy training state</h2></div><span class="ops-chip joy-chip">JOY</span></div><div id="joyTrainingCard" class="ops-agent-state"></div></article><article class="panel"><div class="panel-heading"><div><p class="eyebrow">KANE / ADAPTIVE HIT MODEL</p><h2>Kane training state</h2></div><span class="ops-chip kane-chip">KANE</span></div><div id="kaneTrainingCard" class="ops-agent-state"></div></article></div>
-        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">RESEARCH REGISTRY</p><h2>Experiment memory</h2></div><span class="ops-chip" id="researchStatus">WAITING</span></div><div id="researchSummary" class="ops-agent-state">Waiting for the first published research cycle.</div><div class="table-scroll"><table><thead><tr><th>Agent</th><th>Configuration</th><th>Historical hits</th><th>Research baseline</th><th>Decision</th><th>Package</th></tr></thead><tbody id="researchRows"><tr><td colspan="6">No experiments published.</td></tr></tbody></table></div><p class="caveat">Exploratory scores on previously observed data, not independent evidence. Each configuration is tested once per archive and engine version.</p></article>
-        <article class="panel ops-explainer"><p class="eyebrow">CHRONOLOGICAL LEARNING</p><h2>Predict. Reveal. Score. Update.</h2><p>Each simulation cycle traverses the historical draw archive in chronological order. After the initial warm-up, Joy and Kane each seal one ticket, compare it with the revealed result, update their separate states, and continue to the next draw. The million-cycle optimizer has been removed. The current 100-cycle batch remains isolated from the published live model state and prediction lock.</p><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/daily-simulation-batch.yml" target="_blank" rel="noopener">Open 100-cycle workflow ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/blob/main/data/joy-kane-model-state.json" target="_blank" rel="noopener">Inspect model-state file ↗</a></div></article>
+        <div class="section-heading"><div><p class="eyebrow">01 / MODEL PROVENANCE</p><h2>Training and sealed models</h2></div><div class="updated-label" id="trainingUpdated">Loading model publication…</div></div>
+        <div class="ops-kpi-grid">
+          <article class="metric-card"><div class="metric-label">SEALED MODEL VERSION</div><div class="metric-value ops-value" id="trainModelVersion">—</div><div class="metric-foot">Model that produced the current tickets</div></article>
+          <article class="metric-card"><div class="metric-label">BATCH TRAINING OBSERVATIONS</div><div class="metric-value" id="trainObservations">—</div><div class="metric-foot">Per agent in the selected final cycle</div></article>
+          <article class="metric-card"><div class="metric-label">COMPLETED TRAINING CYCLES</div><div class="metric-value ops-value" id="trainMode">—</div><div class="metric-foot">All 100 must complete before use</div></article>
+          <article class="metric-card"><div class="metric-label">ELIGIBLE PACKAGE CREATED</div><div class="metric-value ops-value" id="trainLastRun">—</div><div class="metric-foot" id="trainRunState">Checking training package</div></article>
+        </div>
+        <div class="ops-two-col">
+          <article class="panel"><div class="panel-heading"><div><p class="eyebrow">CURRENT SEALED PREDICTION</p><h2>Joy model provenance</h2></div><span class="ops-chip joy-chip">JOY</span></div><div id="joyTrainingCard" class="ops-agent-state"></div></article>
+          <article class="panel"><div class="panel-heading"><div><p class="eyebrow">CURRENT SEALED PREDICTION</p><h2>Kane model provenance</h2></div><span class="ops-chip kane-chip">KANE</span></div><div id="kaneTrainingCard" class="ops-agent-state"></div></article>
+        </div>
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">100-CYCLE TRAINING PACKAGE</p><h2>Latest eligible batch</h2></div><span class="ops-chip" id="batchPackageStatus">CHECKING</span></div><div id="batchPackageSummary" class="ops-agent-state">Loading package metadata…</div><p class="caveat">A ready training package does not replace an unresolved ticket. Current prediction provenance is shown separately above.</p></article>
+        <article class="panel ops-explainer"><p class="eyebrow">ONE TRAINING PATH</p><h2>Predict. Reveal. Score. Learn.</h2><p>Each cycle starts from its own initial Joy and Kane states and traverses the archive in order. The first 200 draws are learned as warm-up and excluded from reported hit scores. Every later draw has one sealed ticket per agent before its result is revealed. Parameters update only inside this process.</p><p>Joy uses a quantum circuit Born machine. Kane uses a split-step quantum walk. Both run as classical simulations. The training objective is exact unordered-ticket negative log likelihood after reveal; the public score remains front hits plus back hits.</p><p>After all 100 cycles pass, the fixed final cycle supplies the next model checkpoint. No best-scoring seed or ensemble is selected. The separate optimizer and research trainer are retired.</p><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/daily-simulation-batch.yml" target="_blank" rel="noopener">Open 100-cycle workflow ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/blob/main/docs/joy-kane-quantum-direction.md" target="_blank" rel="noopener">Read model definitions ↗</a></div></article>
       </section>
       <section class="ops-panel" id="ops-deployment" role="tabpanel" aria-labelledby="tab-deployment" tabindex="0" hidden>
-        <div class="section-heading"><div><p class="eyebrow">03 / RELEASE GOVERNANCE</p><h2>Model deployment</h2></div><div class="updated-label" id="deploymentUpdated">Checking active production model…</div></div>
-        <div class="ops-kpi-grid"><article class="metric-card"><div class="metric-label">ACTIVE LIVE VERSION</div><div class="metric-value ops-value" id="deployVersion">—</div><div class="metric-foot">Currently serving prediction workflow</div></article><article class="metric-card"><div class="metric-label">LIVE PREDICTION LOCK</div><div class="metric-value ops-value" id="deployIssue">—</div><div class="metric-foot" id="deployLockDate">No lock information</div></article><article class="metric-card"><div class="metric-label">CANDIDATE STATUS</div><div class="metric-value ops-value" id="candidateStatus">NOT READY</div><div class="metric-foot" id="candidateDetail">No approved candidate package has been published.</div></article><article class="metric-card"><div class="metric-label">AUTO-PROMOTION</div><div class="metric-value ops-value">DISABLED</div><div class="metric-foot">Simulation scores never replace live models automatically.</div></article></div>
-        <article class="panel deployment-guard"><p class="eyebrow">EXPLICIT APPROVAL REQUIRED</p><h2>Promotion gate</h2><p>A candidate must have a traceable model-state package, pass chronological and leakage checks, include a matched random-baseline evaluation, and receive human approval. No simulation batch can promote a model by itself.</p><ol class="promotion-steps"><li><b>Prepare</b><span>Produce a candidate model-state package from a documented training run.</span></li><li><b>Evaluate</b><span>Run chronological holdout evaluation and compare against the matched random baseline.</span></li><li><b>Review</b><span>Inspect the evidence, weight changes and prediction-lock compatibility.</span></li><li><b>Approve</b><span>Approve a dedicated promotion change before it is merged into the live model files.</span></li></ol><div class="approval-status" id="approvalStatus">No candidate is currently eligible for promotion. The active live model remains unchanged.</div><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/holdout-evaluation.yml" target="_blank" rel="noopener">Run chronological evaluation ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/sync-draws.yml" target="_blank" rel="noopener">Inspect live workflow ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/pulls" target="_blank" rel="noopener">Review promotion changes ↗</a></div></article>
+        <div class="section-heading"><div><p class="eyebrow">02 / RESULT AND TRAINING GATE</p><h2>Prediction publication</h2></div><div class="updated-label" id="deploymentUpdated">Checking publication…</div></div>
+        <div class="ops-kpi-grid">
+          <article class="metric-card"><div class="metric-label">SEALED MODEL VERSION</div><div class="metric-value ops-value" id="deployVersion">—</div><div class="metric-foot">Prediction provenance, separate from runtime</div></article>
+          <article class="metric-card"><div class="metric-label">LIVE PREDICTION LOCK</div><div class="metric-value ops-value" id="deployIssue">—</div><div class="metric-foot" id="deployLockDate">Checking lock</div></article>
+          <article class="metric-card"><div class="metric-label">ELIGIBLE TRAINING BATCH</div><div class="metric-value ops-value" id="candidateStatus">CHECKING</div><div class="metric-foot" id="candidateDetail">Checking the complete batch package</div></article>
+          <article class="metric-card"><div class="metric-label">PUBLICATION RUNTIME</div><div class="metric-value ops-value" id="runtimeVersion">—</div><div class="metric-foot">Runtime upgrades never relabel old tickets</div></article>
+        </div>
+        <article class="panel deployment-guard"><p class="eyebrow">AUTOMATIC · REQUIRED CHECKS</p><h2 id="gateStatus">Checking publication gate…</h2><p id="gateDetail">Waiting for the published gate record.</p><ol class="promotion-steps"><li><b>Compare</b><span>Score the exact previously sealed tickets against the verified actual draw.</span></li><li><b>Train</b><span>Complete all 100 chronological cycles using an archive that includes that result.</span></li><li><b>Verify</b><span>Check the archive, engine version, package integrity and fixed final-cycle checkpoint.</span></li><li><b>Seal</b><span>Generate one next-draw ticket from Joy and one from Kane, then lock both.</span></li></ol><div class="approval-status">Last genuinely scored live issue: <strong id="lastScoredIssue">Checking…</strong></div><p class="caveat">Missing results, an incomplete or stale batch, or a failed check leave the next prediction pending. A newer batch never changes an unresolved prediction.</p><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/sync-draws.yml" target="_blank" rel="noopener">Inspect result and publication workflow ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/blob/main/data/joy-kane-live-lock.json" target="_blank" rel="noopener">Inspect current lock ↗</a></div></article>
       </section>
       <section class="ops-panel active" id="ops-evaluation" role="tabpanel" aria-labelledby="tab-evaluation" tabindex="0">
     <section class="section-heading">
@@ -77,9 +90,9 @@
       </section>
       <section class="performance-grid">
         <article class="panel chart-panel">
-          <div class="panel-heading"><div><p class="eyebrow">02 / SCORE TRAJECTORY</p><h2>Across daily batches</h2></div><div class="legend"><span class="legend-joy">Joy</span><span class="legend-kane">Kane</span><span class="legend-baseline">Random expectation</span></div></div>
-          <div id="historyChart" class="chart-wrap"><div class="empty-state">The chart will appear after the first 100-run batch is complete.</div></div>
-          <p class="chart-note">Average total hits per draw for each agent's single ticket. The dashed line is the random-ticket expectation of 1.047619 hits. Dates use Beijing time; exact values appear in the table below.</p>
+          <div class="panel-heading"><div><p class="eyebrow">02 / SCORE TRAJECTORY</p><h2>Quantum v2 batch scores</h2></div><div class="legend"><span class="legend-joy">Joy</span><span class="legend-kane">Kane</span><span class="legend-baseline">Random expectation</span></div></div>
+          <div id="historyChart" class="chart-wrap"><div class="empty-state">Quantum v2 scores will appear after the first complete 100-cycle batch.</div></div>
+          <p class="chart-note">Quantum v2 only: average total hits per draw for each agent’s single ticket. The dashed line is the random-ticket expectation of 1.047619 hits. The table retains earlier engines with explicit labels. Dates use Beijing time.</p>
         </article>
         <article class="panel benchmark-panel">
           <p class="eyebrow">03 / LATEST BATCH AVERAGES</p><h2>Joy vs Kane</h2>
@@ -93,16 +106,16 @@
         <a class="github-link" href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/daily-simulation-batch.yml" target="_blank" rel="noopener">Open workflow ↗</a>
       </section>
       <section class="panel table-panel">
-        <div class="table-scroll" tabindex="0" role="region" aria-label="Recent simulation batches"><table><caption class="sr-only">Recent batch times in Beijing, results and workflow logs</caption><thead><tr><th scope="col">Batch</th><th scope="col">Time (Beijing)</th><th scope="col">Status</th><th scope="col">Runs</th><th scope="col">Joy avg.</th><th scope="col">Kane avg.</th><th scope="col">Runtime</th><th scope="col">Details</th></tr></thead><tbody id="batchRows"><tr><td colspan="8" class="empty-cell">Loading published batches…</td></tr></tbody></table></div>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Recent simulation batches"><table><caption class="sr-only">Recent batch times in Beijing, results and workflow logs</caption><thead><tr><th scope="col">Batch</th><th scope="col">Model engine</th><th scope="col">Time (Beijing)</th><th scope="col">Status</th><th scope="col">Runs</th><th scope="col">Joy avg.</th><th scope="col">Kane avg.</th><th scope="col">Runtime</th><th scope="col">Details</th></tr></thead><tbody id="batchRows"><tr><td colspan="9" class="empty-cell">Loading published batches…</td></tr></tbody></table></div>
         <p class="table-foot" id="historyMeta">The dashboard retains the 30 most recent batches.</p>
       </section>
-      <article class="panel holdout-panel"><p class="eyebrow">CHRONOLOGICAL EVALUATION</p><h2>Published holdout report</h2><p id="holdoutMeta">Checking report…</p><div id="holdoutMetrics" class="ops-agent-state"></div><p class="caveat">Previously inspected holdout data is not a fresh test for future candidates.</p><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/blob/simulation-data/data/chronological-holdout-report.json" target="_blank" rel="noopener">Inspect the published report ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/holdout-evaluation.yml" target="_blank" rel="noopener">Evaluation workflow ↗</a></div></article>
+      <article class="panel holdout-panel"><p class="eyebrow">LEGACY EVALUATION ARCHIVE</p><h2>Earlier model holdout report</h2><p id="holdoutMeta">Checking report…</p><div id="holdoutMetrics" class="ops-agent-state"></div><p class="caveat">This archived report evaluates earlier adaptive models. It does not validate Joy’s Born machine or Kane’s quantum walk.</p><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/blob/simulation-data/data/chronological-holdout-report.json" target="_blank" rel="noopener">Inspect the published report ↗</a></div></article>
       <section class="method-grid">
         <article class="method-card">
           <p class="eyebrow">05 / REPLAY PROTOCOL</p><h2>Same archive. Separate minds.</h2>
           <ol>
             <li><b>Seed independence</b><span>Each of the 100 simulations receives a unique deterministic seed and starts from isolated agent state.</span></li>
-            <li><b>One complete cycle</b><span>Traverse the full archive in chronological order: seal predictions, reveal the result, score, update, then continue. The initial warm-up is not scored.</span></li>
+            <li><b>One complete cycle</b><span>Traverse the full archive in chronological order: seal predictions, reveal the result, score, update, then continue. The first 200 draws update the models as warm-up and are not scored.</span></li>
             <li><b>Chronological integrity</b><span>Predictions use only earlier draws. No future draw may enter the training prefix.</span></li>
             <li><b>One official ticket</b><span>Joy and Kane each submit exactly five front numbers and two back numbers per draw.</span></li>
             <li><b>Audit every replay</b><span>Prediction, result and audit ledgers are cross-checked for every historical draw in every simulation.</span></li>
@@ -111,12 +124,12 @@
         <article class="method-card guardrail-card">
           <p class="eyebrow">06 / SAFETY RAILS</p><h2>What this dashboard does not claim</h2>
           <ul>
-            <li>Past frequency or overdue numbers do not increase a number’s probability in a fair independent draw.</li>
-            <li>The highest-scoring simulation is not automatically a better model.</li>
-            <li>Daily batches do not alter the live prediction lock or live model state.</li>
-            <li>No model is promoted from these full-history replay scores alone.</li>
+            <li>Quantum mathematics does not reveal the outcome of a fair, independent random draw.</li>
+            <li>The fixed final cycle is used regardless of which cycle scored highest.</li>
+            <li>A ready batch cannot replace a prediction whose actual result is still pending.</li>
+            <li>Historical replay scores and prospective live results are different evidence.</li>
           </ul>
-          <div class="guardrail-note">Simulation mode is isolated from live prediction mode.</div>
+          <div class="guardrail-note">Training happens only inside the 100 cycles; the live publisher only compares, checks and predicts.</div>
         </article>
       </section>
       </section>
@@ -124,7 +137,7 @@
     <footer class="footer"><span>FEEL THE CHEE · JOY & KANE</span><span id="feedStatus">Dashboard feed: checking…</span></footer>
   </div>
   <noscript><p class="noscript-note">JavaScript is needed to load the live dashboards. Use the workflow and report links above to inspect the published results.</p></noscript>
-  <script src="./assets/simulation-dashboard.js?v=20261126-1"></script>
-  <script src="./assets/model-operations.js?v=20261126-optimizer-removed"></script>
+  <script src="./assets/simulation-dashboard.js?v=20261126-quantum-v2"></script>
+  <script src="./assets/model-operations.js?v=20261126-quantum-v2"></script>
 </body>
 </html>

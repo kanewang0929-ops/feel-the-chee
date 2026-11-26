@@ -1,6 +1,5 @@
 (function () {
   "use strict";
-  // Keep live telemetry on the same deployed snapshot as the prediction page.
   var ROOT = "./data/";
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]; }); };
@@ -15,124 +14,112 @@
       return r.json();
     }).finally(function(){clearTimeout(timer);});
   }
+  function row(label, value) { return "<div class='ops-data-row'><span>"+esc(label)+"</span><strong>"+esc(value)+"</strong></div>"; }
   function archiveStatus(kind, value, status) {
     var node = $(kind+"ArchiveDate");
     if(node){node.textContent=value||status;node.dataset.archiveDate=value||"";node.dataset.state=status;}
     updateFreshness();
   }
   function updateFreshness() {
-    var note=$("archiveFreshness"), names=["live","batch","research"];
+    var note=$("archiveFreshness"), names=["live","batch","verified"];
     if(!note)return;
     var nodes=names.map(function(name){return $(name+"ArchiveDate");});
     if(nodes.some(function(node){return !node || node.dataset.state==="loading";}))return;
     var dates=nodes.map(function(node){return node.dataset.archiveDate;});
-    var unavailable=nodes.some(function(node){return node.dataset.state==="Unavailable";});
     note.className="freshness-note";
-    if(unavailable){note.textContent="Some data could not be loaded. Refresh data to retry; a missing feed does not mean a model or workflow has stopped.";note.classList.add("attention");return;}
-    if(dates[0] && (dates[1] && dates[1]<dates[0] || dates[2] && dates[2]<dates[0])){
-      note.textContent="The live models include newer draws than the replay or research results. Compare their archive dates before comparing scores.";
+    if(nodes.some(function(node){return node.dataset.state==="Unavailable";})){
+      note.textContent="Some data could not be loaded. Refresh data to retry.";note.classList.add("attention");return;
+    }
+    if(dates[2] && ((dates[0] && dates[0]<dates[2]) || (dates[1] && dates[1]<dates[2]))){
+      note.textContent="Newer verified draws are available. A new prediction requires the previous ticket to be scored and a complete 100-cycle batch containing that result.";
       note.classList.add("attention");
     }else if(dates.every(Boolean) && dates.every(function(value){return value===dates[0];})){
-      note.textContent="Live models, replay and research cover the same latest draw. Each published evaluation keeps its own recorded data cutoff.";
+      note.textContent="The sealed prediction, latest published batch and verified archive cover the same latest draw. An unresolved prediction stays locked.";
     }else{
-      note.textContent="Each date is the latest draw used by that stage. A successful website deployment does not itself run a new evaluation.";
+      note.textContent="Each date belongs to its recorded stage. A pending batch or missing prediction is shown explicitly; no substitute predictor is used.";
     }
   }
   document.addEventListener("ftc:data-updated",updateFreshness);
-  function row(label, value) { return "<div class='ops-data-row'><span>"+esc(label)+"</span><strong>"+esc(value)+"</strong></div>"; }
-  function weightBars(weights) {
-    if (!weights) return "<p class='muted'>No signal weights available.</p>";
-    return Object.keys(weights).map(function (area) {
-      var signals = weights[area] || {};
-      return "<div class='weight-area'><h4>"+esc(area)+" weights</h4>"+Object.keys(signals).map(function (name) {
-        var pct = Math.max(0,Math.min(100,Number(signals[name])*100));
-        return "<div class='weight-row'><span>"+esc(name)+"</span><div class='weight-track'><i style='width:"+pct.toFixed(2)+"%'></i></div><b>"+pct.toFixed(1)+"%</b></div>";
-      }).join("")+"</div>";
-    }).join("");
+  function family(model) {
+    var name=model.modelFamily||"";
+    if(name==="quantum-circuit-born-machine")return "Quantum circuit Born machine";
+    if(name==="split-step-quantum-walk")return "Split-step quantum walk";
+    if(name==="legacy-adaptive-hit-model" || model.backend==="legacy_classical")return "Legacy adaptive model";
+    return name||"Legacy / family not recorded";
   }
-  function agentCard(name, agent) {
-    var duel = agent.duel || {};
-    return row("Model version",agent.modelVersion||"—")+
-      row("Observations",count(agent.observations))+
-      row("Head-to-head",count(duel.wins)+" wins · "+count(duel.losses)+" losses · "+count(duel.ties)+" ties")+
-      row("Exploration setting",number(agent.exploration,3))+
-      row("Last replay update",date(agent.updatedAt))+
-      "<div class='weight-heading'>Current signal weights</div>"+weightBars(agent.weights);
+  function backend(model) {
+    if(model.backend==="classical_statevector")return "Classical statevector simulation";
+    if(model.backend==="legacy_classical")return "Legacy classical model";
+    return model.backend||"Not recorded";
+  }
+  function parameterCount(value) {
+    if(Array.isArray(value))return value.reduce(function(total,item){return total+parameterCount(item);},0);
+    if(value && typeof value==="object")return Object.keys(value).reduce(function(total,key){return total+parameterCount(value[key]);},0);
+    return typeof value==="number" && Number.isFinite(value)?1:0;
+  }
+  function agentCard(agent, active) {
+    if(!active || agent.stateScope==="awaiting_batch")return "<p class='muted'>No current sealed prediction. Training packages are shown separately below.</p>";
+    return row("Model behind sealed ticket",family(agent))+
+      row("Model version",agent.modelVersion||"Not recorded")+
+      row("Execution",backend(agent))+
+      row("Training observations",count(agent.observations))+
+      row("Trainable parameters",agent.parameters?count(parameterCount(agent.parameters)):"Not recorded")+
+      row("State scope",agent.stateScope||"Published snapshot");
   }
   function loadTraining(state, dashboard) {
-    if(!state.agents || !state.agents.joy || !state.agents.kane || !dashboard.summary)throw new Error("Incomplete live model data");
-    var agents = state.agents || {};
-    var joy = agents.joy || {}, kane = agents.kane || {};
-    var latest = [joy.updatedAt,kane.updatedAt].filter(Boolean).sort().pop();
-    $("trainingUpdated").textContent = "Model state refreshed "+date(state.generatedAt || dashboard.generatedAt);
-    $("trainModelVersion").textContent = state.modelVersion || dashboard.modelVersion || "—";
-    $("trainObservations").textContent = count(Math.min(Number(joy.observations||0),Number(kane.observations||0)));
-    $("trainMode").textContent = "REPLAY";
-    $("trainLastRun").textContent = date(latest);
-    $("trainRunState").textContent = latest ? "Latest recorded chronological replay update" : "Replay update time was not recorded";
-    $("joyTrainingCard").innerHTML = agentCard("Joy",joy);
-    $("kaneTrainingCard").innerHTML = agentCard("Kane",kane);
-    $("deployVersion").textContent = state.modelVersion || "—";
-    var lock = state.livePredictionLock || dashboard.livePredictionLock || {};
-    $("deployIssue").textContent = lock.issue || "—";
-    $("deployLockDate").textContent = lock.date ? "Target draw "+lock.date+" · locked "+date(lock.lockedAt) : "No active lock in model-state file";
-    $("deploymentUpdated").textContent = "Production state updated "+date(state.generatedAt);
-    archiveStatus("live",(dashboard.summary.dateRange||{}).latest,"Published");
+    if(!state.agents || !state.agents.joy || !state.agents.kane || !dashboard.nextForecast)throw new Error("Incomplete model publication");
+    var agents=state.agents, gate=dashboard.predictionGate||state.predictionGate||{};
+    var batch=dashboard.trainedBatch||state.trainedBatch||{status:"missing"};
+    var lock=dashboard.livePredictionLock||state.livePredictionLock||{};
+    var next=dashboard.nextForecast||{};
+    var status=gate.status||"legacy_snapshot";
+    var active=["awaiting_result","prediction_locked","legacy_snapshot"].indexOf(status)>=0 && Boolean(lock.lockedAt) && String(lock.issue)===String(next.targetIssue) && lock.date===next.targetDate;
+    var batchReady=batch.status==="ready", batchAgents=batch.agents||{};
+    $("trainingUpdated").textContent="Publication refreshed "+date(state.generatedAt||dashboard.generatedAt);
+    $("trainModelVersion").textContent=active?(dashboard.modelVersion||state.modelVersion||"Not recorded"):"No sealed model";
+    var batchObservations=[(batchAgents.joy||{}).observations,(batchAgents.kane||{}).observations];
+    $("trainObservations").textContent=batchReady&&batchObservations.every(Number.isInteger)?count(Math.min.apply(null,batchObservations)):"—";
+    $("trainMode").textContent=batchReady?count(batch.completedCycles)+" / 100":"WAITING";
+    $("trainLastRun").textContent=batchReady?date(batch.generatedAt):"—";
+    $("trainRunState").textContent=batchReady?"Completed training package · fixed cycle 100":"No eligible batch package published";
+    $("joyTrainingCard").innerHTML=agentCard(agents.joy,active);
+    $("kaneTrainingCard").innerHTML=agentCard(agents.kane,active);
+    $("batchPackageStatus").textContent=String(batch.status||"missing").toUpperCase();
+    $("batchPackageSummary").innerHTML=row("Batch ID",batch.id||"—")+row("Package ID",batch.packageId||"—")+
+      row("Completed cycles",batchReady?count(batch.completedCycles):"—")+row("Selected cycle",batchReady?count(batch.selectedCycle):"—")+
+      row("Selection rule",batchReady?"Fixed final cycle; no best-score selection":"—")+
+      row("Archive through",(batch.archive||{}).lastDate||"—")+
+      (batchReady?row("Joy batch model",family(batchAgents.joy||{}))+row("Kane batch model",family(batchAgents.kane||{})):row("Package status",batch.reason||"Awaiting a complete qualifying batch"));
+    $("deployVersion").textContent=active?(dashboard.modelVersion||state.modelVersion||"Not recorded"):"No current ticket";
+    $("runtimeVersion").textContent=dashboard.runtimeVersion||state.runtimeVersion||"Legacy runtime snapshot";
+    $("deployIssue").textContent=active?lock.issue:"—";
+    $("deployLockDate").textContent=active?"Target draw "+lock.date+" · locked "+date(lock.lockedAt):"Next ticket has not been issued";
+    $("deploymentUpdated").textContent="Publication updated "+date(state.generatedAt||dashboard.generatedAt);
+    $("candidateStatus").textContent=String(batch.status||"missing").toUpperCase();
+    $("candidateDetail").textContent=batchReady?"Batch "+batch.id+" · cycle "+batch.selectedCycle:"No eligible complete batch";
+    var labels={awaiting_result:"Awaiting actual draw",awaiting_batch:"Awaiting 100-cycle batch",prediction_locked:"Next prediction locked",blocked:"Publication blocked",legacy_snapshot:"Legacy sealed snapshot"};
+    $("gateStatus").textContent=labels[status]||"Unknown publication state";
+    $("gateDetail").textContent=gate.reason||"Existing sealed tickets retain their original model provenance.";
+    $("lastScoredIssue").textContent=gate.lastScoredIssue||"No live result scored yet";
+    archiveStatus("live",next.historyThroughDate,active?"Not recorded":"No prediction");
+    archiveStatus("verified",(dashboard.dataCoverage||{}).latestDate,(dashboard.dataCoverage||{}).latestDate?"Published":"Not recorded");
   }
   function loadHoldout() {
-    var url = "https://raw.githubusercontent.com/kanewang0929-ops/feel-the-chee/simulation-data/data/chronological-holdout-report.json";
+    var url="https://raw.githubusercontent.com/kanewang0929-ops/feel-the-chee/simulation-data/data/chronological-holdout-report.json";
     fetchJSON(url).then(function(report){
-      if(!report.finalTestComparisons || !report.randomBaseline)throw new Error("Unrecognized holdout report");
-      var cmp=report.finalTestComparisons||{};
-      var baseline=report.randomBaseline||{};
-      var html="<div class='ops-data-row'><span>Archive draws</span><strong>"+count(report.archive&&report.archive.validDrawCount)+"</strong></div>"+
-        "<div class='ops-data-row'><span>Random expected hits</span><strong>"+number(baseline.theoreticalExpectedTotalHitsPerTicket,6)+"</strong></div>";
+      if(!report.finalTestComparisons||!report.randomBaseline)throw new Error("Unrecognized legacy report");
+      var cmp=report.finalTestComparisons, baseline=report.randomBaseline;
+      var html=row("Legacy archive draws",count(report.archive&&report.archive.validDrawCount))+row("Random expected hits",number(baseline.theoreticalExpectedTotalHitsPerTicket,6));
       ["joy","kane"].forEach(function(agent){
         var c=cmp[agent]||{}, observed=c.finalTest||{};
-        html+="<div class='ops-data-row'><span>"+agent.toUpperCase()+" final-test average</span><strong>"+number(observed.averageTotalHits,6)+"</strong></div>"+
-          "<div class='ops-data-row'><span>"+agent.toUpperCase()+" vs random mean</span><strong>"+number(c.differenceVsRandomMean,6)+"</strong></div>"+
-          "<div class='ops-data-row'><span>"+agent.toUpperCase()+" empirical p-value</span><strong>"+number(c.empiricalOneSidedPValue,4)+"</strong></div>";
+        html+=row(agent.toUpperCase()+" legacy final-test average",number(observed.averageTotalHits,6))+row(agent.toUpperCase()+" legacy vs random mean",number(c.differenceVsRandomMean,6));
       });
       $("holdoutMetrics").innerHTML=html;
       var finalTest=(report.split||{}).finalTest||{};
-      $("holdoutMeta").textContent="Published historical evaluation · "+(report.evaluationVersion||"")+" · "+count(report.split&&report.split.counts&&report.split.counts.finalTestDraws)+" final-test draws"+(finalTest.lastDate?" · through "+finalTest.lastDate:"");
+      $("holdoutMeta").textContent="LEGACY MODELS ONLY · "+(report.evaluationVersion||"")+" · "+count(report.split&&report.split.counts&&report.split.counts.finalTestDraws)+" final-test draws"+(finalTest.lastDate?" · through "+finalTest.lastDate:"")+". This report does not evaluate the quantum models.";
     }).catch(function(error){
-      var missing=error.status===404;
-      $("holdoutMetrics").innerHTML="<div class='empty-state'>"+(missing?"The historical report has not been published to the dashboard. Check the evaluation workflow and its artifacts.":"The historical report could not be loaded. Refresh data to retry.")+"</div>";
-      $("holdoutMeta").textContent=missing?"Report not published":"Report temporarily unavailable";
-    });
-  }
-  function loadResearch() {
-    var base = "https://raw.githubusercontent.com/kanewang0929-ops/feel-the-chee/simulation-data/data/research/";
-    var browse = "https://github.com/kanewang0929-ops/feel-the-chee/blob/simulation-data/data/research/";
-    fetchJSON(base+"registry.json").then(function(registry){
-      if(registry.schemaVersion!==1 || registry.promotionEnabled!==false || !Array.isArray(registry.experiments) || !Array.isArray(registry.batches))throw new Error("Invalid registry");
-      var experiments=registry.experiments, batches=registry.batches, last=batches[batches.length-1]||{};
-      $("researchStatus").textContent="RESEARCH ONLY";
-      var html=row("Recorded experiments",count(experiments.length))+row("Research batches",count(batches.length))+
-        row("Research archive through",last.archiveThrough||"—")+row("Last batch",last.id||"—");
-      ["joy","kane"].forEach(function(agent){
-        var p=(registry.production||{})[agent]||{};
-        html+=row(agent.toUpperCase()+" production snapshot",p.snapshotId?p.snapshotId.slice(0,12):"—");
-      });
-      $("researchSummary").innerHTML=html;
-      $("researchRows").innerHTML=experiments.slice(-30).reverse().map(function(r){
-        var id=String(r.id||"");
-        var link=/^[a-f0-9]{64}$/.test(id)?"<a href='"+browse+"candidates/"+id+".json' target='_blank' rel='noopener'>"+id.slice(0,10)+" ↗</a>":"—";
-        var decision={research_only:"Research only",not_improved:"No improvement"}[r.decision]||r.decision;
-        return "<tr><td>"+esc(String(r.agent||"").toUpperCase())+"</td><td>"+esc(String((r.configuration||{}).name||"").replace(/_/g," "))+"</td><td>"+number(r.score,4)+"</td><td>"+number(r.researchBaseline,4)+"</td><td>"+esc(decision)+"</td><td>"+link+"</td></tr>";
-      }).join("")||"<tr><td colspan='6'>No experiments recorded.</td></tr>";
-      $("candidateStatus").textContent=experiments.length?"RESEARCH ONLY":"NOT READY";
-      $("candidateDetail").textContent=experiments.length+" experimental packages; none eligible for promotion.";
-      $("approvalStatus").textContent="Promotion blocked. Fresh prospective evidence, production comparison and approval are required.";
-      archiveStatus("research",last.archiveThrough,batches.length?"Published":"Not published");
-    }).catch(function(e){
-      var missing=e.status===404;
-      $("researchStatus").textContent=missing?"NOT PUBLISHED":"UNAVAILABLE";
-      $("researchSummary").textContent=missing?"No research registry has been published yet.":"Research data could not be loaded. Refresh data to retry.";
-      $("candidateStatus").textContent="UNKNOWN";
-      $("candidateDetail").textContent="Candidate data unavailable. Automatic promotion is disabled.";
-      archiveStatus("research",null,missing?"Not published":"Unavailable");
+      $("holdoutMetrics").innerHTML="<p class='muted'>"+(error.status===404?"No legacy holdout report was published.":"The legacy report could not be loaded. Refresh data to retry.")+"</p>";
+      $("holdoutMeta").textContent=error.status===404?"Legacy report not published":"Legacy report temporarily unavailable";
     });
   }
   function initTabs() {
@@ -158,17 +145,16 @@
     $("refreshData").addEventListener("click",function(){location.reload();});
   }
   initTabs();
-  Promise.all([
-    fetchJSON(ROOT+"joy-kane-model-state.json"),
-    fetchJSON(ROOT+"joy-kane-dashboard.json")
-  ]).then(function(rows){loadTraining(rows[0],rows[1]);}).catch(function(error){
-    $("trainingUpdated").textContent="Live model state unavailable. Refresh data to retry.";
-    $("joyTrainingCard").textContent="Unable to load Joy model state.";
-    $("kaneTrainingCard").textContent="Unable to load Kane model state.";
-    $("deploymentUpdated").textContent="Production state could not be loaded.";
-    archiveStatus("live",null,"Unavailable");
+  Promise.all([fetchJSON(ROOT+"joy-kane-model-state.json"),fetchJSON(ROOT+"joy-kane-dashboard.json")]).then(function(rows){loadTraining(rows[0],rows[1]);}).catch(function(){
+    $("trainingUpdated").textContent="Model publication unavailable. Refresh data to retry.";
+    $("joyTrainingCard").textContent="Unable to verify Joy model provenance.";
+    $("kaneTrainingCard").textContent="Unable to verify Kane model provenance.";
+    $("deploymentUpdated").textContent="Publication could not be loaded.";
+    $("gateStatus").textContent="UNAVAILABLE";
+    $("candidateStatus").textContent="UNKNOWN";
+    $("batchPackageStatus").textContent="UNKNOWN";
+    archiveStatus("live",null,"Unavailable");archiveStatus("verified",null,"Unavailable");
   });
   loadHoldout();
-  loadResearch();
   updateFreshness();
 }());

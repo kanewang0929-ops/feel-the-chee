@@ -73,6 +73,10 @@ def build_batch(summary: dict[str, Any] | None, *, status: str, run_id: str, run
         "finishedAt": finished_at,
         "durationSeconds": duration,
         "engineVersion": summary.get("engineVersion") if summary else None,
+        "modelVersion": summary.get("modelVersion") if summary else None,
+        "selectedCycle": summary.get("selectedCycle") if summary else None,
+        "selectionPolicy": summary.get("selectionPolicy") if summary else None,
+        "archiveNormalizedSha256": (summary.get("archive") or {}).get("sha256") if summary else None,
         "batchSeed": summary.get("batchSeed") if summary else None,
         "archiveSha256": hashlib.sha256(archive_path.read_bytes()).hexdigest() if archive_path.exists() else None,
         "simulationCount": int(summary.get("simulationCount", len(rows))) if summary else 0,
@@ -85,6 +89,7 @@ def build_batch(summary: dict[str, Any] | None, *, status: str, run_id: str, run
         "duelWins": duel_wins,
         "simulations": [
             {"simulationId": row.get("simulationId"), "drawsEvaluated": row.get("drawsEvaluated"),
+             "trainedDrawCount": row.get("trainedDrawCount"), "finalModelHashes": row.get("finalModelHashes"),
              "joy": row.get("joy"), "kane": row.get("kane"), "duelWins": row.get("duelWins"),
              "firstPredictionFingerprint": row.get("firstPredictionFingerprint"),
              "fullReplayAuditRowsValidated": row.get("fullReplayAuditRowsValidated")}

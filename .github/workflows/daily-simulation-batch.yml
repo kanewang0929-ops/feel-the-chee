@@ -5,35 +5,31 @@ on:
     - cron: "0 10 * * *"
   workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - "scripts/run_simulation_batch.py"
-      - "scripts/joy_kane_duel.py"
+      - "scripts/quantum_models.py"
+      - "scripts/quantum_protocol.py"
       - "scripts/publish_simulation_dashboard.py"
+      - "requirements.txt"
       - "data/draws.json"
-  pull_request:
-    branches:
-      - main
-    paths:
       - ".github/workflows/daily-simulation-batch.yml"
-      - "scripts/closed_loop_research.py"
-      - "scripts/evaluate_chronological_holdout.py"
-      - "assets/*.js"
-      - "assets/*.css"
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/**"
+      - "assets/**"
       - "index.html"
       - "simulation.html"
-      - "scripts/run_simulation_batch.py"
-      - "scripts/joy_kane_duel.py"
-      - "scripts/publish_simulation_dashboard.py"
+      - "requirements.txt"
       - "tests/**"
-      - "data/draws.json"
+      - ".github/workflows/**"
 
 permissions:
   contents: write
 
 concurrency:
-  group: daily-100-simulation-batch
+  group: daily-100-quantum-cycles-${{ github.event_name == 'pull_request' && github.ref || 'production' }}
   cancel-in-progress: false
 
 jobs:
@@ -42,20 +38,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Check out pull request
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run unit and simulation contract tests
-        run: python -m unittest discover -s tests -v
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - run: python -m pip install -r requirements.txt
+      - run: python -m unittest discover -s tests -v
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Run website rendering and navigation tests
-        run: node --test tests/*.js
+      - run: node --test tests/*.js
 
   daily-batch:
     if: ${{ github.event_name != 'pull_request' }}
@@ -70,22 +62,21 @@ jobs:
         id: checkout
         uses: actions/checkout@v4
         with:
-          persist-credentials: true
-      - name: Set up Python
-        uses: actions/setup-python@v5
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run unit and simulation contract tests
+      - name: Install quantum model runtime
+        run: python -m pip install -r requirements.txt
+      - name: Run model and pipeline tests
         run: python -m unittest discover -s tests -v
-      - name: Run 100 independent full-history simulations
+      - name: Run 100 complete chronological quantum learning cycles
         id: simulations
         env:
           DUEL_BATCH_SEED: "${{ github.run_id }}-${{ github.run_attempt }}"
         run: |
-          python scripts/run_simulation_batch.py \
-            --count 100 \
-            --batch-seed "$DUEL_BATCH_SEED" \
-            --output-dir simulation-artifacts
+          SIMULATION_SOURCE_COMMIT="$(git rev-parse HEAD)" python scripts/run_simulation_batch.py --count 100 --batch-seed "$DUEL_BATCH_SEED" --output-dir simulation-artifacts
       - name: Read previous dashboard history
         if: always() && steps.checkout.outcome == 'success'
         shell: bash
@@ -107,47 +98,31 @@ jobs:
             --summary simulation-artifacts/simulation-batch-summary.json \
             --existing-feed /tmp/simulation-dashboard-history.json \
             --output /tmp/simulation-dashboard-history-next.json \
-            --archive data/draws.json \
-            --status "$BATCH_OUTCOME" \
-            --run-id "$RUN_ID" \
-            --run-attempt "$RUN_ATTEMPT" \
-            --run-number "$RUN_NUMBER" \
-            --run-url "$RUN_URL" \
-            --started-at "$RUN_STARTED_AT"
-      - name: Publish dashboard history to data branch
+            --archive data/draws.json --status "$BATCH_OUTCOME" \
+            --run-id "$RUN_ID" --run-attempt "$RUN_ATTEMPT" --run-number "$RUN_NUMBER" \
+            --run-url "$RUN_URL" --started-at "$RUN_STARTED_AT"
+      - name: Publish batch evidence and qualifying model package together
         if: always() && steps.publish_feed.outcome == 'success'
-        shell: bash
+        env:
+          BATCH_OUTCOME: "${{ steps.simulations.outcome }}"
         run: |
           git worktree add --detach /tmp/simulation-data origin/simulation-data
           mkdir -p /tmp/simulation-data/data
           cp /tmp/simulation-dashboard-history-next.json /tmp/simulation-data/data/simulation-dashboard-history.json
+          if test "$BATCH_OUTCOME" = success; then
+            test -f simulation-artifacts/joy-kane-batch-models.json
+            cp simulation-artifacts/joy-kane-batch-models.json /tmp/simulation-data/data/joy-kane-batch-models.json
+          fi
           cd /tmp/simulation-data
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/simulation-dashboard-history.json
-          git commit -m "Publish simulation batch $GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT"
+          if test "$BATCH_OUTCOME" = success; then git add data/joy-kane-batch-models.json; fi
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Publish completed quantum cycles and batch evidence $GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT"
+          git pull --rebase origin simulation-data
           git push origin HEAD:refs/heads/simulation-data
-      - name: Run and publish isolated research registry
-        if: steps.simulations.outcome == 'success' && steps.publish_feed.outcome == 'success' && success()
-        shell: bash
-        run: |
-          git fetch origin simulation-data
-          git worktree add --detach /tmp/research-data origin/simulation-data
-          python scripts/closed_loop_research.py \
-            --archive data/draws.json \
-            --batch simulation-artifacts/simulation-batch-summary.json \
-            --live-state data/joy-kane-model-state.json \
-            --source-commit "$GITHUB_SHA" \
-            --output /tmp/research-data/data/research
-          cd /tmp/research-data
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/research
-          if ! git diff --cached --quiet; then
-            git commit -m "Publish research registry $GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT"
-            git push origin HEAD:refs/heads/simulation-data
-          fi
-      - name: Upload batch summaries and representative audit trace
+      - name: Upload all checkpoints and selected chronological traces
         if: always()
         uses: actions/upload-artifact@v4
         with:
