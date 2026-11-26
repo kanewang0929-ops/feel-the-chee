@@ -12,8 +12,8 @@ jobs:
     timeout-minutes: 30
     env:
       DUEL_WARMUP_DRAWS: "200"
-      DUEL_CYCLES: "1"
-      MIN_HOURS_BETWEEN_DUEL_TRAINING: "999999"
+      DUEL_SIMULATION_MODE: "1"
+      DUEL_SIMULATION_SEED: "20261119"
     steps:
       - name: Checkout pilot branch
         uses: actions/checkout@v4
@@ -37,6 +37,5 @@ jobs:
             data/joy-kane-predictions.jsonl
             data/joy-kane-results.jsonl
             data/joy-kane-model-state.json
-            data/joy-kane-training-log.jsonl
           if-no-files-found: error
           retention-days: 7

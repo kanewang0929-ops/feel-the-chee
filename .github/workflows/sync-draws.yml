@@ -10,7 +10,6 @@ on:
       - "scripts/chee_formula.py"
       - "scripts/chee_backtest.py"
       - "scripts/joy_kane_duel.py"
-      - "scripts/summarize_joy_kane_logs.py"
       - "assets/app.js"
       - "assets/joy-kane.js"
       - "assets/style.css"
@@ -57,12 +56,7 @@ jobs:
       - name: Run strict walk-forward Joy and Kane duel
         env:
           DUEL_WARMUP_DRAWS: "200"
-          DUEL_CYCLES: "1000000"
-          MIN_HOURS_BETWEEN_DUEL_TRAINING: "23"
         run: python scripts/joy_kane_duel.py
-
-      - name: Summarize daily optimization logs older than seven days
-        run: python scripts/summarize_joy_kane_logs.py
 
       - name: Commit draw database, forecasts, agent states, and audit ledgers
         run: |

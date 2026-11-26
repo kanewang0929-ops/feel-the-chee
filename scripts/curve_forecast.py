@@ -385,34 +385,6 @@ def model(
     ]
 
 
-def apply_mean_anchor(
-    model_rows: list[dict],
-    draws: list[dict],
-    area: str,
-    blend: float,
-    window: int = 60,
-) -> list[dict]:
-    """Blend learned curve centers with the trailing positional mean.
-
-    The blend is chosen by the daily million-simulation trainer and only moves
-    when chronological held-out validation improves.
-    """
-    blend = max(0.0, min(0.88, float(blend or 0.0)))
-    if blend <= 0 or not draws:
-        return [dict(row) for row in model_rows]
-    sample = draws[-min(window, len(draws)) :]
-    width = len(model_rows)
-    anchors = [statistics.fmean(draw[area][i] for draw in sample) for i in range(width)]
-    output = []
-    for i, row in enumerate(model_rows):
-        item = dict(row)
-        item["rawCenter"] = row["center"]
-        item["meanAnchor"] = anchors[i]
-        item["center"] = (1.0 - blend) * float(row["center"]) + blend * anchors[i]
-        output.append(item)
-    return output
-
-
 def loss(actual: list[int], model_rows: list[dict], upper: int) -> float:
     position_loss = statistics.fmean(
         abs(value - model_rows[index]["center"]) / upper
@@ -906,10 +878,6 @@ def main() -> None:
 
     front_model = model(draws, "front", profile, 1, 35)
     back_model = model(draws, "back", profile, 1, 12)
-    million_training = state.get("millionSimulationTraining", {}) if isinstance(state.get("millionSimulationTraining"), dict) else {}
-    mean_anchor_blend = float(million_training.get("meanAnchorBlend", 0.0) or 0.0)
-    front_model = apply_mean_anchor(front_model, draws, "front", mean_anchor_blend)
-    back_model = apply_mean_anchor(back_model, draws, "back", mean_anchor_blend)
     relationship_training = state.get("relationshipTraining", {}) if isinstance(state.get("relationshipTraining"), dict) else {}
     relationship_blend = float(relationship_training.get("blend", 0.0) or 0.0)
     front_model = apply_relationship_anchor(front_model, draws, "front", relationship_blend, 1, 35)
@@ -975,14 +943,6 @@ def main() -> None:
                 "validationScore": relationship_training.get("validationScore"),
                 "validationLoss": relationship_training.get("validationLoss"),
                 "features": ["positionDelta", "sumDelta", "spanDelta", "oddDelta", "repeatCount"],
-            },
-            "millionSimulation": {
-                "meanAnchorBlend": round(mean_anchor_blend, 6),
-                "validationScore": million_training.get("validationScore"),
-                "validationLoss": million_training.get("validationLoss"),
-                "iterationsPerRun": million_training.get("iterationsPerRun"),
-                "totalIterations": million_training.get("totalIterations"),
-                "accepted": million_training.get("accepted"),
             },
             "note": (
                 "Forecasts sorted-position curves and samples their "
