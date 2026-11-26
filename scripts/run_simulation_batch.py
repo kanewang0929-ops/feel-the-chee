@@ -78,10 +78,10 @@ def validate_run(run_data: Path, dashboard: dict) -> tuple[list[dict], str]:
             "Prediction, result, and audit row counts must be equal and non-zero "
             f"(got {len(predictions)}, {len(results)}, {len(audit)})."
         )
-    if dashboard.get("method", {}).get("dailyTraining", {}).get("simulationMode") is not True:
+    if dashboard.get("method", {}).get("training", {}).get("simulationMode") is not True:
         raise RuntimeError("Dashboard does not identify this run as simulation mode.")
-    if dashboard.get("method", {}).get("dailyTraining", {}).get("ranToday") is not False:
-        raise RuntimeError("Daily optimizer unexpectedly ran during simulation.")
+    if dashboard.get("method", {}).get("optimizer", {}).get("enabled") is not False:
+        raise RuntimeError("Simulation must identify the separate optimizer as disabled.")
     if "livePredictionLock" in dashboard:
         raise RuntimeError("Simulation dashboard must not expose a livePredictionLock object.")
     if dashboard.get("nextForecast", {}).get("forecastScope") != "archive_next_draw_not_live":
@@ -198,8 +198,6 @@ def main() -> None:
                 "DUEL_SIMULATION_MODE": "1",
                 "DUEL_SIMULATION_SEED": str(seed),
                 "DUEL_WARMUP_DRAWS": str(WARMUP_DRAWS),
-                "DUEL_CYCLES": "1",
-                "MIN_HOURS_BETWEEN_DUEL_TRAINING": "999999",
             })
             completed = subprocess.run(
                 [sys.executable, str(ENGINE)],
@@ -229,8 +227,8 @@ def main() -> None:
                 "kane": summary["kane"],
                 "duelWins": summary["duelWins"],
                 "firstPredictionFingerprint": fingerprint,
-                "dailyTrainingRan": dashboard["method"]["dailyTraining"]["ranToday"],
-                "simulationMode": dashboard["method"]["dailyTraining"]["simulationMode"],
+                "optimizerEnabled": dashboard["method"]["optimizer"]["enabled"],
+                "simulationMode": dashboard["method"]["training"]["simulationMode"],
                 "fullReplayAuditRowsValidated": len(predictions),
             })
             if simulation_id == 1:

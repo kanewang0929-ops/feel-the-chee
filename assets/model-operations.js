@@ -51,35 +51,25 @@
     }).join("");
   }
   function agentCard(name, agent) {
-    var train = agent.dailyTraining || {};
     var duel = agent.duel || {};
     return row("Model version",agent.modelVersion||"—")+
       row("Observations",count(agent.observations))+
       row("Head-to-head",count(duel.wins)+" wins · "+count(duel.losses)+" losses · "+count(duel.ties)+" ties")+
-      row("Last optimizer decision",train.accepted===true?"Accepted":train.accepted===false?"Not accepted":"Not recorded")+
-      row("Accepted trials",count(train.acceptedTrials))+
-      row("Training score",number(train.trainScoreBefore)+" → "+number(train.trainScoreAfter))+
-      row("Validation score",number(train.validationScoreBefore)+" → "+number(train.validationScoreAfter))+
-      row("Historical test diagnostic",number(train.untouchedTestScoreBefore)+" → "+number(train.untouchedTestScoreAfter))+
-      row("Last optimizer update",date(train.updatedAt))+
+      row("Exploration setting",number(agent.exploration,3))+
+      row("Last replay update",date(agent.updatedAt))+
       "<div class='weight-heading'>Current signal weights</div>"+weightBars(agent.weights);
   }
   function loadTraining(state, dashboard) {
     if(!state.agents || !state.agents.joy || !state.agents.kane || !dashboard.summary)throw new Error("Incomplete live model data");
     var agents = state.agents || {};
     var joy = agents.joy || {}, kane = agents.kane || {};
-    var dashAgents = dashboard.agentStates || {};
-    var trainJoy = (dashAgents.joy && dashAgents.joy.dailyTraining) || joy.dailyTraining || {};
-    var trainKane = (dashAgents.kane && dashAgents.kane.dailyTraining) || kane.dailyTraining || {};
-    var latest = [trainJoy.updatedAt,trainKane.updatedAt].filter(Boolean).sort().pop();
+    var latest = [joy.updatedAt,kane.updatedAt].filter(Boolean).sort().pop();
     $("trainingUpdated").textContent = "Model state refreshed "+date(state.generatedAt || dashboard.generatedAt);
     $("trainModelVersion").textContent = state.modelVersion || dashboard.modelVersion || "—";
     $("trainObservations").textContent = count(Math.min(Number(joy.observations||0),Number(kane.observations||0)));
-    $("trainCycles").textContent = count(Math.max(Number(trainJoy.cyclesPerRun||0),Number(trainKane.cyclesPerRun||0)));
+    $("trainMode").textContent = "REPLAY";
     $("trainLastRun").textContent = date(latest);
-    var skipped = trainJoy.skipped === true && trainKane.skipped === true;
-    var ran = Boolean(dashboard.method && dashboard.method.dailyTraining && dashboard.method.dailyTraining.ranToday);
-    $("trainRunState").textContent = skipped ? (trainJoy.reason || trainKane.reason || "Optimizer skipped by the minimum interval guard") : ran ? "Optimizer ran in the latest live workflow" : (trainJoy.reason || trainKane.reason || "Latest optimizer execution status is not recorded");
+    $("trainRunState").textContent = latest ? "Latest recorded chronological replay update" : "Replay update time was not recorded";
     $("joyTrainingCard").innerHTML = agentCard("Joy",joy);
     $("kaneTrainingCard").innerHTML = agentCard("Kane",kane);
     $("deployVersion").textContent = state.modelVersion || "—";

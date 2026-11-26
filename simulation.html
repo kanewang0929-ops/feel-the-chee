@@ -26,7 +26,7 @@
         <div class="hero-copy">
           <p class="eyebrow">MODEL OPERATIONS</p>
           <h1>Follow the learning.<br><span>Check the evidence.</span></h1>
-          <p class="hero-subtitle">Track historical replays, live training and research in one place. Each daily batch runs 100 independently seeded histories, with one sealed ticket per agent per draw.</p>
+          <p class="hero-subtitle">Track historical replays, published model states and research in one place. Each daily batch runs 100 full chronological cycles over the same draw history, with one sealed ticket per agent per draw.</p>
           <div class="hero-meta">
             <span class="schedule-pill" id="scheduleStatus" role="status">CHECKING FEED</span>
             <span class="schedule-text">Scheduled daily at 18:00 Beijing · start times may vary</span>
@@ -34,7 +34,7 @@
         </div>
         <div class="hero-visual" aria-hidden="true">
           <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
-          <div class="core"><span>100</span><small>RUNS / DAY</small></div>
+          <div class="core"><span>100</span><small>CYCLES / BATCH</small></div>
           <div class="orbit-dot dot-a"></div><div class="orbit-dot dot-b"></div><div class="orbit-dot dot-c"></div>
         </div>
       </section>
@@ -54,10 +54,10 @@
       </div>
       <section class="ops-panel" id="ops-training" role="tabpanel" aria-labelledby="tab-training" tabindex="0" hidden>
         <div class="section-heading"><div><p class="eyebrow">01 / LIVE MODEL TELEMETRY</p><h2>Training operations</h2></div><div class="updated-label" id="trainingUpdated">Loading live model state…</div></div>
-        <div class="ops-kpi-grid"><article class="metric-card"><div class="metric-label">MODEL VERSION</div><div class="metric-value ops-value" id="trainModelVersion">—</div><div class="metric-foot">Current live production model</div></article><article class="metric-card"><div class="metric-label">HISTORICAL OBSERVATIONS</div><div class="metric-value" id="trainObservations">—</div><div class="metric-foot">Chronological draws processed</div></article><article class="metric-card"><div class="metric-label">OPTIMIZER CYCLES / AGENT</div><div class="metric-value" id="trainCycles">—</div><div class="metric-foot">Configured candidate-weight search</div></article><article class="metric-card"><div class="metric-label">LAST TRAINING UPDATE</div><div class="metric-value ops-value" id="trainLastRun">—</div><div class="metric-foot" id="trainRunState">Reading training record</div></article></div>
+        <div class="ops-kpi-grid"><article class="metric-card"><div class="metric-label">MODEL VERSION</div><div class="metric-value ops-value" id="trainModelVersion">—</div><div class="metric-foot">Current published model state</div></article><article class="metric-card"><div class="metric-label">HISTORICAL OBSERVATIONS</div><div class="metric-value" id="trainObservations">—</div><div class="metric-foot">Chronological draws processed</div></article><article class="metric-card"><div class="metric-label">LEARNING METHOD</div><div class="metric-value ops-value" id="trainMode">—</div><div class="metric-foot">Predict, reveal, score, then update</div></article><article class="metric-card"><div class="metric-label">LAST REPLAY UPDATE</div><div class="metric-value ops-value" id="trainLastRun">—</div><div class="metric-foot" id="trainRunState">Reading replay record</div></article></div>
         <div class="ops-two-col"><article class="panel"><div class="panel-heading"><div><p class="eyebrow">JOY / ADAPTIVE HIT MODEL</p><h2>Joy training state</h2></div><span class="ops-chip joy-chip">JOY</span></div><div id="joyTrainingCard" class="ops-agent-state"></div></article><article class="panel"><div class="panel-heading"><div><p class="eyebrow">KANE / ADAPTIVE HIT MODEL</p><h2>Kane training state</h2></div><span class="ops-chip kane-chip">KANE</span></div><div id="kaneTrainingCard" class="ops-agent-state"></div></article></div>
         <article class="panel"><div class="panel-heading"><div><p class="eyebrow">RESEARCH REGISTRY</p><h2>Experiment memory</h2></div><span class="ops-chip" id="researchStatus">WAITING</span></div><div id="researchSummary" class="ops-agent-state">Waiting for the first published research cycle.</div><div class="table-scroll"><table><thead><tr><th>Agent</th><th>Configuration</th><th>Historical hits</th><th>Research baseline</th><th>Decision</th><th>Package</th></tr></thead><tbody id="researchRows"><tr><td colspan="6">No experiments published.</td></tr></tbody></table></div><p class="caveat">Exploratory scores on previously observed data, not independent evidence. Each configuration is tested once per archive and engine version.</p></article>
-        <article class="panel ops-explainer"><p class="eyebrow">HOW LIVE TRAINING WORKS</p><h2>Learning is separate from simulation</h2><p>The live prediction workflow scores sealed historical predictions after each reveal and updates each agent's independent signal weights. The daily optimizer searches up to one million candidate weight combinations per agent, subject to its 23-hour minimum interval. Simulation replays do not write to these live states.</p><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/sync-draws.yml" target="_blank" rel="noopener">Open live training workflow ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/blob/main/data/joy-kane-model-state.json" target="_blank" rel="noopener">Inspect model-state file ↗</a></div></article>
+        <article class="panel ops-explainer"><p class="eyebrow">CHRONOLOGICAL LEARNING</p><h2>Predict. Reveal. Score. Update.</h2><p>Each simulation cycle traverses the historical draw archive in chronological order. After the initial warm-up, Joy and Kane each seal one ticket, compare it with the revealed result, update their separate states, and continue to the next draw. The million-cycle optimizer has been removed. The current 100-cycle batch remains isolated from the published live model state and prediction lock.</p><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/daily-simulation-batch.yml" target="_blank" rel="noopener">Open 100-cycle workflow ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/blob/main/data/joy-kane-model-state.json" target="_blank" rel="noopener">Inspect model-state file ↗</a></div></article>
       </section>
       <section class="ops-panel" id="ops-deployment" role="tabpanel" aria-labelledby="tab-deployment" tabindex="0" hidden>
         <div class="section-heading"><div><p class="eyebrow">03 / RELEASE GOVERNANCE</p><h2>Model deployment</h2></div><div class="updated-label" id="deploymentUpdated">Checking active production model…</div></div>
@@ -71,7 +71,7 @@
       </section>
       <section class="kpi-grid">
         <article class="metric-card"><div class="metric-label">LATEST BATCH STATUS</div><div class="metric-value status-value" id="batchStatus">WAITING</div><div class="metric-foot" id="batchTime">The first production batch will appear here.</div></article>
-        <article class="metric-card"><div class="metric-label">INDEPENDENT SIMULATIONS</div><div class="metric-value" id="runCount">0<span class="metric-unit"> / 100</span></div><div class="metric-foot" id="seedCheck">Unique seeds are checked before a batch passes.</div></article>
+        <article class="metric-card"><div class="metric-label">CHRONOLOGICAL CYCLES</div><div class="metric-value" id="runCount">0<span class="metric-unit"> / 100</span></div><div class="metric-foot" id="seedCheck">Unique seeds are checked before a batch passes.</div></article>
         <article class="metric-card"><div class="metric-label">DRAWS AUDITED / SIMULATION</div><div class="metric-value" id="drawCount">—</div><div class="metric-foot" id="dateRange">Complete historical walk-forward replay.</div></article>
         <article class="metric-card"><div class="metric-label">BATCH RUNTIME</div><div class="metric-value" id="runtime">—</div><div class="metric-foot" id="runtimeNote">Runner time through feed publication.</div></article>
       </section>
@@ -102,7 +102,8 @@
           <p class="eyebrow">05 / REPLAY PROTOCOL</p><h2>Same archive. Separate minds.</h2>
           <ol>
             <li><b>Seed independence</b><span>Each of the 100 simulations receives a unique deterministic seed and starts from isolated agent state.</span></li>
-            <li><b>Chronological integrity</b><span>Predictions are sealed before the target draw is revealed. No future draw may enter the training prefix.</span></li>
+            <li><b>One complete cycle</b><span>Traverse the full archive in chronological order: seal predictions, reveal the result, score, update, then continue. The initial warm-up is not scored.</span></li>
+            <li><b>Chronological integrity</b><span>Predictions use only earlier draws. No future draw may enter the training prefix.</span></li>
             <li><b>One official ticket</b><span>Joy and Kane each submit exactly five front numbers and two back numbers per draw.</span></li>
             <li><b>Audit every replay</b><span>Prediction, result and audit ledgers are cross-checked for every historical draw in every simulation.</span></li>
           </ol>
@@ -124,6 +125,6 @@
   </div>
   <noscript><p class="noscript-note">JavaScript is needed to load the live dashboards. Use the workflow and report links above to inspect the published results.</p></noscript>
   <script src="./assets/simulation-dashboard.js?v=20261126-1"></script>
-  <script src="./assets/model-operations.js?v=20261126-1"></script>
+  <script src="./assets/model-operations.js?v=20261126-optimizer-removed"></script>
 </body>
 </html>

@@ -39,9 +39,6 @@ jobs:
   holdout:
     runs-on: ubuntu-latest
     timeout-minutes: 90
-    env:
-      DUEL_CYCLES: "1"
-      MIN_HOURS_BETWEEN_DUEL_TRAINING: "999999"
     steps:
       - name: Checkout evaluation branch
         uses: actions/checkout@v4

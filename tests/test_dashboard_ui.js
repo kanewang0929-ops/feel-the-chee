@@ -29,6 +29,7 @@ function batch(id, finishedAt) {
 
 function fixtures() {
   const agent = {observations:2753,duel:{wins:950,losses:906,ties:897},modelVersion:"adaptive-v1",
+    updatedAt:"2026-11-25T23:25:00Z",exploration:.08,
     dailyTraining:{cyclesPerRun:1000000,updatedAt:"2026-11-25T23:04:36Z",accepted:true},weights:{front:{frequency:1}}};
   return {
     feed:{schemaVersion:1,updatedAt:new Date().toISOString(),batches:[batch("old","2026-11-24T22:32:00Z"),batch("new","2026-11-25T22:32:00Z")]},
@@ -112,13 +113,29 @@ test("missing agent scores do not fabricate deltas or break valid batch metadata
   assert.doesNotMatch(nodes.agentScores.innerHTML,/-1\.0476/);
 });
 
-test("holdout uses finalTest fields and optimizer status uses dashboard metadata",async()=>{
+test("holdout remains intact and replay telemetry ignores historical optimizer metadata",async()=>{
   const {nodes}=await page(fixtures());
   assert.match(nodes.holdoutMetrics.innerHTML,/1\.019964/);
   assert.match(nodes.holdoutMetrics.innerHTML,/1\.029038/);
   assert.match(nodes.holdoutMeta.textContent,/551 final-test draws.*2026-11-16/);
-  assert.equal(nodes.trainRunState.textContent,"Optimizer ran in the latest live workflow");
-  assert.match(nodes.trainLastRun.textContent,/07:04 Beijing/);
+  assert.equal(nodes.trainMode.textContent,"REPLAY");
+  assert.equal(nodes.trainRunState.textContent,"Latest recorded chronological replay update");
+  assert.match(nodes.trainLastRun.textContent,/07:25 Beijing/);
+  for(const id of ["joyTrainingCard","kaneTrainingCard"]){
+    assert.match(nodes[id].innerHTML,/Exploration setting.*0\.080/);
+    assert.match(nodes[id].innerHTML,/Last replay update.*07:25 Beijing/);
+    assert.doesNotMatch(nodes[id].innerHTML,/optimizer|Accepted trials|Validation score|Historical test diagnostic|1,000,000|07:04/);
+  }
+});
+
+test("a missing replay timestamp does not fall back to an old optimizer timestamp",async()=>{
+  const data=fixtures();
+  delete data.state.agents.joy.updatedAt;
+  delete data.state.agents.kane.updatedAt;
+  const {nodes}=await page(data);
+  assert.equal(nodes.trainLastRun.textContent,"—");
+  assert.equal(nodes.trainRunState.textContent,"Replay update time was not recorded");
+  assert.doesNotMatch(nodes.joyTrainingCard.innerHTML,/07:04/);
 });
 
 test("freshness comparison does not hide older replay and research archives",async()=>{

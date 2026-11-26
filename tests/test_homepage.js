@@ -64,6 +64,31 @@ test("forecast metadata and locally edited text are escaped", () => {
   assert.equal(app.escapeText('<button onclick="x">'), "&lt;button onclick=&quot;x&quot;&gt;");
 });
 
+test("Joy and Kane learning display ignores legacy optimizer fields and describes one ticket per draw", () => {
+  const app = appContext();
+  const learning = { innerHTML: "" };
+  const audit = { innerHTML: "", querySelector: () => null };
+  app.document.getElementById = id => id === "joyKaneLearning" ? learning : id === "joyKaneAudit" ? audit : null;
+  const source = fs.readFileSync(path.join(root, "assets/joy-kane.js"), "utf8").replace(/\nloadJoyKane\(\);\s*$/, "");
+  vm.runInContext(source, app);
+  const state = {
+    modelVersion: "adaptive-v1", observations: 2753, exploration: .08,
+    updatedAt: "2026-11-25T23:25:00Z", weights: { front: { frequency: 1 }, back: { frequency: 1 } },
+    dailyTraining: { cyclesPerRun: 1000000, updatedAt: "2026-11-25T23:04:36Z", accepted: true,
+      skipped: true, reason: "STALE_OPTIMIZER_REASON", validationScoreBefore: 998, validationScoreAfter: 999 }
+  };
+  app.renderJoyKaneLearning({ agentStates: { joy: state, kane: state }, summary: {}, method: { dailyTraining: { ranToday: true } } });
+  assert.match(learning.innerHTML, /完整回放历史开奖记录 100 轮/);
+  assert.match(learning.innerHTML, /探索强度.*0\.080/);
+  assert.match(learning.innerHTML, /2026\/11\/26 07:25/);
+  assert.match(learning.innerHTML, /提前封存的唯一一组号码/);
+  assert.doesNotMatch(learning.innerHTML, /每日搜索次数|验证集命中分变化|每天各进行一百万|STALE_OPTIMIZER_REASON|未触碰最后一段|1,000,000|07:04/);
+  app.renderJoyKaneAudit();
+  assert.match(audit.innerHTML, /Joy · 1组预测及命中/);
+  assert.match(audit.innerHTML, /Kane · 1组预测及命中/);
+  assert.doesNotMatch(audit.innerHTML, /三组预测|3组预测/);
+});
+
 test("local archive renders while the online request is pending and preserves edits and pagination", async () => {
   const storage = {};
   const app = appContext(storage);

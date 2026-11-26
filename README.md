@@ -30,16 +30,20 @@
 
 - Dashboard: [Simulation Dashboard](./simulation.html)
 - Schedule: daily at 18:00 Asia/Shanghai (10:00 UTC)
-- Workload: 100 independent full-history simulations per batch
+- Workload: 100 complete chronological simulation cycles over the historical draw archive per batch
 - Results: the latest 30 batch summaries are published to the `simulation-data` branch and read by the static dashboard
 - Compute: GitHub Actions hosted runner; no additional Render service or database is required
 
+One cycle traverses the complete archive in chronological order. After the initial warm-up, Joy and Kane each make exactly one ticket for the next historical draw. The predictions are sealed before the result is revealed, scored and used to update their separate states. This sequence continues through the latest available draw. Each of the 100 cycles starts with isolated state and a unique deterministic seed.
+
 The daily workflow runs contract tests before simulations, validates every chronological replay, stores a representative trace and compact run summaries as a 30-day GitHub Actions artifact, and publishes a compact dashboard feed. Simulation runs do not write to live prediction locks or live model state.
+
+The million-cycle weight optimizer has been removed from the active prediction workflow. It no longer searches candidate weights or reloads previously optimized weights. Historical optimizer records are retained as past records, not current training telemetry. This change does not introduce quantum models or connect batch output to live model publication; those remain separate model changes.
 
 
 ## Model Operations Center
 
 The Simulation Dashboard is the central operations view with three areas:
-- Training: reads the live model-state and dashboard JSON to show Joy and Kane's observations, optimizer results, and signal weights.
+- Training: reads the live model-state and dashboard JSON to show Joy and Kane's observations, exploration settings, replay update times, and signal weights.
 - Evaluation: shows daily 100-run batch metrics and the latest chronological holdout report. Running the holdout workflow publishes its summary to the `simulation-data` branch.
 - Deployment: shows the active live model version and prediction lock, and documents the explicit human review gate. Simulation batches never promote or overwrite live models.

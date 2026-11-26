@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """Settle the previous Agent forecast against a newly published draw.
 
-This runs before full-history cycle training so the newest real draw is included
-in the live Agent state first. The million-cycle trainer then optimizes from that
-updated state and its champion remains the final state used for the next forecast.
+Record the previous forecast's exact matches and update the legacy Agent state
+once for each newly published result.
 """
 from __future__ import annotations
 

@@ -92,27 +92,16 @@ def make_ai_prediction(
     back_model = ai.model(history, "back", profile, 1, 12)
 
     if live:
-        million = state.get("millionSimulationTraining", {})
-        if not isinstance(million, dict):
-            million = {}
         relationship_training = state.get("relationshipTraining", {})
         if not isinstance(relationship_training, dict):
             relationship_training = {}
-        mean_blend = float(million.get("meanAnchorBlend", 0.0) or 0.0)
         blend_value = relationship_training.get("blend", 1.0)
         relationship_blend = float(1.0 if blend_value is None else blend_value)
     else:
         # Historical replay starts from a clean state and uses only transitions
         # contained in the prefix before the target draw.
-        mean_blend = 0.0
         relationship_blend = 1.0
 
-    front_model = ai.apply_mean_anchor(
-        front_model, history, "front", mean_blend
-    )
-    back_model = ai.apply_mean_anchor(
-        back_model, history, "back", mean_blend
-    )
     front_model = ai.apply_relationship_anchor(
         front_model, history, "front", relationship_blend, 1, 35
     )
@@ -144,7 +133,6 @@ def make_ai_prediction(
         "selectedLabel": profile_seed.get("label"),
         "temperature": round(profile["temperature"], 4),
         "temperatureAdjustment": round(adjustment, 4),
-        "meanAnchorBlend": round(mean_blend, 6),
         "relationshipBlend": round(relationship_blend, 6),
     }
     payload = {
@@ -260,43 +248,6 @@ def aggregate_source(rows: list[dict], source: str) -> dict:
     }
 
 
-def optimized_live_agent_state(replay_state: dict) -> dict:
-    """Use the existing million-cycle optimizer only for the next live draw.
-
-    The historical replay always starts from agent.default_state(). Optimized
-    weights are never fed backwards into an earlier historical prediction.
-    """
-    state = clone(replay_state)
-    optimized = ai.read_json(DATA / "hybrid-model-state.json", {})
-    if not isinstance(optimized, dict):
-        return state
-
-    for area in ("front", "back"):
-        source_weights = optimized.get("sourceWeights", {}).get(area, {})
-        if all(name in source_weights for name in agent.SOURCES):
-            values = {
-                name: max(0.0, float(source_weights[name]))
-                for name in agent.SOURCES
-            }
-            total = sum(values.values())
-            if total > 0:
-                state["sourceWeights"][area] = {
-                    name: values[name] / total for name in agent.SOURCES
-                }
-
-        strategy_weights = optimized.get("strategyWeights", {}).get(area, {})
-        if all(name in strategy_weights for name in agent.CATEGORIES):
-            candidate = {
-                name: max(0.0, float(strategy_weights[name]))
-                for name in agent.CATEGORIES
-            }
-            if sum(candidate.values()) > 0:
-                state["strategyWeights"][area] = candidate
-
-    state["liveWeightSource"] = "sequential replay plus accepted million-cycle optimization"
-    return state
-
-
 def main() -> None:
     draws = ai.load()
     if len(draws) <= WARMUP:
@@ -304,8 +255,8 @@ def main() -> None:
             f"Need more than {WARMUP} valid draws; found {len(draws)}."
         )
 
-    # Historical replay deliberately starts from neutral states. Existing live
-    # model files and full-history optimizer weights are not read here.
+    # Historical replay deliberately starts from neutral states. Persisted live
+    # model weights are not read here.
     ai_state = ai.initial_state()
     agent_state = agent.default_state()
     ai_logs: list[dict] = []
@@ -505,8 +456,7 @@ def main() -> None:
                     flush=True,
                 )
 
-    # The next live prediction may use the accepted million-cycle weights.
-    # Those weights are applied only after the historical no-peek replay ends.
+    # Use the completed chronological replay for the next live prediction.
     latest = draws[-1]
     next_issue = str(int(latest["issue"]) + 1)
     next_date = ai.next_draw_day(latest["date"])
@@ -514,13 +464,8 @@ def main() -> None:
     live_ai_state = clone(ai_state)
     legacy_ai_state = ai.read_json(ai.STATE_FILE, {})
     if isinstance(legacy_ai_state, dict):
-        for key in (
-            "millionSimulationTraining",
-            "relationshipTraining",
-            "fullHistoryCycleTraining",
-        ):
-            if key in legacy_ai_state:
-                live_ai_state[key] = legacy_ai_state[key]
+        if "relationshipTraining" in legacy_ai_state:
+            live_ai_state["relationshipTraining"] = legacy_ai_state["relationshipTraining"]
 
     live_profile, live_calibration = ai.choose(draws, live_ai_state)
     ai_next, _ = make_ai_prediction(
@@ -554,7 +499,8 @@ def main() -> None:
     } if rows else None)
 
     chee_next = make_chee_prediction(next_issue, next_date)
-    live_agent_state = optimized_live_agent_state(agent_state)
+    live_agent_state = clone(agent_state)
+    live_agent_state["liveWeightSource"] = "completed chronological replay"
     agent_next_bundle = agent.generate_bundle(
         ai_next, chee_next, live_agent_state
     )
@@ -640,7 +586,7 @@ def main() -> None:
             "targetResultAccess": "The target draw's front/back numbers are accessed only after the prediction ledger is flushed.",
             "historyDigest": "SHA-256 of the exact historical prefix used for each prediction.",
             "fengShuiPolicy": "Formula-only. Uses target issue/date and never learns from historical results.",
-            "liveOptimizationPolicy": "Accepted million-cycle weights may affect the next live forecast only, never earlier historical predictions.",
+            "liveWeightPolicy": "The next Agent forecast uses the completed chronological replay state.",
             "predictionLedger": "data/walk-forward-agent-predictions.jsonl",
             "resultLedger": "data/walk-forward-agent-results.jsonl",
         },
