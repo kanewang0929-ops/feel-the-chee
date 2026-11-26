@@ -36,7 +36,7 @@
     <section id="prediction" class="page active" role="tabpanel" aria-labelledby="tab-prediction">
       <div class="prediction-overview" aria-label="预测与数据状态" aria-live="polite">
         <div><span class="overview-label">预测状态</span><strong id="homeLockStatus">正在检查封存记录</strong><span id="homeLockDetail">Joy / Kane · 每期各一组号码</span></div>
-        <div><span class="overview-label">模型数据更新 · 北京时间</span><strong id="homeUpdatedAt">—</strong><span id="homeVersion">正在读取当前版本</span></div>
+        <div><span class="overview-label">预测记录更新 · 北京时间</span><strong id="homeUpdatedAt">—</strong><span id="homeVersion">正在读取当前版本</span></div>
         <div><span class="overview-label">预测使用的历史数据</span><strong id="homeArchiveCount">—</strong><span id="homeArchiveThrough">正在读取数据截止日期</span></div>
       </div>
       <div class="grid">
@@ -44,7 +44,7 @@
           <div class="section-head">
             <div>
               <h2>Joy <span class="agent-role">独立预测模型</span></h2>
-              <div class="muted">Joy 的独立AI模型 · 严格逐期预测，开奖后学习。</div>
+              <div class="muted">先核对模型版本与封存状态，再展示本期号码。</div>
             </div>
             <span class="badge blue">Joy · 1组主预测</span>
           </div>
@@ -58,7 +58,7 @@
           <div class="section-head">
             <div>
               <h2>Kane <span class="agent-role">独立挑战模型</span></h2>
-              <div class="muted">独立训练与评分，每期向 Joy 发起挑战。</div>
+              <div class="muted">独立模型、独立训练，与 Joy 在同一期次比较命中。</div>
             </div>
             <span class="badge gold">Kane · 1组挑战预测</span>
           </div>
@@ -68,28 +68,8 @@
           </div>
         </div>
 
-        <div id="cheePredictionCard" class="card chee-card">
-          <div class="section-head">
-            <div>
-              <h2>Feel the Chee <span class="agent-role">河图洛书公式</span></h2>
-              <div class="muted">独立公式模型：只按河图洛书、目标期号与开奖日期计算，不使用历史开奖学习。</div>
-            </div>
-            <span class="badge gold">2组结果 · 公式计算</span>
-          </div>
-          <p id="cheeStatus" class="forecast-meta" aria-live="polite">正在核对公式结果的目标期次...</p>
-          <div class="chee-bars">
-            <div class="chee-row"><span>金</span><div class="bar"><div class="fill" style="width:0%"></div></div><span>0</span></div>
-            <div class="chee-row"><span>火</span><div class="bar"><div class="fill" style="width:0%"></div></div><span>0</span></div>
-            <div class="chee-row"><span>土</span><div class="bar"><div class="fill" style="width:0%"></div></div><span>0</span></div>
-            <div class="chee-row"><span>木</span><div class="bar"><div class="fill" style="width:0%"></div></div><span>0</span></div>
-            <div class="chee-row"><span>水</span><div class="bar"><div class="fill" style="width:0%"></div></div><span>0</span></div>
-          </div>
-          <div class="forecast-list">
-            <div class="forecast"><div class="muted">正在运行河图洛书公式...</div></div>
-          </div>
-        </div>
       </div>
-      <p class="prediction-note">号码用于模型实验与结果复盘。历史命中表现和 Chee 值不代表下一期中奖概率。<a href="./simulation.html">查看评估方法与运行记录 →</a></p>
+      <p class="prediction-note">仅发布 Joy 与 Kane 的封存预测。量子模型在普通计算机上模拟；历史命中表现不代表下一期中奖概率。<a href="./simulation.html">查看评估方法与运行记录 →</a></p>
     </section>
 
     <section id="admin" class="page" role="tabpanel" aria-labelledby="tab-admin" hidden>
@@ -147,8 +127,7 @@
   </div>
 </div>
 
-<script src="./assets/app.js?v=20261126-review1"></script>
-<script src="./assets/chee-runtime.js?v=20261126-review1"></script>
-<script src="./assets/joy-kane.js?v=20261126-optimizer-removed"></script>
+<script src="./assets/app.js?v=20261126-quantum-v2"></script>
+<script src="./assets/joy-kane.js?v=20261126-quantum-v2"></script>
 </body>
 </html>

@@ -7,17 +7,19 @@ import hashlib
 import json
 import os
 import shutil
-import subprocess
 import sys
 import tempfile
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-ENGINE = ROOT / "scripts" / "joy_kane_duel.py"
 DRAW_SOURCE = ROOT / "data" / "draws.json"
-ENGINE_VERSION = "joy-kane-sim-v1"
+ENGINE_VERSION = "joy-kane-quantum-sim-v2"
 WARMUP_DRAWS = 200
+BATCH_CYCLES = 100
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 
 def seed_for(batch_seed: str, simulation_id: int) -> int:
@@ -169,115 +171,247 @@ def validate_run(run_data: Path, dashboard: dict) -> tuple[list[dict], str]:
     return predictions, fingerprint
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--count", type=int, default=10)
-    parser.add_argument("--batch-seed", default=os.environ.get("DUEL_BATCH_SEED", "pilot-2026-11-19"))
-    parser.add_argument("--output-dir", type=Path, default=ROOT / "simulation-artifacts")
-    args = parser.parse_args()
-    if args.count < 2:
-        raise SystemExit("At least two simulations are required to test seed independence.")
-    if not DRAW_SOURCE.exists():
-        raise SystemExit(f"Historical draw archive not found: {DRAW_SOURCE}")
+def stamp() -> str:
+    return datetime.now(timezone.utc).isoformat()
 
-    output = args.output_dir.resolve()
-    output.mkdir(parents=True, exist_ok=True)
-    summaries = []
-    fingerprints = set()
 
-    with tempfile.TemporaryDirectory(prefix="joy-kane-sims-") as temp_root:
-        temp_root = Path(temp_root)
-        for simulation_id in range(1, args.count + 1):
-            run_data = temp_root / f"run-{simulation_id:02d}" / "data"
-            run_data.mkdir(parents=True)
-            shutil.copy2(DRAW_SOURCE, run_data / "draws.json")
-            seed = seed_for(args.batch_seed, simulation_id)
-            env = os.environ.copy()
-            env.update({
-                "DUEL_DATA_DIR": str(run_data),
-                "DUEL_SIMULATION_MODE": "1",
-                "DUEL_SIMULATION_SEED": str(seed),
-                "DUEL_WARMUP_DRAWS": str(WARMUP_DRAWS),
-            })
-            completed = subprocess.run(
-                [sys.executable, str(ENGINE)],
-                cwd=ROOT,
-                env=env,
-                text=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                timeout=2400,
-            )
-            if completed.returncode:
-                raise RuntimeError(
-                    f"Simulation {simulation_id} failed (exit {completed.returncode}).\n{completed.stdout[-12000:]}"
+def write_json(path: Path, value) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    temporary.replace(path)
+
+
+def seal_event(handle, event) -> None:
+    # Flush each prediction before accessing its target result. A failed cycle
+    # is never published; fsync both complete journals at the cycle boundary.
+    handle.write(json.dumps(event, ensure_ascii=False, separators=(",", ":")) + "\n")
+    handle.flush()
+
+
+def replay_cycle(draws: list[dict], *, cycle: int, batch_seed: str, run_data: Path,
+                 prefix_hashes: list[str] | None = None) -> tuple[dict, dict]:
+    """One complete chronological learning cycle. Never touches live files."""
+    from scripts import quantum_models as quantum
+    from scripts import quantum_protocol as protocol
+
+    if len(draws) <= WARMUP_DRAWS:
+        raise ValueError("The archive must contain more than 200 warm-up draws.")
+    run_data.mkdir(parents=True, exist_ok=True)
+    write_json(run_data / "draws.json", {"draws": [
+        {**row, "front": " ".join(map(str, row["front"])), "back": " ".join(map(str, row["back"]))}
+        for row in draws
+    ]})
+    seed = seed_for(batch_seed, cycle)
+    states = {name: quantum.initial_state(name, seed) for name in ("joy", "kane")}
+    totals = {name: {"front": 0, "back": 0, "total": 0} for name in states}
+    wins = {"joy": 0, "kane": 0, "tie": 0}
+    audit = []
+    if prefix_hashes is None:
+        prefix_hashes = [protocol.digest(draws[:index]) for index in range(len(draws))]
+    pred_path, result_path = run_data / "joy-kane-predictions.jsonl", run_data / "joy-kane-results.jsonl"
+    with pred_path.open("w", encoding="utf-8") as predictions, result_path.open("w", encoding="utf-8") as results:
+        for index in range(len(draws)):
+            # Public target metadata is separate from the unrevealed outcome.
+            issue, target_date = draws[index]["issue"], draws[index]["date"]
+            forecasts, distributions = {}, {}
+            before = {name: protocol.digest(state) for name, state in states.items()}
+            for name in states:
+                ticket_seed = int(protocol.digest([seed, name, issue, target_date])[:16], 16)
+                forecasts[name], distributions[name] = quantum.make_prediction(
+                    name, states[name], issue, target_date, ticket_seed
                 )
-            dashboard = json.loads((run_data / "joy-kane-dashboard.json").read_text(encoding="utf-8"))
-            predictions, fingerprint = validate_run(run_data, dashboard)
-            fingerprints.add(fingerprint)
-            summary = dashboard["summary"]
-            if summary.get("drawsEvaluated") != len(predictions):
-                raise RuntimeError(f"Simulation {simulation_id} dashboard count does not match its ledgers.")
-            summaries.append({
-                "simulationId": simulation_id,
-                "seed": seed,
-                "drawsEvaluated": summary["drawsEvaluated"],
-                "dateRange": summary["dateRange"],
-                "joy": summary["joy"],
-                "kane": summary["kane"],
-                "duelWins": summary["duelWins"],
-                "firstPredictionFingerprint": fingerprint,
-                "optimizerEnabled": dashboard["method"]["optimizer"]["enabled"],
-                "simulationMode": dashboard["method"]["training"]["simulationMode"],
-                "fullReplayAuditRowsValidated": len(predictions),
-            })
-            if simulation_id == 1:
-                trace = output / "representative-trace-run-01"
-                trace.mkdir(parents=True, exist_ok=True)
-                for name in (
-                    "joy-kane-audit.json",
-                    "joy-kane-predictions.jsonl",
-                    "joy-kane-results.jsonl",
-                    "joy-kane-dashboard.json",
-                    "joy-kane-model-state.json",
-                ):
-                    shutil.copy2(run_data / name, trace / name)
-            print(
-                f"Completed and audited {simulation_id}/{args.count}: seed={seed}, "
-                f"draws={summary['drawsEvaluated']}, Joy={summary['joy']['averageBestTotalHits']}, "
-                f"Kane={summary['kane']['averageBestTotalHits']}",
-                flush=True,
-            )
+                if protocol.digest(states[name]) != before[name]:
+                    raise RuntimeError("Inference mutated a quantum model state.")
+                validate_ticket_list(forecasts[name]["results"], f"cycle {cycle} {name}")
+            locked_at = stamp()
+            prediction_id = protocol.digest([ENGINE_VERSION, seed, issue, target_date, prefix_hashes[index]])[:24]
+            if index >= WARMUP_DRAWS:
+                event = {
+                    "eventType": "prediction_locked", "predictionId": prediction_id,
+                    "issue": issue, "date": target_date, "trainingDrawCount": index,
+                    "trainingThroughIssue": draws[index - 1]["issue"],
+                    "trainingThroughDate": draws[index - 1]["date"],
+                    "historyDigest": prefix_hashes[index], "predictionLockedAt": locked_at,
+                    "livePredictionLock": False, "futureLeakage": False,
+                    "agents": {name: {
+                        "modelVersion": states[name]["modelVersion"],
+                        "modelFamily": states[name]["modelFamily"],
+                        "modelStateHash": before[name], "tickets": forecasts[name]["results"],
+                    } for name in states},
+                }
+                seal_event(predictions, event)
 
-    distinct = len(fingerprints)
+            # Only here is the target outcome passed to scoring or learning.
+            actual = {"front": draws[index]["front"], "back": draws[index]["back"]}
+            revealed_at = stamp()
+            metrics = {name: protocol.score_ticket(forecasts[name]["results"][0], actual) for name in states}
+            learning = {name: quantum.train_on_draw(states[name], actual, distributions[name]) for name in states}
+            if index < WARMUP_DRAWS:
+                continue
+            ranks = {name: (value["bestTotalHits"], value["bestFrontHits"], value["bestBackHits"])
+                     for name, value in metrics.items()}
+            winner = "tie" if ranks["joy"] == ranks["kane"] else max(ranks, key=ranks.get)
+            wins[winner] += 1
+            for name, value in metrics.items():
+                totals[name]["front"] += value["bestFrontHits"]
+                totals[name]["back"] += value["bestBackHits"]
+                totals[name]["total"] += value["bestTotalHits"]
+            formatted = {area: [f"{number:02d}" for number in actual[area]] for area in ("front", "back")}
+            result = {
+                "eventType": "result_scored", "predictionId": prediction_id,
+                "issue": issue, "date": target_date, "actual": formatted,
+                **metrics, "winner": winner, "learning": learning,
+                "modelStateBefore": before,
+                "modelStateAfter": {name: protocol.digest(state) for name, state in states.items()},
+                "predictionLockedAt": locked_at, "actualRevealedAt": revealed_at,
+                "futureLeakage": False,
+            }
+            seal_event(results, result)
+            audit.append({
+                "issue": issue, "date": target_date, "predictionId": prediction_id,
+                "actual": formatted, **metrics, "winner": winner,
+                "trainingThroughIssue": draws[index - 1]["issue"],
+                "predictionLockedAt": locked_at, "actualRevealedAt": revealed_at,
+                "futureLeakage": False, "usedLivePredictionLock": False,
+            })
+        for handle in (predictions, results):
+            handle.flush()
+            os.fsync(handle.fileno())
+
+    count = len(draws) - WARMUP_DRAWS
+    summary = {
+        "drawsEvaluated": count, "trainedDrawCount": len(draws), "warmupDraws": WARMUP_DRAWS,
+        "dateRange": {"earliest": draws[WARMUP_DRAWS]["date"], "latest": draws[-1]["date"]},
+        "duelWins": wins,
+        "scoreDefinition": "One sealed ticket per agent and draw; exact front plus back matches.",
+        "learningObjective": "unordered_ticket_negative_log_likelihood",
+        "randomTicketBaseline": {"expectedFrontHits": 25 / 35, "expectedBackHits": 4 / 12,
+                                 "expectedTotalHits": 25 / 35 + 4 / 12},
+    }
+    for name, values in totals.items():
+        summary[name] = {"draws": count,
+                         "averageBestFrontHits": round(values["front"] / count, 6),
+                         "averageBestBackHits": round(values["back"] / count, 6),
+                         "averageBestTotalHits": round(values["total"] / count, 6)}
+        quantum.validate_state(states[name])
+        if states[name]["observations"] != len(draws):
+            raise RuntimeError("Every historical draw, including warm-up, must be learned exactly once per cycle.")
+    dashboard = {
+        "modelVersion": quantum.MODEL_VERSION, "generatedAt": stamp(),
+        "method": {"training": {"kind": "chronological_replay", "simulationMode": True,
+                                "simulationSeed": seed, "replayCycles": 1},
+                   "optimizer": {"enabled": False, "status": "removed"}},
+        "summary": summary, "nextForecast": {"forecastScope": "archive_next_draw_not_live"},
+    }
+    write_json(run_data / "joy-kane-dashboard.json", dashboard)
+    write_json(run_data / "joy-kane-audit.json", {"modelVersion": quantum.MODEL_VERSION, "rows": audit})
+    write_json(run_data / "joy-kane-model-state.json", {"modelVersion": quantum.MODEL_VERSION, "agents": states})
+    predictions, fingerprint = validate_run(run_data, dashboard)
+    summary.update({"simulationId": cycle, "seed": seed,
+                    "firstPredictionFingerprint": fingerprint, "simulationMode": True,
+                    "optimizerEnabled": False, "fullReplayAuditRowsValidated": len(predictions),
+                    "finalModelHashes": {name: protocol.digest(state) for name, state in states.items()}})
+    return summary, states
+
+
+def run_batch(archive_path: Path, output: Path, *, batch_seed: str, count: int = BATCH_CYCLES,
+              diagnostic: bool = False, source_commit: str | None = None) -> dict:
+    from scripts import quantum_models as quantum
+    from scripts import quantum_protocol as protocol
+
+    output.mkdir(parents=True, exist_ok=True)
+    # A new attempt owns these completion markers even if input validation
+    # fails. Never leave a prior successful batch looking like this attempt.
+    package_path = output / "joy-kane-batch-models.json"
+    for filename in ("joy-kane-batch-models.json", "simulation-batch-summary.json",
+                     "simulation-model-checkpoints.json", "simulation-progress.json"):
+        stale_path = output / filename
+        if stale_path.exists():
+            stale_path.unlink()
+    if count != BATCH_CYCLES and not diagnostic:
+        raise ValueError("A production training batch must contain exactly 100 complete chronological cycles.")
+    if count < 1:
+        raise ValueError("At least one diagnostic cycle is required.")
+    draws = protocol.load_archive(archive_path)
+    if len(draws) <= WARMUP_DRAWS:
+        raise ValueError("Need more than 200 historical draws.")
+    source_digest = protocol.engine_digest()
+    prefixes = [protocol.digest(draws[:index]) for index in range(len(draws))]
+    summaries, checkpoints = [], []
+    archive = protocol.archive_metadata(draws)
+    with tempfile.TemporaryDirectory(prefix="joy-kane-quantum-") as temporary:
+        run_data = Path(temporary) / "data"
+        for cycle in range(1, count + 1):
+            summary, states = replay_cycle(draws, cycle=cycle, batch_seed=batch_seed,
+                                          run_data=run_data, prefix_hashes=prefixes)
+            summaries.append(summary)
+            checkpoints.append({"cycle": cycle, "seed": summary["seed"], "agents": states,
+                                "modelHashes": summary["finalModelHashes"]})
+            if cycle in {1, count}:
+                destination = output / f"trace-cycle-{cycle:03d}"
+                destination.mkdir(parents=True, exist_ok=True)
+                for filename in ("joy-kane-predictions.jsonl", "joy-kane-results.jsonl", "joy-kane-audit.json",
+                                 "joy-kane-dashboard.json", "joy-kane-model-state.json"):
+                    shutil.copy2(run_data / filename, destination / filename)
+            write_json(output / "simulation-progress.json", {"completedCycles": cycle, "requiredCycles": count,
+                       "archive": archive, "engineVersion": ENGINE_VERSION, "updatedAt": stamp()})
+            print(f"Completed cycle {cycle}/{count}: Joy {summary['joy']['averageBestTotalHits']:.6f}, "
+                  f"Kane {summary['kane']['averageBestTotalHits']:.6f}", flush=True)
+    fingerprint_count = len({row["firstPredictionFingerprint"] for row in summaries})
+    if fingerprint_count != count:
+        raise RuntimeError("Independent cycle model/prediction fingerprints are not distinct.")
+    if protocol.engine_digest() != source_digest:
+        raise RuntimeError("Engine source changed during training; no completed batch may be published.")
     report = {
-        "engineVersion": ENGINE_VERSION,
-        "batchSeed": args.batch_seed,
-        "simulationCount": args.count,
-        "independentFirstPredictions": distinct,
-        "allFirstPredictionsDistinct": distinct == args.count,
-        "simulationSummaries": summaries,
+        "engineVersion": ENGINE_VERSION, "modelVersion": quantum.MODEL_VERSION,
+        "engineDigest": source_digest,
+        "batchSeed": batch_seed, "simulationCount": count, "archive": archive,
+        "independentFirstPredictions": fingerprint_count, "allFirstPredictionsDistinct": True,
+        "simulationSummaries": summaries, "selectedCycle": count,
+        "selectionPolicy": "fixed_final_cycle", "diagnosticOnly": diagnostic,
         "guardrails": {
             "oneOfficialTicketPerAgentPerDraw": True,
             "allPredictionResultAuditRowsValidated": True,
-            "livePredictionLockReadOrWrite": False,
-            "dailyOptimizerRan": False,
-            "walkForwardArchiveReplay": True,
-            "detailedTracePolicy": "One representative trace (run 01); compact summaries and full-row validation for every run.",
+            "livePredictionLockReadOrWrite": False, "dailyOptimizerRan": False,
+            "walkForwardArchiveReplay": True, "trainingOnlyInsideCycles": True,
+            "modelInitialization": "fresh independent state at the start of each cycle",
+            "learningObjective": "unordered_ticket_negative_log_likelihood",
+            "warmupLearning": "First 200 draws train the model but are excluded from reported hit scores.",
+            "detailedTracePolicy": "Cycles 1 and 100 retained; every cycle audited; all 100 final model checkpoints retained.",
         },
     }
-    (output / "simulation-batch-summary.json").write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
-    if distinct < args.count:
-        raise SystemExit(
-            f"Seed-independence check failed: {distinct} distinct first predictions across {args.count} simulations."
-        )
-    print(json.dumps({
-        "simulationCount": args.count,
-        "independentFirstPredictions": distinct,
-        "summaryFile": str(output / "simulation-batch-summary.json"),
-    }, indent=2))
+    write_json(output / "simulation-model-checkpoints.json", {"engineVersion": ENGINE_VERSION,
+               "archive": archive, "cycles": checkpoints})
+    write_json(output / "simulation-batch-summary.json", report)
+    if not diagnostic:
+        package = {
+            "schemaVersion": 2, "modelVersion": quantum.MODEL_VERSION,
+            "engineVersion": ENGINE_VERSION, "engineDigest": source_digest,
+            "batch": {"id": batch_seed, "seed": batch_seed, "status": "complete",
+                      "cycleCount": BATCH_CYCLES, "completedCycles": count,
+                      "selectedCycle": BATCH_CYCLES, "selectionPolicy": "fixed_final_cycle"},
+            "archive": archive, "warmupDraws": WARMUP_DRAWS,
+            "agents": checkpoints[-1]["agents"], "generatedAt": stamp(),
+            "sourceCommit": source_commit or os.environ.get("SIMULATION_SOURCE_COMMIT") or os.environ.get("GITHUB_SHA", "local-unpublished"),
+        }
+        protocol.validate_package(package, draws)
+        write_json(package_path, package)
+    return report
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Train Joy and Kane only through 100 complete chronological cycles.")
+    parser.add_argument("--count", type=int, default=BATCH_CYCLES)
+    parser.add_argument("--batch-seed", default=os.environ.get("DUEL_BATCH_SEED", "quantum-2026-11-26"))
+    parser.add_argument("--archive", type=Path, default=DRAW_SOURCE)
+    parser.add_argument("--output-dir", type=Path, default=ROOT / "simulation-artifacts")
+    parser.add_argument("--diagnostic", action="store_true", help="Test-only execution; never exports a production model package.")
+    args = parser.parse_args()
+    report = run_batch(args.archive, args.output_dir.resolve(), batch_seed=args.batch_seed,
+                       count=args.count, diagnostic=args.diagnostic)
+    print(json.dumps({"simulationCount": report["simulationCount"], "diagnosticOnly": args.diagnostic,
+                      "summaryFile": str(args.output_dir / "simulation-batch-summary.json")}, indent=2))
 
 
 if __name__ == "__main__":

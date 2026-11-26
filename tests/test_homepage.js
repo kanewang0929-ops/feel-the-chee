@@ -64,29 +64,18 @@ test("forecast metadata and locally edited text are escaped", () => {
   assert.equal(app.escapeText('<button onclick="x">'), "&lt;button onclick=&quot;x&quot;&gt;");
 });
 
-test("Joy and Kane learning display ignores legacy optimizer fields and describes one ticket per draw", () => {
-  const app = appContext();
-  const learning = { innerHTML: "" };
-  const audit = { innerHTML: "", querySelector: () => null };
-  app.document.getElementById = id => id === "joyKaneLearning" ? learning : id === "joyKaneAudit" ? audit : null;
-  const source = fs.readFileSync(path.join(root, "assets/joy-kane.js"), "utf8").replace(/\nloadJoyKane\(\);\s*$/, "");
-  vm.runInContext(source, app);
-  const state = {
-    modelVersion: "adaptive-v1", observations: 2753, exploration: .08,
-    updatedAt: "2026-11-25T23:25:00Z", weights: { front: { frequency: 1 }, back: { frequency: 1 } },
-    dailyTraining: { cyclesPerRun: 1000000, updatedAt: "2026-11-25T23:04:36Z", accepted: true,
-      skipped: true, reason: "STALE_OPTIMIZER_REASON", validationScoreBefore: 998, validationScoreAfter: 999 }
-  };
-  app.renderJoyKaneLearning({ agentStates: { joy: state, kane: state }, summary: {}, method: { dailyTraining: { ranToday: true } } });
-  assert.match(learning.innerHTML, /完整回放历史开奖记录 100 轮/);
-  assert.match(learning.innerHTML, /探索强度.*0\.080/);
-  assert.match(learning.innerHTML, /2026\/11\/26 07:25/);
-  assert.match(learning.innerHTML, /提前封存的唯一一组号码/);
-  assert.doesNotMatch(learning.innerHTML, /每日搜索次数|验证集命中分变化|每天各进行一百万|STALE_OPTIMIZER_REASON|未触碰最后一段|1,000,000|07:04/);
-  app.renderJoyKaneAudit();
-  assert.match(audit.innerHTML, /Joy · 1组预测及命中/);
-  assert.match(audit.innerHTML, /Kane · 1组预测及命中/);
-  assert.doesNotMatch(audit.innerHTML, /三组预测|3组预测/);
+test("learning view separates sealed legacy models from a ready quantum batch", () => {
+  const app=appContext(), learning={innerHTML:""};
+  app.document.getElementById=id=>id==="joyKaneLearning"?learning:null;
+  vm.runInContext(fs.readFileSync(path.join(root,"assets/joy-kane.js"),"utf8").replace(/\nloadJoyKane\(\);\s*$/, ""),app);
+  const state={modelVersion:"adaptive-v1",modelFamily:"legacy-adaptive-hit-model",backend:"legacy_classical",observations:null,
+    dailyTraining:{cyclesPerRun:1000000,accepted:true,reason:"STALE_OPTIMIZER"},weights:{front:{frequency:1}}};
+  app.renderJoyKaneLearning({agentStates:{joy:state,kane:state},trainedBatch:{status:"ready",id:"batch-1",completedCycles:100,selectedCycle:100}});
+  assert.match(learning.innerHTML,/完整回放历史开奖记录 100 轮/);
+  assert.match(learning.innerHTML,/既有模型 · 封存记录/);
+  assert.match(learning.innerHTML,/使用第 100 轮/);
+  assert.match(learning.innerHTML,/无序整票的负对数似然/);
+  assert.doesNotMatch(learning.innerHTML,/每日搜索次数|验证集命中分变化|STALE_OPTIMIZER|信号权重|1,000,000/);
 });
 
 test("local archive renders while the online request is pending and preserves edits and pagination", async () => {
@@ -125,61 +114,84 @@ test("an older, incomplete or future-dated online archive cannot displace the pu
   assert.equal(app.newerArchive({ draws: [{ issue: "2001", date: "2020-02-02" }, ...current.draws] }, current), true);
 });
 
-async function renderChee(target, options = {}) {
-  const payload = JSON.parse(fs.readFileSync(path.join(root, "data/chee-forecast.json"), "utf8"));
-  const nodes = Object.fromEntries(["description", "badge", "bars", "list", "status"].map(name => [name, { textContent: "", innerHTML: "", hidden: false, classList: { toggle() {} } }]));
-  const selectors = { ".section-head .muted": "description", ".section-head .badge": "badge", ".chee-bars": "bars", ".forecast-list": "list" };
-  const card = { dataset: {}, querySelector: selector => nodes[selectors[selector]] };
-  let boot;
-  let requests = 0;
-  const context = vm.createContext({
-    document: { readyState: "loading", addEventListener: (_event, callback) => { boot = callback; }, getElementById: id => id === "cheePredictionCard" ? card : id === "cheeStatus" ? nodes.status : null },
-    fetch: async () => { requests++; if (options.fail) throw new Error("offline"); return { ok: true, json: async () => payload }; },
-    loadDuelPayload: async () => ({ nextForecast: target?.(payload) }),
-    isPastTarget: () => Boolean(options.past),
-    window: { dispatchEvent() {} }, CustomEvent: class {},
-    AbortController, setTimeout, clearTimeout, console: { error() {} }
-  });
-  vm.runInContext(fs.readFileSync(path.join(root, "assets/chee-runtime.js"), "utf8"), context);
-  await boot();
-  return { payload, card, nodes, requests };
+function forecastPublication(status="prediction_locked",legacy=false){
+  const ticket={label:"Main",front:[1,2,3,4,5],back:[1,12]};
+  const agent=name=>({modelVersion:legacy?"adaptive-v1":"v2.0-quantum-chronological",modelFamily:legacy?"legacy-adaptive-hit-model":name==="joy"?"quantum-circuit-born-machine":"split-step-quantum-walk",backend:legacy?"legacy_classical":"classical_statevector"});
+  return {modelVersion:legacy?"legacy-locked-prediction":"v2.0-quantum-chronological",runtimeVersion:"v2.0-quantum-chronological",generatedAt:"2026-11-26T12:00:00Z",
+    predictionGate:{status,reason:"Gate detail"},agentStates:{joy:agent("joy"),kane:agent("kane")},
+    nextForecast:{targetIssue:"26136",targetDate:"2026-11-28",historyCount:2953,historyThroughDate:"2026-11-25",joy:{...agent("joy"),results:[ticket]},kane:{...agent("kane"),results:[ticket]}},
+    livePredictionLock:{issue:"26136",date:"2026-11-28",lockedAt:"2026-11-26T00:00:00Z"},
+    trainedBatch:{status:"ready",agents:{joy:agent("joy"),kane:agent("kane")}}};
 }
 
-test("a stale Chee draw is collapsed and cannot look like the current prediction", async () => {
-  const { card, nodes } = await renderChee(() => ({ targetIssue: "99999", targetDate: "2099-01-01" }));
-  assert.equal(card.dataset.cheeCurrent, "false");
-  assert.equal(nodes.bars.hidden, true);
-  assert.equal(nodes.list.innerHTML.startsWith('<details class="archived-formula">'), true);
-  assert.equal(nodes.badge.textContent, "历史结果 · 待更新");
-  assert.equal(nodes.status.textContent.includes("99999"), true);
+function forecastView(payload){
+  const app=appContext();
+  const element=()=>({textContent:"",innerHTML:"",classList:{toggle(){}}});
+  const nodes=Object.fromEntries(["homeLockStatus","homeLockDetail","homeUpdatedAt","homeVersion","homeArchiveCount","homeArchiveThrough","next"].map(id=>[id,element()]));
+  const cards={};
+  for(const id of ["aiPredictionCard","kanePredictionCard"]){
+    const parts=Object.fromEntries([".forecast-list",".section-head .muted",".section-head .badge",".forecast-meta",".agent-role"].map(selector=>[selector,element()]));
+    cards[id]={parts,querySelector:selector=>parts[selector]};
+  }
+  app.document.getElementById=id=>cards[id]||nodes[id]||null;
+  app.document.querySelector=selector=>selector===".next"?nodes.next:selector.startsWith("#aiPredictionCard ")?cards.aiPredictionCard.querySelector(selector.slice(18)):null;
+  app.renderHomeSummary(payload);
+  app.renderAgentForecast(payload,"joy");app.renderAgentForecast(payload,"kane");
+  return {app,nodes,cards};
+}
+
+test("homepage loads only Joy and Kane official prediction sources",()=>{
+  const html=fs.readFileSync(path.join(root,"index.html"),"utf8");
+  assert.match(html,/id="aiPredictionCard"/);assert.match(html,/id="kanePredictionCard"/);
+  assert.doesNotMatch(html,/id="cheePredictionCard"|chee-runtime\.js/);
+  const app=appContext();
+  assert.equal(typeof app.loadCheeForecast,"undefined");assert.equal(typeof app.renderChee,"undefined");assert.equal(typeof app.renderAiLearning,"undefined");
 });
 
-test("matching Chee issue and date show both current formula results", async () => {
-  const { card, nodes } = await renderChee(payload => ({ targetIssue: payload.targetIssue, targetDate: payload.targetDate }));
-  assert.equal(card.dataset.cheeCurrent, "true");
-  assert.equal(nodes.bars.hidden, false);
-  assert.equal(nodes.list.innerHTML.includes("<details"), false);
-  assert.equal((nodes.list.innerHTML.match(/class="forecast"/g) || []).length, 2);
+test("awaiting a batch or blocked gate hides stale tickets without substitute predictions",()=>{
+  for(const status of ["awaiting_batch","blocked"]){
+    const payload=forecastPublication(status);
+    const {app,nodes,cards}=forecastView(payload);
+    assert.equal(app.officialPrediction(payload,"joy").results.length,0);
+    assert.equal(app.officialPrediction(payload,"kane").results.length,0);
+    for(const card of Object.values(cards))assert.doesNotMatch(card.parts[".forecast-list"].innerHTML,/class="ball/);
+    assert.match(nodes.homeVersion.textContent,/尚未发布/);
+    assert.doesNotMatch(nodes.homeLockStatus.textContent,/已封存/);
+  }
 });
 
-test("unknown live target is explicitly unverified rather than labelled current", async () => {
-  const { card, nodes } = await renderChee();
-  assert.equal(card.dataset.cheeCurrent, "false");
-  assert.equal(nodes.badge.textContent.includes("期次未核验"), true);
+test("unresolved legacy ticket keeps its provenance even with a quantum runtime and ready package",()=>{
+  const payload=forecastPublication("awaiting_result",true);
+  payload.trainedBatch.agents={joy:{modelFamily:"quantum-circuit-born-machine"},kane:{modelFamily:"split-step-quantum-walk"}};
+  const {nodes,cards}=forecastView(payload);
+  assert.match(nodes.homeLockStatus.textContent,/等待当前期实际开奖结果/);
+  assert.match(nodes.homeVersion.textContent,/既有封存模型/);
+  for(const card of Object.values(cards)){
+    assert.match(card.parts[".forecast-list"].innerHTML,/class="ball/);
+    assert.match(card.parts[".agent-role"].textContent,/既有模型/);
+    assert.doesNotMatch(card.parts[".agent-role"].textContent,/Born|游走/);
+  }
 });
 
-test("even matching snapshots are historical when their target date has passed", async () => {
-  const { card, nodes } = await renderChee(payload => ({ targetIssue: payload.targetIssue, targetDate: payload.targetDate }), { past: true });
-  assert.equal(card.dataset.cheeCurrent, "false");
-  assert.equal(nodes.bars.hidden, true);
-  assert.equal(nodes.status.textContent.includes("日期已过"), true);
+test("active quantum tickets display distinct model families and classical execution",()=>{
+  const {nodes,cards}=forecastView(forecastPublication());
+  assert.match(cards.aiPredictionCard.parts[".agent-role"].textContent,/Born.*经典模拟/);
+  assert.match(cards.kanePredictionCard.parts[".agent-role"].textContent,/量子游走.*经典模拟/);
+  assert.match(nodes.homeArchiveThrough.textContent,/2026-11-25/);
+  assert.match(nodes.homeLockStatus.textContent,/已封存/);
 });
 
-test("missing Chee sources resolve to an honest unavailable state without retrying forever", async () => {
-  const { card, nodes, requests } = await renderChee(undefined, { fail: true });
-  assert.equal(requests, 2);
-  assert.equal(card.dataset.cheeLoaded, "false");
-  assert.equal(nodes.bars.hidden, true);
-  assert.equal(nodes.list.innerHTML.includes("公式结果暂不可用"), true);
-  assert.equal(nodes.list.innerHTML.includes("offline"), false);
+test("legacy JSON is never relabeled quantum and malformed or unmatched locks suppress tickets",()=>{
+  const app=appContext(), payload=forecastPublication();
+  delete payload.predictionGate;
+  payload.modelVersion="v1.0";payload.agentStates={};
+  assert.equal(app.officialPrediction(payload,"joy").legacy,true);
+  assert.match(app.officialPrediction(payload,"joy").modelLabel,/既有模型/);
+  payload.livePredictionLock.issue="99999";
+  assert.equal(app.officialPrediction(payload,"joy").results.length,0);
+  assert.match(forecastView(payload).nodes.homeLockStatus.textContent,/未通过核验/);
+  payload.livePredictionLock.issue="26136";
+  payload.nextForecast.joy.results.push(payload.nextForecast.joy.results[0]);
+  assert.equal(app.officialPrediction(payload,"joy").results.length,0);
+  assert.equal(app.officialPrediction(payload,"chee").results.length,0);
 });

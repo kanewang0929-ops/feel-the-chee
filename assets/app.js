@@ -57,6 +57,30 @@ function validTicket(ticket){
     values.every(value=>Number.isInteger(Number(value))&&Number(value)>=1&&Number(value)<=max));
 }
 
+function modelDescriptor(model={}){
+  const family=String(model.modelFamily||"");
+  if(family==="legacy-adaptive-hit-model"||model.backend==="legacy_classical") return "既有模型 · 封存记录";
+  if(/born/i.test(family)) return "量子电路 Born 模型 · 经典模拟";
+  if(/walk/i.test(family)) return "量子游走模型 · 经典模拟";
+  return family||"模型类型未记录";
+}
+
+function officialPrediction(payload,name){
+  if(!["joy","kane"].includes(name)) return {results:[],status:"blocked",modelLabel:"未知模型"};
+  const next=payload.nextForecast||{}, forecast=next[name]||{}, lock=payload.livePredictionLock||{};
+  const gate=payload.predictionGate||{};
+  const state=payload.agentStates?.[name]||{};
+  const status=gate.status||"legacy_snapshot";
+  const sealed=Boolean(lock.lockedAt&&String(lock.issue)===String(next.targetIssue)&&lock.date===next.targetDate);
+  const allowed=["awaiting_result","prediction_locked","legacy_snapshot"].includes(status);
+  const matches=(!forecast.targetIssue||String(forecast.targetIssue)===String(next.targetIssue))&&(!forecast.targetDate||forecast.targetDate===next.targetDate);
+  const results=allowed&&sealed&&matches&&Array.isArray(forecast.results)&&forecast.results.length===1&&validTicket(forecast.results[0])?forecast.results:[];
+  const legacy=payload.modelVersion==="legacy-locked-prediction"||status==="legacy_snapshot"||state.modelFamily==="legacy-adaptive-hit-model";
+  const modelLabel=legacy?"既有模型 · 封存记录":modelDescriptor({...state,...forecast});
+  const reason=status==="awaiting_batch"?"等待包含最新开奖结果的完整 100 轮训练批次。":status==="blocked"?"预测流程已暂停，请查看模型运行中心的检查结果。":"尚无可核验的封存预测，请查看模型运行中心。";
+  return {results,status,sealed,legacy,modelLabel,reason,targetIssue:next.targetIssue,targetDate:next.targetDate,modelVersion:forecast.modelVersion||state.modelVersion};
+}
+
 const LIVE_HISTORY_URL="https://raw.githubusercontent.com/yangxb919/lottery-data/main/data/dlt.json";
 const LOCAL_HISTORY_URL="./data/draws.json";
 const DUEL_DASHBOARD_URL="./data/joy-kane-dashboard.json";
@@ -216,10 +240,6 @@ function ball(number,back=false){
   return `<span class="ball${back?" back":""}">${escapeText(String(number).padStart(2,"0"))}</span>`;
 }
 
-function scoreText(value){
-  return Number(value||0).toFixed(1);
-}
-
 function forecastCard(result,targetDate){
   return `<div class="forecast">
     <div class="forecast-top">
@@ -235,164 +255,46 @@ function forecastCard(result,targetDate){
   </div>`;
 }
 
-function cheeCard(result){
-  return `<div class="forecast">
-    <div class="forecast-top">
-      <strong>Chee 结果 ${result.rank} · ${result.label||"五行路径"}</strong>
-      <span class="score">Chee 值 ${scoreText(result.cheeValue)}</span>
-    </div>
-    <div class="numbers">
-      ${(result.front||[]).map(number=>ball(number)).join("")}
-      <span class="plus">+</span>
-      ${(result.back||[]).map(number=>ball(number,true)).join("")}
-    </div>
-    <div class="reason">${result.reason||""}</div>
-  </div>`;
-}
-
-function renderAiLearning(payload){
-  const summary=document.getElementById("aiLearningSummary");
-  const logs=document.getElementById("aiLearningLogs");
-  if(!summary||!logs) return;
-
-  const calibration=payload.calibration||{};
-  summary.querySelector(".section-head .muted").textContent=
-    "AI信号严格按历史期次逐期生成，每一期只读取目标期之前的开奖数据。";
-  summary.querySelector(".section-head .badge").textContent=`AI模型 ${payload.modelVersion||"-"}`;
-  summary.querySelector(".weight-grid").innerHTML=`
-    <div class="weight"><span class="muted">曲线画像</span><strong>${calibration.selectedLabel||calibration.selectedProfile||"-"}</strong></div>
-    <div class="weight"><span class="muted">前区曲线损失</span><strong>${Number(calibration.frontCurveLoss||0).toFixed(3)}</strong></div>
-    <div class="weight"><span class="muted">后区曲线损失</span><strong>${Number(calibration.backCurveLoss||0).toFixed(3)}</strong></div>
-    <div class="weight"><span class="muted">采样温度</span><strong>${Number(calibration.temperature||0).toFixed(2)}</strong></div>`;
-
-  const evaluation=payload.lastEvaluation;
-  const centers=payload.curveForecast?.front?.centers||[];
-  const sigmas=payload.curveForecast?.front?.sigmas||[];
-  const review=evaluation?`<div class="log">
-    <div class="log-time">第${evaluation.issue}期复盘</div>
-    <div>
-      <div class="log-title">预测曲线与实际结果已对照</div>
-      <div class="log-body">实际：${evaluation.actual?.front?.join(" ")} + ${evaluation.actual?.back?.join(" ")}。平均前区命中 ${evaluation.summary?.averageFrontHits??"-"} 个，后区命中 ${evaluation.summary?.averageBackHits??"-"} 个。</div>
-    </div>
-  </div>`:"";
-
-  logs.querySelector("h3").textContent="AI 曲线学习日志";
-  logs.querySelector(".log-list").innerHTML=`${review}
-    <div class="log">
-      <div class="log-time">滚动回测</div>
-      <div>
-        <div class="log-title">选择 ${calibration.selectedLabel||calibration.selectedProfile||"曲线画像"}</div>
-        <div class="log-body">最近 ${calibration.tests||0} 个走步测试中，前区曲线损失 ${Number(calibration.frontCurveLoss||0).toFixed(4)}，后区曲线损失 ${Number(calibration.backCurveLoss||0).toFixed(4)}。</div>
-      </div>
-    </div>
-    <div class="log">
-      <div class="log-time">下一期曲线</div>
-      <div>
-        <div class="log-title">从过去的开奖曲线与波动带生成候选</div>
-        <div class="log-body">前区中心：${centers.join(" / ")}；标准差：${sigmas.join(" / ")}。页面固定显示3组AI结果。</div>
-      </div>
-    </div>`;
-}
-
-function renderForecast(payload){
-  const card=document.getElementById("aiPredictionCard");
+function renderAgentForecast(payload,name){
+  const card=document.getElementById(name==="joy"?"aiPredictionCard":"kanePredictionCard");
   if(!card) return;
-  const results=Array.isArray(payload.results)?payload.results.filter(validTicket).slice(0,1):[];
-  card.querySelector(".forecast-list").innerHTML=results.length
-    ?results.map(result=>forecastCard(result,payload.targetDate)).join("")
-    :`<div class="forecast"><div class="muted">AI结果暂不可用。</div></div>`;
-  card.querySelector(".section-head .muted").textContent=
-    "按历史信号生成一组号码，开奖后按实际命中数评分。";
-  card.querySelector(".section-head .badge").textContent=`Joy · ${results.length}组预测`;
-  card.querySelector(".forecast-meta").textContent=`第 ${payload.targetIssue||"—"} 期 · 目标开奖 ${payload.targetDate||"未记录"}`;
-  card.querySelector(".forecast-meta").classList.toggle("is-stale",isPastTarget(payload.targetDate));
-  const next=document.querySelector(".next");
-  if(next) next.textContent=`${isPastTarget(payload.targetDate)?"最近发布目标":"目标开奖"}：${payload.targetDate||"未记录"} · 第 ${payload.targetIssue||"—"} 期`;
+  const view=officialPrediction(payload,name), title=name==="joy"?"Joy":"Kane";
+  card.querySelector(".forecast-list").innerHTML=view.results.length
+    ?view.results.map(result=>forecastCard(result,view.targetDate)).join("")
+    :`<div class="forecast"><div class="muted">${escapeText(view.reason)}</div></div>`;
+  card.querySelector(".section-head .muted").textContent=view.results.length
+    ?`${view.modelLabel}。当前号码保持封存，实际结果评分后才生成下一期预测。`
+    :"仅由完成 100 轮训练的 Joy 与 Kane 生成预测，当前没有可发布号码。";
+  const role=card.querySelector(".agent-role");
+  if(role) role.textContent=view.results.length?view.modelLabel:"等待下一期预测";
+  card.querySelector(".section-head .badge").textContent=`${title} · ${view.results.length?"1组已封存":"等待中"}`;
+  card.querySelector(".forecast-meta").textContent=`第 ${view.targetIssue||"—"} 期 · 目标开奖 ${view.targetDate||"未记录"}`;
+  card.querySelector(".forecast-meta").classList.toggle("is-stale",isPastTarget(view.targetDate));
 }
 
 function renderHomeSummary(payload){
   const forecast=payload.nextForecast||{};
   const lock=payload.livePredictionLock||{};
-  const sealed=Boolean(lock.lockedAt&&String(lock.issue)===String(forecast.targetIssue)&&lock.date===forecast.targetDate);
+  const view=officialPrediction(payload,"joy");
+  const ready=view.results.length===1&&officialPrediction(payload,"kane").results.length===1;
   const past=isPastTarget(forecast.targetDate);
-  document.getElementById("homeLockStatus").textContent=past?"显示最近发布的历史预测":sealed?"Joy / Kane 预测已封存":"封存状态未验证";
-  document.getElementById("homeLockStatus").classList.toggle("is-stale",past);
-  document.getElementById("homeLockDetail").textContent=past?"目标开奖日期已过，请核对模型更新记录":sealed?`${formatBeijing(lock.lockedAt)} · 北京时间`:"请在模型运行中心核对当前记录";
+  const labels={awaiting_result:"等待当前期实际开奖结果",awaiting_batch:"等待完整 100 轮训练",prediction_locked:"Joy / Kane 预测已封存",blocked:"预测流程暂停",legacy_snapshot:"既有预测封存记录"};
+  document.getElementById("homeLockStatus").textContent=ready?labels[view.status]:["awaiting_batch","blocked"].includes(view.status)?labels[view.status]:"封存记录未通过核验";
+  document.getElementById("homeLockStatus").classList.toggle("is-stale",!ready||past);
+  document.getElementById("homeLockDetail").textContent=ready?`${formatBeijing(lock.lockedAt)} · 北京时间 · 每个模型一组号码`:view.reason;
   document.getElementById("homeUpdatedAt").textContent=formatBeijing(payload.generatedAt);
-  document.getElementById("homeVersion").textContent=payload.modelVersion||"版本未记录";
-  document.getElementById("homeArchiveCount").textContent=Number.isInteger(forecast.historyCount)?`${forecast.historyCount.toLocaleString("zh-CN")} 期历史开奖`:"样本数未记录";
-  document.getElementById("homeArchiveThrough").textContent=`数据截止 ${payload.summary?.dateRange?.latest||"未记录"}`;
-}
-
-function renderCheeFormula(payload){
-  const learning=document.getElementById("learning");
-  if(!learning) return;
-  let card=document.getElementById("cheeFormulaCard");
-  if(!card){
-    card=document.createElement("div");
-    card.id="cheeFormulaCard";
-    card.className="card";
-    learning.appendChild(card);
-  }
-
-  const calculation=payload.calculation||{};
-  card.innerHTML=`<div class="section-head">
-    <div>
-      <h2>Feel the Chee 公式计算</h2>
-      <div class="muted">每日执行全历史审计并保存日志，但不使用历史开奖结果训练公式。</div>
-    </div>
-    <span class="badge gold">${payload.modelVersion||"公式模型"}</span>
-  </div>
-  <div class="weight-grid">
-    <div class="weight"><span class="muted">天数</span><strong>${calculation.heavenNumber??"-"}</strong></div>
-    <div class="weight"><span class="muted">地数</span><strong>${calculation.earthNumber??"-"}</strong></div>
-    <div class="weight"><span class="muted">人数</span><strong>${calculation.humanNumber??"-"}</strong></div>
-    <div class="weight"><span class="muted">动爻</span><strong>${calculation.movingLine??"-"}</strong></div>
-  </div>
-  <div class="log-list">
-    <div class="log">
-      <div class="log-time">五行路径</div>
-      <div>
-        <div class="log-title">${calculation.primaryElement||"-"} → ${calculation.supportElement||"-"} → ${calculation.balanceElement||"-"}</div>
-        <div class="log-body">目标第${payload.targetIssue}期，日期${payload.targetDate}。公式只读取期号、日期和河图洛书映射。</div>
-      </div>
-    </div>
-  </div>`;
-}
-
-function renderChee(payload){
-  const card=document.getElementById("cheePredictionCard");
-  if(!card) return;
-  const results=Array.isArray(payload.results)?payload.results.slice(0,2):[];
-  card.querySelector(".section-head .muted").textContent=
-    "仅按河图洛书、目标期号和开奖日期计算2组结果，不使用历史开奖学习。";
-  card.querySelector(".section-head .badge").textContent=`${results.length}组结果 · 公式计算`;
-
-  const order=["金","火","土","木","水"];
-  const bars=card.querySelector(".chee-bars");
-  if(bars){
-    bars.innerHTML=order.map(name=>{
-      const value=Number(payload.elementStrengths?.[name]||0);
-      return `<div class="chee-row">
-        <span>${name}</span>
-        <div class="bar"><div class="fill" style="width:${Math.max(0,Math.min(100,value))}%"></div></div>
-        <span>${Math.round(value)}</span>
-      </div>`;
-    }).join("");
-  }
-
-  card.querySelector(".forecast-list").innerHTML=results.length
-    ?results.map(cheeCard).join("")
-    :`<div class="forecast"><div class="muted">风水公式结果暂不可用。</div></div>`;
-  renderCheeFormula(payload);
+  document.getElementById("homeVersion").textContent=ready?(view.legacy?"当前号码来自既有封存模型":payload.modelVersion||"版本未记录"):"下一期号码尚未发布";
+  document.getElementById("homeArchiveCount").textContent=!ready?"待生成预测":Number.isInteger(forecast.historyCount)?`${forecast.historyCount.toLocaleString("zh-CN")} 期历史开奖`:"样本数未记录";
+  document.getElementById("homeArchiveThrough").textContent=`预测数据截止 ${forecast.historyThroughDate||"未记录"}`;
+  const next=document.querySelector(".next");
+  if(next) next.textContent=`${ready?"封存目标":"等待目标"}：${forecast.targetDate||"未记录"} · 第 ${forecast.targetIssue||"—"} 期`;
 }
 
 async function loadForecast(){
   try{
     const payload=await loadDuelPayload();
     renderHomeSummary(payload);
-    const joy=payload.nextForecast?.joy||{};
-    renderForecast({...joy,targetIssue:payload.nextForecast?.targetIssue,targetDate:payload.nextForecast?.targetDate,historyCount:payload.nextForecast?.historyCount});
+    renderAgentForecast(payload,"joy");
   }catch(error){
     console.warn("Forecast unavailable",error);
     const list=document.querySelector("#aiPredictionCard .forecast-list");
@@ -403,17 +305,6 @@ async function loadForecast(){
     document.getElementById("homeVersion").textContent="模型数据暂不可用";
     document.getElementById("homeArchiveThrough").textContent="模型数据暂不可用";
     document.querySelector("#aiPredictionCard .forecast-meta").textContent="目标期次暂不可用";
-  }
-}
-
-async function loadCheeForecast(){
-  try{
-    const payload=await fetchJson("./data/chee-forecast.json");
-    renderChee(payload);
-  }catch(error){
-    console.warn("Chee forecast unavailable",error);
-    const list=document.querySelector("#cheePredictionCard .forecast-list");
-    if(list) list.innerHTML=`<div class="forecast"><div class="muted">风水公式加载失败，请稍后刷新。</div></div>`;
   }
 }
 
@@ -564,4 +455,3 @@ document.getElementById("resetLocalChanges")?.addEventListener("click",()=>{
 
 loadDraws();
 loadForecast();
-// Chee is rendered only by chee-runtime.js, which verifies its target draw.

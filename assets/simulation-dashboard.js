@@ -2,6 +2,7 @@
   "use strict";
   var FEED_URL = "https://raw.githubusercontent.com/kanewang0929-ops/feel-the-chee/simulation-data/data/simulation-dashboard-history.json";
   var RANDOM_EXPECTED = 1.047619;
+  var CURRENT_ENGINE = "joy-kane-quantum-sim-v2";
   var $ = function (id) { return document.getElementById(id); };
   var fmt = function (value, digits) { if (value === null || value === undefined || value === "") return "—"; var n = Number(value); return Number.isFinite(n) ? n.toFixed(digits == null ? 3 : digits) : "—"; };
   var fmtInt = function (value) { var n = value == null || value === "" ? NaN : Number(value); return Number.isFinite(n) ? Math.round(n).toLocaleString("en-US") : "—"; };
@@ -19,6 +20,8 @@
   var esc = function (value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) { return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[c]; }); };
   var metric = function (batch, agent, key) { return batch && batch[agent] && batch[agent][key] ? batch[agent][key].mean : null; };
   var batchDate = function (batch) { return batch.startedAt || batch.finishedAt || ""; };
+  var currentEngine = function (batch) { return batch && batch.engineVersion === CURRENT_ENGINE; };
+  var engineLabel = function (batch) { return currentEngine(batch) ? "Quantum v2" : !batch.engineVersion || /v1$/.test(batch.engineVersion) ? "Legacy adaptive" : "Legacy / other: " + String(batch.modelVersion || batch.engineVersion); };
   function archiveStatus(date, status) {
     var node = $("batchArchiveDate");
     if (node) { node.textContent = date || status; node.dataset.archiveDate = date || ""; node.dataset.state = status; }
@@ -36,10 +39,10 @@
       archiveStatus(null, "Not published"); return;
     }
     var done = batch.status === "completed";
-    $("batchStatus").textContent = done ? "COMPLETED" : String(batch.status || "UNKNOWN").toUpperCase();
+    $("batchStatus").textContent = done ? (currentEngine(batch) ? "COMPLETED" : "LEGACY / OTHER ENGINE") : String(batch.status || "UNKNOWN").toUpperCase();
     $("batchStatus").className = "metric-value status-value " + (done ? "completed" : "failed");
-    $("batchTime").textContent = (batch.startedAt ? "Started " : "Published ") + fmtDate(batchDate(batch)) + " · Batch " + (batch.batchId || "—");
-    $("scheduleStatus").textContent = done ? "LATEST BATCH PASSED" : "LATEST BATCH " + String(batch.status || "UNKNOWN").toUpperCase();
+    $("batchTime").textContent = (batch.startedAt ? "Started " : "Published ") + fmtDate(batchDate(batch)) + " · Batch " + (batch.batchId || "—") + " · " + engineLabel(batch);
+    $("scheduleStatus").textContent = done ? (currentEngine(batch) ? "LATEST QUANTUM BATCH PASSED" : "LATEST BATCH USES AN EARLIER ENGINE") : "LATEST BATCH " + String(batch.status || "UNKNOWN").toUpperCase();
     $("runCount").innerHTML = fmtInt(batch.simulationCount) + "<span class='metric-unit'> / 100</span>";
     $("drawCount").textContent = fmtInt(batch.drawsEvaluatedPerSimulation); $("runtime").textContent = fmtDuration(batch.durationSeconds);
     $("runtimeNote").textContent = batch.durationSeconds == null ? "Timing was not recorded for this batch." : "Runner time through feed publication.";
@@ -51,6 +54,7 @@
   }
   function renderAgents(batch) {
     if (!batch || batch.status !== "completed" || !batch.joy || !batch.kane) { $("agentScores").innerHTML = "<div class='empty-state'>No completed batch averages are available yet.</div>"; return; }
+    if (!currentEngine(batch)) { $("agentScores").innerHTML = "<div class='empty-state'>The latest published batch uses " + esc(engineLabel(batch)) + ". Its historical scores remain in the table below. Quantum v2 results have not been published for this batch.</div>"; return; }
     function card(name, agent, colorClass) {
       var total = metric(batch, agent, "averageBestTotalHits"), front = metric(batch, agent, "averageBestFrontHits"), back = metric(batch, agent, "averageBestBackHits");
       if (total == null || total === "" || !Number.isFinite(Number(total))) return "<div class='agent-score'><div class='agent-name'>" + name + "</div><p class='caveat'>Score was not recorded for this batch.</p></div>";
@@ -64,8 +68,8 @@
     $("agentScores").innerHTML = card("JOY", "joy", "joy-fill") + card("KANE", "kane", "kane-fill");
   }
   function renderChart(batches) {
-    var rows = (batches || []).filter(function (b) { return b.status === "completed" && ["joy", "kane"].every(function (agent) { var value = metric(b, agent, "averageBestTotalHits"); return value != null && value !== "" && Number.isFinite(Number(value)); }); }).slice(0, 12).reverse();
-    if (!rows.length) { $("historyChart").innerHTML = "<div class='empty-state'>The chart will appear after the first 100-run batch is complete.</div>"; return; }
+    var rows = (batches || []).filter(function (b) { return currentEngine(b) && b.status === "completed" && ["joy", "kane"].every(function (agent) { var value = metric(b, agent, "averageBestTotalHits"); return value != null && value !== "" && Number.isFinite(Number(value)); }); }).slice(0, 12).reverse();
+    if (!rows.length) { $("historyChart").innerHTML = "<div class='empty-state'>Quantum v2 scores will appear after a complete 100-cycle batch is published. Legacy results remain in the table.</div>"; return; }
     var values = [];
     rows.forEach(function (b) { values.push(metric(b, "joy", "averageBestTotalHits")); values.push(metric(b, "kane", "averageBestTotalHits")); });
     values.push(RANDOM_EXPECTED); values = values.map(Number).filter(Number.isFinite);
@@ -89,14 +93,14 @@
   }
   function renderTable(batches) {
     var rows = (batches || []).slice(0, 30);
-    if (!rows.length) { $("batchRows").innerHTML = "<tr><td colspan='8' class='empty-cell'>No batches have been published yet. The initial production run will appear here.</td></tr>"; $("historyMeta").textContent = "The dashboard retains the 30 most recent batches."; return; }
+    if (!rows.length) { $("batchRows").innerHTML = "<tr><td colspan='9' class='empty-cell'>No batches have been published yet. The initial production run will appear here.</td></tr>"; $("historyMeta").textContent = "The dashboard retains the 30 most recent batches."; return; }
     $("batchRows").innerHTML = rows.map(function (b) {
       var completed = b.status === "completed";
-      return "<tr><td>" + esc(b.batchId || "—") + "</td><td>" + esc(fmtDate(batchDate(b))) + (!b.startedAt && b.finishedAt ? "<small class='date-note'>Published; start not recorded</small>" : "") + "</td><td><span class='table-status " + (completed ? "completed" : "failed") + "'>" + esc(String(b.status || "unknown").toUpperCase()) + "</span></td>" +
+      return "<tr><td>" + esc(b.batchId || "—") + "</td><td>" + esc(engineLabel(b)) + "</td><td>" + esc(fmtDate(batchDate(b))) + (!b.startedAt && b.finishedAt ? "<small class='date-note'>Published; start not recorded</small>" : "") + "</td><td><span class='table-status " + (completed ? "completed" : "failed") + "'>" + esc(String(b.status || "unknown").toUpperCase()) + "</span></td>" +
         "<td>" + esc(fmtInt(b.simulationCount)) + "</td><td>" + esc(fmt(metric(b, "joy", "averageBestTotalHits"), 4)) + "</td><td>" + esc(fmt(metric(b, "kane", "averageBestTotalHits"), 4)) + "</td><td>" + esc(fmtDuration(b.durationSeconds)) + "</td>" +
         "<td>" + (b.workflowRunUrl ? "<a class='run-link' href='" + esc(b.workflowRunUrl) + "' target='_blank' rel='noopener'>Logs ↗</a>" : "") + "</td></tr>";
     }).join("");
-    $("historyMeta").textContent = "Showing " + rows.length + " recent batches. Full workflow logs and downloadable audit artifacts are linked per run.";
+    $("historyMeta").textContent = "Showing " + rows.length + " recent batches with their engine labels. The chart includes Quantum v2 only; legacy scores do not evaluate the new models.";
   }
   function render(feed) {
     if (feed.schemaVersion !== 1 || !Array.isArray(feed.batches)) throw new Error("Unrecognized dashboard feed");
@@ -122,7 +126,7 @@
     $("feedStatus").textContent = "Feed unavailable · " + (error.name === "AbortError" ? "Request timed out" : error.message);
     $("historyChart").innerHTML = "<div class='empty-state'>Replay history could not be loaded. Refresh data to retry.</div>";
     $("agentScores").innerHTML = "<div class='empty-state'>Scores are unavailable while the feed cannot be reached.</div>";
-    $("batchRows").innerHTML = "<tr><td colspan='8' class='empty-cell'>Batch history is unavailable. The workflow link above remains available.</td></tr>";
+    $("batchRows").innerHTML = "<tr><td colspan='9' class='empty-cell'>Batch history is unavailable. The workflow link above remains available.</td></tr>";
     archiveStatus(null, "Unavailable");
   }).finally(function () { clearTimeout(timer); });
 }());

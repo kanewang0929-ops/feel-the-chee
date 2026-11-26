@@ -23,11 +23,11 @@ def publication_script():
 
 
 class WorkflowPublicationTests(unittest.TestCase):
-    def test_archive_formula_and_agents_publish_together(self):
+    def test_archive_agents_and_live_ledger_publish_together(self):
         outputs = [
-            "data/draws.json", "data/chee-forecast.json", "data/chee-backtest.json",
+            "data/draws.json", "data/joy-kane-audit.json",
             "data/joy-kane-dashboard.json", "data/joy-kane-model-state.json",
-            "data/joy-kane-live-lock.json", "data/joy-kane-predictions.jsonl",
+            "data/joy-kane-live-lock.json", "data/joy-kane-live-ledger.jsonl",
         ]
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
