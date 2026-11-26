@@ -1,0 +1,268 @@
+{
+  "evaluationVersion": "chronological-holdout-v1",
+  "masterSeed": 20261119,
+  "archive": {
+    "path": "data/draws.json",
+    "validDrawCount": 2949,
+    "normalizedArchiveSha256": "38efd092c5f943b256b52a1f20a1941da90159478b1ece6dca01c69a92119a7c"
+  },
+  "split": {
+    "warmup": {
+      "count": 200,
+      "firstIssue": "07001",
+      "firstDate": "2007-05-30",
+      "lastIssue": "08107",
+      "lastDate": "2008-09-13",
+      "startIndex": 0,
+      "endIndexExclusive": 200
+    },
+    "training": {
+      "count": 1649,
+      "firstIssue": "08108",
+      "firstDate": "2008-09-15",
+      "lastIssue": "19067",
+      "lastDate": "2019-06-12",
+      "startIndex": 200,
+      "endIndexExclusive": 1849
+    },
+    "validation": {
+      "count": 549,
+      "firstIssue": "19068",
+      "firstDate": "2019-06-15",
+      "lastIssue": "23032",
+      "lastDate": "2023-03-25",
+      "startIndex": 1849,
+      "endIndexExclusive": 2398
+    },
+    "finalTest": {
+      "count": 551,
+      "firstIssue": "23033",
+      "firstDate": "2023-03-27",
+      "lastIssue": "26131",
+      "lastDate": "2026-11-16",
+      "startIndex": 2398,
+      "endIndexExclusive": 2949
+    },
+    "counts": {
+      "archiveDraws": 2949,
+      "warmupDraws": 200,
+      "eligibleDraws": 2749,
+      "trainingDraws": 1649,
+      "validationDraws": 549,
+      "finalTestDraws": 551
+    }
+  },
+  "candidateConfigurations": [
+    {
+      "name": "baseline",
+      "ema_rate": 0.035,
+      "weight_sensitivity": 0.85
+    },
+    {
+      "name": "fast_adaptation",
+      "ema_rate": 0.07,
+      "weight_sensitivity": 0.85
+    },
+    {
+      "name": "conservative_adaptation",
+      "ema_rate": 0.0175,
+      "weight_sensitivity": 0.85
+    },
+    {
+      "name": "high_weight_sensitivity",
+      "ema_rate": 0.035,
+      "weight_sensitivity": 1.2
+    }
+  ],
+  "validationSelection": {
+    "joy": {
+      "baseline": {
+        "training": {
+          "draws": 1649,
+          "averageFrontHits": 0.785324,
+          "averageBackHits": 0.349909,
+          "averageTotalHits": 1.135233
+        },
+        "validation": {
+          "draws": 549,
+          "averageFrontHits": 0.708561,
+          "averageBackHits": 0.326047,
+          "averageTotalHits": 1.034608
+        }
+      },
+      "fast_adaptation": {
+        "training": {
+          "draws": 1649,
+          "averageFrontHits": 0.783505,
+          "averageBackHits": 0.344451,
+          "averageTotalHits": 1.127956
+        },
+        "validation": {
+          "draws": 549,
+          "averageFrontHits": 0.684882,
+          "averageBackHits": 0.336976,
+          "averageTotalHits": 1.021858
+        }
+      },
+      "conservative_adaptation": {
+        "training": {
+          "draws": 1649,
+          "averageFrontHits": 0.787144,
+          "averageBackHits": 0.35476,
+          "averageTotalHits": 1.141904
+        },
+        "validation": {
+          "draws": 549,
+          "averageFrontHits": 0.724954,
+          "averageBackHits": 0.326047,
+          "averageTotalHits": 1.051002
+        }
+      },
+      "high_weight_sensitivity": {
+        "training": {
+          "draws": 1649,
+          "averageFrontHits": 0.788357,
+          "averageBackHits": 0.353548,
+          "averageTotalHits": 1.141904
+        },
+        "validation": {
+          "draws": 549,
+          "averageFrontHits": 0.693989,
+          "averageBackHits": 0.331512,
+          "averageTotalHits": 1.025501
+        }
+      }
+    },
+    "kane": {
+      "baseline": {
+        "training": {
+          "draws": 1649,
+          "averageFrontHits": 0.716798,
+          "averageBackHits": 0.349303,
+          "averageTotalHits": 1.066101
+        },
+        "validation": {
+          "draws": 549,
+          "averageFrontHits": 0.708561,
+          "averageBackHits": 0.336976,
+          "averageTotalHits": 1.045537
+        }
+      },
+      "fast_adaptation": {
+        "training": {
+          "draws": 1649,
+          "averageFrontHits": 0.725288,
+          "averageBackHits": 0.344451,
+          "averageTotalHits": 1.069739
+        },
+        "validation": {
+          "draws": 549,
+          "averageFrontHits": 0.737705,
+          "averageBackHits": 0.347905,
+          "averageTotalHits": 1.08561
+        }
+      },
+      "conservative_adaptation": {
+        "training": {
+          "draws": 1649,
+          "averageFrontHits": 0.713159,
+          "averageBackHits": 0.33778,
+          "averageTotalHits": 1.05094
+        },
+        "validation": {
+          "draws": 549,
+          "averageFrontHits": 0.71949,
+          "averageBackHits": 0.344262,
+          "averageTotalHits": 1.063752
+        }
+      },
+      "high_weight_sensitivity": {
+        "training": {
+          "draws": 1649,
+          "averageFrontHits": 0.719224,
+          "averageBackHits": 0.3396,
+          "averageTotalHits": 1.058824
+        },
+        "validation": {
+          "draws": 549,
+          "averageFrontHits": 0.730419,
+          "averageBackHits": 0.336976,
+          "averageTotalHits": 1.067395
+        }
+      }
+    }
+  },
+  "selectedConfigurations": {
+    "joy": "conservative_adaptation",
+    "kane": "fast_adaptation"
+  },
+  "finalTestComparisons": {
+    "joy": {
+      "selectedConfiguration": "conservative_adaptation",
+      "finalTest": {
+        "draws": 551,
+        "averageFrontHits": 0.68784,
+        "averageBackHits": 0.332123,
+        "averageTotalHits": 1.019964
+      },
+      "matchedRandomBaseline": {
+        "seriesCount": 1000,
+        "ticketsPerSeries": 551,
+        "totalTickets": 551000,
+        "averageFrontHits": 0.7142395644283122,
+        "averageBackHits": 0.33264609800362976,
+        "averageTotalHits": 1.046885662431942,
+        "averageTotalHitsP2_5": 0.9745916515426497,
+        "averageTotalHitsP97_5": 1.1216424682395645
+      },
+      "differenceVsRandomMean": -0.026922,
+      "empiricalOneSidedPValue": 0.753247,
+      "randomSeriesAtOrAboveAgent": 753
+    },
+    "kane": {
+      "selectedConfiguration": "fast_adaptation",
+      "finalTest": {
+        "draws": 551,
+        "averageFrontHits": 0.720508,
+        "averageBackHits": 0.30853,
+        "averageTotalHits": 1.029038
+      },
+      "matchedRandomBaseline": {
+        "seriesCount": 1000,
+        "ticketsPerSeries": 551,
+        "totalTickets": 551000,
+        "averageFrontHits": 0.7142395644283122,
+        "averageBackHits": 0.33264609800362976,
+        "averageTotalHits": 1.046885662431942,
+        "averageTotalHitsP2_5": 0.9745916515426497,
+        "averageTotalHitsP97_5": 1.1216424682395645
+      },
+      "differenceVsRandomMean": -0.017848,
+      "empiricalOneSidedPValue": 0.681319,
+      "randomSeriesAtOrAboveAgent": 681
+    }
+  },
+  "randomBaseline": {
+    "seriesCount": 1000,
+    "ticketsPerSeries": 551,
+    "totalTickets": 551000,
+    "theoreticalExpectedTotalHitsPerTicket": 1.047619048,
+    "interpretation": "Empirical interval is the 2.5th to 97.5th percentile of matched random-series average scores on the exact final-test draw dates."
+  },
+  "protocol": {
+    "chronologicalOnly": true,
+    "shuffle": false,
+    "validationOnlyCandidateSelection": true,
+    "finalTestUsedForSelection": false,
+    "testWalkForwardLearning": true,
+    "agentLearningIndependent": true,
+    "oneOfficialTicketPerAgentPerDraw": true,
+    "randomBaselineMatchedDatesAndTicketCount": true,
+    "randomBaselineOneTicketPerDraw": true
+  },
+  "limitations": [
+    "Lottery draws are designed to be independent; historical patterns do not establish an edge on future draws.",
+    "The random interval describes random-ticket variation conditional on these historical test dates, not uncertainty over all possible future draw sequences.",
+    "The empirical p-value is a diagnostic against the matched random-ticket distribution, not proof of a persistent predictive advantage."
+  ]
+}
