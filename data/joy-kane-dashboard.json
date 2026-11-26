@@ -1,6 +1,6 @@
 {
-  "modelVersion": "v1.0-joy-kane-duel",
-  "generatedAt": "2026-11-26T09:38:46.319889+00:00",
+  "modelVersion": "v1.1-joy-kane-no-optimizer",
+  "generatedAt": "2026-11-26T14:27:29.499015+00:00",
   "walkForward": true,
   "futureLeakage": false,
   "method": {
@@ -34,13 +34,16 @@
     "liveLock": "data/joy-kane-live-lock.json",
     "lockIsolation": "Live lock reads and writes are disabled in simulation mode.",
     "auditFile": "data/joy-kane-audit.json",
-    "dailyTraining": {
+    "training": {
+      "kind": "chronological_replay",
       "simulationMode": false,
       "simulationSeed": null,
-      "cyclesPerAgent": 0,
-      "ranToday": false,
-      "minimumHoursBetweenRuns": 23.0,
-      "objective": "Exact best-ticket front plus back hit counts only."
+      "replayCycles": 1,
+      "objective": "Exact front plus back hit counts after each sealed prediction is revealed."
+    },
+    "optimizer": {
+      "enabled": false,
+      "status": "removed"
     }
   },
   "summary": {
@@ -148,41 +151,25 @@
         "opponentScoreTotal": 2927.0
       },
       "exploration": 0.19490670774416743,
-      "dailyTraining": {
-        "cyclesPerRun": 1000000,
-        "accepted": false,
-        "acceptedTrials": 81,
-        "trainScoreBefore": 1.103701,
-        "trainScoreAfter": 1.103701,
-        "validationScoreBefore": 1.039602,
-        "validationScoreAfter": 1.039602,
-        "untouchedTestScoreBefore": 0.99873,
-        "untouchedTestScoreAfter": 0.99873,
-        "trainingDraws": 1927,
-        "validationDraws": 550,
-        "untouchedTestDraws": 276,
-        "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
-        "updatedAt": "2026-11-25T23:04:27.554051+00:00",
-        "skipped": true,
-        "reason": "Daily million-cycle search already ran 10.6 hours ago."
-      }
+      "modelVersion": "joy-adaptive-hit-model-v1",
+      "updatedAt": "2026-11-26T14:27:29.492198+00:00"
     },
     "kane": {
       "observations": 2753,
       "weights": {
         "front": {
-          "frequency": 0.000447562936939488,
-          "interval": 0.9982097482522421,
-          "deviation": 0.000447562936939488,
-          "distribution": 0.000447562936939488,
-          "overdue": 0.000447562936939488
+          "frequency": 0.20761737603682492,
+          "interval": 0.229115024850634,
+          "deviation": 0.18729389451175854,
+          "distribution": 0.18438956995931385,
+          "overdue": 0.1915841346414686
         },
         "back": {
-          "frequency": 0.997210691265262,
-          "interval": 0.0006973271836845089,
-          "deviation": 0.0006973271836845089,
-          "distribution": 0.0006973271836845089,
-          "overdue": 0.0006973271836845089
+          "frequency": 0.18773821065367075,
+          "interval": 0.19759541105906853,
+          "deviation": 0.2170111702240064,
+          "distribution": 0.20731976759859913,
+          "overdue": 0.1903354404646552
         }
       },
       "duel": {
@@ -192,24 +179,8 @@
         "opponentScoreTotal": 2991.0
       },
       "exploration": 0.1887863396766282,
-      "dailyTraining": {
-        "cyclesPerRun": 1000000,
-        "accepted": true,
-        "acceptedTrials": 73,
-        "trainScoreBefore": 1.075422,
-        "trainScoreAfter": 1.092835,
-        "validationScoreBefore": 1.050824,
-        "validationScoreAfter": 1.110748,
-        "untouchedTestScoreBefore": 1.041699,
-        "untouchedTestScoreAfter": 1.057938,
-        "trainingDraws": 1927,
-        "validationDraws": 550,
-        "untouchedTestDraws": 276,
-        "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
-        "updatedAt": "2026-11-25T23:04:36.245553+00:00",
-        "skipped": true,
-        "reason": "Daily million-cycle search already ran 10.6 hours ago."
-      }
+      "modelVersion": "kane-adaptive-hit-model-v1",
+      "updatedAt": "2026-11-26T14:27:29.492242+00:00"
     }
   },
   "livePredictionLock": {
