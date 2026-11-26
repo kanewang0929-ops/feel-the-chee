@@ -27,6 +27,20 @@
         "kane": 1.05447072
       },
       "sourceCommit": "9929bd68f5fa7c75717b11ba7dac5eb3e0f6bb95"
+    },
+    {
+      "archiveId": "38efd092c5f943b256b52a1f20a1941da90159478b1ece6dca01c69a92119a7c",
+      "archiveThrough": "2026-11-16",
+      "candidateIds": [
+        "ce4e0338908642792fe1127e7bde866c2f55433b0cec34513f2312dfea1d55ed",
+        "aefff1806767201f1a66371674766a0157d704576a70f1c43f2914e27446c035"
+      ],
+      "id": "45793554281-1",
+      "replayMeans": {
+        "joy": 1.0967188,
+        "kane": 1.05510003
+      },
+      "sourceCommit": "a2501808d57741525cbb6138f36556dbc23f4725"
     }
   ],
   "experiments": [
@@ -121,19 +135,65 @@
       "score": 1.025,
       "scoringDraws": 200,
       "seed": 14454208638746166344
+    },
+    {
+      "agent": "joy",
+      "archiveId": "38efd092c5f943b256b52a1f20a1941da90159478b1ece6dca01c69a92119a7c",
+      "archiveThrough": "2026-11-16",
+      "batchId": "45793554281-1",
+      "configuration": {
+        "ema_rate": 0.07,
+        "name": "fast_adaptation",
+        "weight_sensitivity": 0.85
+      },
+      "decision": "research_only",
+      "deltaVsResearchBaseline": 0.03500000000000003,
+      "engineId": "91c2e53ee12204ca42d33c310025b912baafc2a00e30894f3c0aef9ab9e8b9f9",
+      "id": "ce4e0338908642792fe1127e7bde866c2f55433b0cec34513f2312dfea1d55ed",
+      "package": "candidates/ce4e0338908642792fe1127e7bde866c2f55433b0cec34513f2312dfea1d55ed.json",
+      "promotionEligible": false,
+      "randomExpectation": 1.0476190476190477,
+      "reason": "Exploratory result; fresh prospective evaluation and production comparison required",
+      "researchBaseline": 0.985,
+      "score": 1.02,
+      "scoringDraws": 200,
+      "seed": 11651618223924877526
+    },
+    {
+      "agent": "kane",
+      "archiveId": "38efd092c5f943b256b52a1f20a1941da90159478b1ece6dca01c69a92119a7c",
+      "archiveThrough": "2026-11-16",
+      "batchId": "45793554281-1",
+      "configuration": {
+        "ema_rate": 0.07,
+        "name": "fast_adaptation",
+        "weight_sensitivity": 0.85
+      },
+      "decision": "research_only",
+      "deltaVsResearchBaseline": 0.050000000000000044,
+      "engineId": "91c2e53ee12204ca42d33c310025b912baafc2a00e30894f3c0aef9ab9e8b9f9",
+      "id": "aefff1806767201f1a66371674766a0157d704576a70f1c43f2914e27446c035",
+      "package": "candidates/aefff1806767201f1a66371674766a0157d704576a70f1c43f2914e27446c035.json",
+      "promotionEligible": false,
+      "randomExpectation": 1.0476190476190477,
+      "reason": "Exploratory result; fresh prospective evaluation and production comparison required",
+      "researchBaseline": 0.98,
+      "score": 1.03,
+      "scoringDraws": 200,
+      "seed": 14454208638746166344
     }
   ],
   "production": {
     "joy": {
-      "observations": 2752,
-      "snapshot": "production-snapshots/6e725c0fda1fd90d7c326f43cc574d4600e452530abe94f7d7faa0b968295da8.json",
-      "snapshotId": "6e725c0fda1fd90d7c326f43cc574d4600e452530abe94f7d7faa0b968295da8",
+      "observations": 2753,
+      "snapshot": "production-snapshots/552614059f4a762ee34df9d5b7df7bf5db94e8deca3392cd5edf3acf71b1ce8e.json",
+      "snapshotId": "552614059f4a762ee34df9d5b7df7bf5db94e8deca3392cd5edf3acf71b1ce8e",
       "version": "joy-adaptive-hit-model-v1"
     },
     "kane": {
-      "observations": 2752,
-      "snapshot": "production-snapshots/8b73f1b4c3761be29b69633c7017d647e5e30da02800ff35290e30191b56a7b7.json",
-      "snapshotId": "8b73f1b4c3761be29b69633c7017d647e5e30da02800ff35290e30191b56a7b7",
+      "observations": 2753,
+      "snapshot": "production-snapshots/9ebd86980e8f79f4f4071f76fdb7604d4cd7b41310584e83d73faf6488ab1f7c.json",
+      "snapshotId": "9ebd86980e8f79f4f4071f76fdb7604d4cd7b41310584e83d73faf6488ab1f7c",
       "version": "kane-adaptive-hit-model-v1"
     }
   },

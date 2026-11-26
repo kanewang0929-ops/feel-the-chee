@@ -1,0 +1,73 @@
+{
+  "dailyTraining": {
+    "accepted": false,
+    "acceptedTrials": 81,
+    "cyclesPerRun": 1000000,
+    "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
+    "reason": "Daily million-cycle search already ran 10.5 hours ago.",
+    "skipped": true,
+    "trainScoreAfter": 1.103701,
+    "trainScoreBefore": 1.103701,
+    "trainingDraws": 1927,
+    "untouchedTestDraws": 276,
+    "untouchedTestScoreAfter": 0.99873,
+    "untouchedTestScoreBefore": 0.99873,
+    "updatedAt": "2026-11-25T23:04:27.554051+00:00",
+    "validationDraws": 550,
+    "validationScoreAfter": 1.039602,
+    "validationScoreBefore": 1.039602
+  },
+  "duel": {
+    "losses": 906,
+    "opponentScoreTotal": 2927.0,
+    "ties": 897,
+    "wins": 950
+  },
+  "exploration": 0.19490670774416743,
+  "modelVersion": "joy-adaptive-hit-model-v1",
+  "name": "Joy",
+  "observations": 2753,
+  "optimizedWeights": {
+    "back": {
+      "curve": 0.26463631248751623,
+      "frequency": 0.24314526989869292,
+      "recency": 0.2396846071246258,
+      "transition": 0.25253381048916507
+    },
+    "front": {
+      "curve": 0.24588768514596437,
+      "frequency": 0.2741772849873417,
+      "recency": 0.23787660555446627,
+      "transition": 0.24205842431222765
+    }
+  },
+  "signalEma": {
+    "back": {
+      "curve": 0.3641238111497761,
+      "frequency": 0.26447981769553097,
+      "recency": 0.24761492227746626,
+      "transition": 0.3090516523393164
+    },
+    "front": {
+      "curve": 0.6444012242659717,
+      "frequency": 0.7725189365374808,
+      "recency": 0.605433233604638,
+      "transition": 0.6259356390529314
+    }
+  },
+  "updatedAt": "2026-11-26T09:33:39.246420+00:00",
+  "weights": {
+    "back": {
+      "curve": 0.26463631248751623,
+      "frequency": 0.24314526989869292,
+      "recency": 0.2396846071246258,
+      "transition": 0.25253381048916507
+    },
+    "front": {
+      "curve": 0.24588768514596437,
+      "frequency": 0.2741772849873417,
+      "recency": 0.23787660555446627,
+      "transition": 0.24205842431222765
+    }
+  }
+}

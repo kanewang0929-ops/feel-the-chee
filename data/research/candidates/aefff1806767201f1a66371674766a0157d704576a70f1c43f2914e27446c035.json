@@ -1,0 +1,67 @@
+{
+  "adaptationStart": "2024-11-18",
+  "agent": "kane",
+  "archiveDrawCount": 2949,
+  "archiveId": "38efd092c5f943b256b52a1f20a1941da90159478b1ece6dca01c69a92119a7c",
+  "archiveThrough": "2026-11-16",
+  "configuration": {
+    "ema_rate": 0.07,
+    "name": "fast_adaptation",
+    "weight_sensitivity": 0.85
+  },
+  "engineId": "91c2e53ee12204ca42d33c310025b912baafc2a00e30894f3c0aef9ab9e8b9f9",
+  "parent": "default research state (not production snapshot)",
+  "promotionEligible": false,
+  "researchState": {
+    "duel": {
+      "losses": 0,
+      "opponentScoreTotal": 0.0,
+      "ties": 0,
+      "wins": 0
+    },
+    "exploration": 0.08,
+    "modelVersion": "kane-adaptive-hit-model-v1",
+    "name": "Kane",
+    "observations": 300,
+    "signalEma": {
+      "back": {
+        "deviation": 0.33982623270716217,
+        "distribution": 0.35307034721317365,
+        "frequency": 0.2976468768415427,
+        "interval": 0.3559004625199228,
+        "overdue": 0.2903956019525017
+      },
+      "front": {
+        "deviation": 0.7234651316656737,
+        "distribution": 0.8156145890578752,
+        "frequency": 0.633287638652906,
+        "interval": 0.6409966216896075,
+        "overdue": 0.7535986369912908
+      }
+    },
+    "updatedAt": null,
+    "weights": {
+      "back": {
+        "deviation": 0.20207265919349743,
+        "distribution": 0.20436034425906804,
+        "frequency": 0.19495619244888873,
+        "interval": 0.20485254487774604,
+        "overdue": 0.19375825922079978
+      },
+      "front": {
+        "deviation": 0.2013719062075139,
+        "distribution": 0.2177789411355481,
+        "frequency": 0.1865133109603991,
+        "interval": 0.18773947764255308,
+        "overdue": 0.20659636405398582
+      }
+    }
+  },
+  "researchVersion": "research-v1",
+  "schemaVersion": 1,
+  "scope": "exploratory historical research only",
+  "scoringDraws": 200,
+  "scoringStart": "2025-07-21",
+  "seed": 14454208638746166344,
+  "sourceCommit": "a2501808d57741525cbb6138f36556dbc23f4725"
+}

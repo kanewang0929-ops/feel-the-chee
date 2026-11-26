@@ -1,0 +1,79 @@
+{
+  "dailyTraining": {
+    "accepted": true,
+    "acceptedTrials": 73,
+    "cyclesPerRun": 1000000,
+    "objective": "weighted average of exact front/back hits from each signal's best historical ticket; no curve-fit, frequency, overdue, balance, or pattern bonus is added to hit score",
+    "reason": "Daily million-cycle search already ran 10.5 hours ago.",
+    "skipped": true,
+    "trainScoreAfter": 1.092835,
+    "trainScoreBefore": 1.075422,
+    "trainingDraws": 1927,
+    "untouchedTestDraws": 276,
+    "untouchedTestScoreAfter": 1.057938,
+    "untouchedTestScoreBefore": 1.041699,
+    "updatedAt": "2026-11-25T23:04:36.245553+00:00",
+    "validationDraws": 550,
+    "validationScoreAfter": 1.110748,
+    "validationScoreBefore": 1.050824
+  },
+  "duel": {
+    "losses": 950,
+    "opponentScoreTotal": 2991.0,
+    "ties": 897,
+    "wins": 906
+  },
+  "exploration": 0.1887863396766282,
+  "modelVersion": "kane-adaptive-hit-model-v1",
+  "name": "Kane",
+  "observations": 2753,
+  "optimizedWeights": {
+    "back": {
+      "deviation": 0.0006973271836845089,
+      "distribution": 0.0006973271836845089,
+      "frequency": 0.997210691265262,
+      "interval": 0.0006973271836845089,
+      "overdue": 0.0006973271836845089
+    },
+    "front": {
+      "deviation": 0.000447562936939488,
+      "distribution": 0.000447562936939488,
+      "frequency": 0.000447562936939488,
+      "interval": 0.9982097482522421,
+      "overdue": 0.000447562936939488
+    }
+  },
+  "signalEma": {
+    "back": {
+      "deviation": 0.41177274459095825,
+      "distribution": 0.35802397334320946,
+      "frequency": 0.24130176574432435,
+      "interval": 0.30150537253980825,
+      "overdue": 0.2574658784342756
+    },
+    "front": {
+      "deviation": 0.7234814725882202,
+      "distribution": 0.7050952795714962,
+      "frequency": 0.8446789265225934,
+      "interval": 0.96059342297386,
+      "overdue": 0.7501262325632608
+    }
+  },
+  "updatedAt": "2026-11-26T09:33:39.246479+00:00",
+  "weights": {
+    "back": {
+      "deviation": 0.0006973271836845089,
+      "distribution": 0.0006973271836845089,
+      "frequency": 0.997210691265262,
+      "interval": 0.0006973271836845089,
+      "overdue": 0.0006973271836845089
+    },
+    "front": {
+      "deviation": 0.000447562936939488,
+      "distribution": 0.000447562936939488,
+      "frequency": 0.000447562936939488,
+      "interval": 0.9982097482522421,
+      "overdue": 0.000447562936939488
+    }
+  }
+}
