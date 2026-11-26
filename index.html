@@ -7,9 +7,11 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>Feel the Chee · Joy vs Kane Prediction Lab</title>
-<link rel="stylesheet" href="./assets/style.css?v=20261118-joykane6">
+<meta name="description" content="Joy 与 Kane 的逐期预测、封存状态、历史开奖与模型实验记录。">
+<link rel="stylesheet" href="./assets/style.css?v=20261126-review1">
 </head>
 <body>
+<a class="skip-link" href="#main">跳到主要内容</a>
 <div class="shell">
   <header class="header">
     <div class="brand">
@@ -19,52 +21,62 @@
         <p>双智能体对决 · 完整开奖数据库 · 历史模拟评估</p>
       </div>
     </div>
-    <div class="next">下一期开奖：正在读取...</div>
+    <div class="next" aria-live="polite">目标开奖：正在读取...</div>
   </header>
 
-  <nav class="tabs">
-    <button class="tab active" data-page="prediction">预测中心 · Joy vs Kane</button>
-    <button class="tab" data-page="admin">管理员后台</button>
-    <a class="tab" style="display:inline-block;text-decoration:none" href="./simulation.html">Simulation Dashboard · 100 Runs</a>
+  <nav class="tabs" aria-label="主要导航">
+    <div class="page-tabs" role="tablist" aria-label="实验室页面">
+      <button id="tab-prediction" class="tab active" role="tab" aria-selected="true" aria-controls="prediction" data-page="prediction">预测中心</button>
+      <button id="tab-admin" class="tab" role="tab" aria-selected="false" aria-controls="admin" tabindex="-1" data-page="admin">历史开奖</button>
+    </div>
+    <a class="tab ops-link" href="./simulation.html">模型运行中心 <span aria-hidden="true">↗</span></a>
   </nav>
 
-  <main>
-    <section id="prediction" class="page active">
+  <main id="main" tabindex="-1">
+    <section id="prediction" class="page active" role="tabpanel" aria-labelledby="tab-prediction">
+      <div class="prediction-overview" aria-label="预测与数据状态" aria-live="polite">
+        <div><span class="overview-label">预测状态</span><strong id="homeLockStatus">正在检查封存记录</strong><span id="homeLockDetail">Joy / Kane · 每期各一组号码</span></div>
+        <div><span class="overview-label">模型数据更新 · 北京时间</span><strong id="homeUpdatedAt">—</strong><span id="homeVersion">正在读取当前版本</span></div>
+        <div><span class="overview-label">预测使用的历史数据</span><strong id="homeArchiveCount">—</strong><span id="homeArchiveThrough">正在读取数据截止日期</span></div>
+      </div>
       <div class="grid">
-        <div id="aiPredictionCard" class="card">
+        <div id="aiPredictionCard" class="card agent-card joy-card">
           <div class="section-head">
             <div>
-              <h2>Joy · AI Prediction</h2>
+              <h2>Joy <span class="agent-role">独立预测模型</span></h2>
               <div class="muted">Joy 的独立AI模型 · 严格逐期预测，开奖后学习。</div>
             </div>
             <span class="badge blue">Joy · 1组主预测</span>
           </div>
+          <p class="forecast-meta">正在核对预测期次...</p>
           <div class="forecast-list">
             <div class="forecast"><div class="muted">正在读取 Joy 的预测结果...</div></div>
           </div>
         </div>
 
-        <div id="kanePredictionCard" class="card">
+        <div id="kanePredictionCard" class="card agent-card kane-card">
           <div class="section-head">
             <div>
-              <h2>Kane · Challenger Agent</h2>
-              <div class="muted">数学平衡与 OVERDUE NUMBERS 模型。独立训练，每期向 Joy 发起挑战。</div>
+              <h2>Kane <span class="agent-role">独立挑战模型</span></h2>
+              <div class="muted">独立训练与评分，每期向 Joy 发起挑战。</div>
             </div>
             <span class="badge gold">Kane · 1组挑战预测</span>
           </div>
+          <p class="forecast-meta">正在核对预测期次...</p>
           <div class="forecast-list">
             <div class="forecast"><div class="muted">正在读取 Kane 的挑战号码...</div></div>
           </div>
         </div>
 
-        <div id="cheePredictionCard" class="card">
+        <div id="cheePredictionCard" class="card chee-card">
           <div class="section-head">
             <div>
-              <h2>Feel the Chee · Feng Shui</h2>
+              <h2>Feel the Chee <span class="agent-role">河图洛书公式</span></h2>
               <div class="muted">独立公式模型：只按河图洛书、目标期号与开奖日期计算，不使用历史开奖学习。</div>
             </div>
             <span class="badge gold">2组结果 · 公式计算</span>
           </div>
+          <p id="cheeStatus" class="forecast-meta" aria-live="polite">正在核对公式结果的目标期次...</p>
           <div class="chee-bars">
             <div class="chee-row"><span>金</span><div class="bar"><div class="fill" style="width:0%"></div></div><span>0</span></div>
             <div class="chee-row"><span>火</span><div class="bar"><div class="fill" style="width:0%"></div></div><span>0</span></div>
@@ -77,63 +89,66 @@
           </div>
         </div>
       </div>
+      <p class="prediction-note">号码用于模型实验与结果复盘。历史命中表现和 Chee 值不代表下一期中奖概率。<a href="./simulation.html">查看评估方法与运行记录 →</a></p>
     </section>
 
-    <section id="admin" class="page">
+    <section id="admin" class="page" role="tabpanel" aria-labelledby="tab-admin" hidden>
       <div class="card">
         <div class="section-head">
           <div>
-            <h2>管理员后台</h2>
-            <div class="muted">完整历史开奖记录，支持搜索、每页10条、编辑、删除与同步状态检查。</div>
+            <h2>历史开奖记录</h2>
+            <div class="muted">搜索期次、日期或号码，每页显示 10 条。本地编辑和隐藏仅保存在此浏览器，不会修改线上数据库或模型训练数据。</div>
           </div>
-          <span class="badge blue">完整数据库</span>
+          <span class="badge blue">公开数据浏览</span>
         </div>
 
         <div class="toolbar">
-          <input id="searchInput" class="search" placeholder="搜索期次、日期或号码">
-          <div id="syncMeta" class="muted">正在加载完整开奖数据库...</div>
+          <label class="search-label" for="searchInput">搜索开奖记录<input id="searchInput" class="search" type="search" placeholder="例如：26135 或 2026-11-25"></label>
+          <button id="resetLocalChanges" class="btn secondary" type="button">恢复原始记录</button>
+          <div id="syncMeta" class="muted" aria-live="polite">正在加载完整开奖数据库...</div>
         </div>
 
-        <div style="overflow:auto">
-          <table>
+        <div class="archive-table-wrap" role="region" aria-label="历史开奖记录，可横向滚动" tabindex="0">
+          <table class="archive-table">
             <thead>
               <tr>
                 <th>期次</th>
                 <th>开奖日期</th>
                 <th>开奖号码</th>
-                <th>同步状态</th>
-                <th>操作</th>
+                <th>记录状态</th>
+                <th>浏览器本地操作</th>
               </tr>
             </thead>
             <tbody id="drawBody"></tbody>
           </table>
         </div>
-        <div id="pager" class="pager"></div>
+        <p id="archiveResultCount" class="archive-count" aria-live="polite"></p>
+        <div id="pager" class="pager" aria-label="开奖记录分页"></div>
       </div>
     </section>
 
   </main>
 </div>
 
-<div id="editModal" class="modal">
+<div id="editModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="editTitle">
   <div class="modal-card">
-    <h3>编辑开奖记录</h3>
+    <h3 id="editTitle">编辑浏览器本地记录</h3>
+    <p class="muted">修改仅保存在此浏览器，线上数据库和预测结果不受影响。</p>
     <div class="form-grid">
-      <input id="editIssue" placeholder="期次">
-      <input id="editDate" placeholder="日期">
-      <input id="editFront" placeholder="前区：01 02 03 04 05">
-      <input id="editBack" placeholder="后区：01 02">
+      <label for="editIssue">期次<input id="editIssue" inputmode="numeric" placeholder="期次"></label>
+      <label for="editDate">开奖日期<input id="editDate" type="date"></label>
+      <label for="editFront">前区 · 5 个号码<input id="editFront" placeholder="01 02 03 04 05"></label>
+      <label for="editBack">后区 · 2 个号码<input id="editBack" placeholder="01 02"></label>
     </div>
     <div class="modal-actions">
       <button class="btn del" onclick="closeModal()">取消</button>
-      <button class="btn edit" onclick="saveEdit()">保存修改</button>
+      <button class="btn edit" onclick="saveEdit()">保存到此浏览器</button>
     </div>
   </div>
 </div>
 
-<script src="./assets/app.js?v=20261119-single-main"></script>
-<script src="./assets/chee-runtime.js?v=20261118-joykane6"></script>
-<script src="./assets/chee-backtest.js?v=20261118-joykane6"></script>
-<script src="./assets/joy-kane.js?v=20261119-single-main"></script>
+<script src="./assets/app.js?v=20261126-review1"></script>
+<script src="./assets/chee-runtime.js?v=20261126-review1"></script>
+<script src="./assets/joy-kane.js?v=20261126-review1"></script>
 </body>
 </html>

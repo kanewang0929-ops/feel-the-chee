@@ -4,10 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0b1120">
-  <title>Simulation Dashboard · Feel the Chee</title>
-  <link rel="stylesheet" href="./assets/simulation-dashboard.css?v=20261119-1">
+  <meta name="description" content="Follow Joy and Kane's historical evaluations, live training and research candidates. Check archive freshness, batch results and model release status.">
+  <title>Model Operations · Feel the Chee</title>
+  <link rel="stylesheet" href="./assets/simulation-dashboard.css?v=20261126-1">
 </head>
 <body>
+  <a class="skip-link" href="#operations">Skip to model operations</a>
   <div class="page-shell">
     <header class="topbar">
       <a class="brand" href="./index.html" aria-label="Back to Feel the Chee home">
@@ -22,12 +24,12 @@
     <main>
       <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">SIMULATION CONTROL / 001</p>
-          <h1>Every draw.<br><span>One hundred possible histories.</span></h1>
-          <p class="hero-subtitle">A daily, independently seeded replay of the complete historical archive. Joy and Kane each make one sealed ticket per draw, then learn only after the result is revealed.</p>
+          <p class="eyebrow">MODEL OPERATIONS</p>
+          <h1>Follow the learning.<br><span>Check the evidence.</span></h1>
+          <p class="hero-subtitle">Track historical replays, live training and research in one place. Each daily batch runs 100 independently seeded histories, with one sealed ticket per agent per draw.</p>
           <div class="hero-meta">
-            <span class="schedule-pill"><span class="pulse"></span> DAILY BATCH ACTIVE</span>
-            <span class="schedule-text">100 simulations · Daily 18:00 Beijing time</span>
+            <span class="schedule-pill" id="scheduleStatus" role="status">CHECKING FEED</span>
+            <span class="schedule-text">Scheduled daily at 18:00 Beijing · start times may vary</span>
           </div>
         </div>
         <div class="hero-visual" aria-hidden="true">
@@ -36,22 +38,33 @@
           <div class="orbit-dot dot-a"></div><div class="orbit-dot dot-b"></div><div class="orbit-dot dot-c"></div>
         </div>
       </section>
-        <nav class="ops-tabs" aria-label="Model operations sections">
-        <button class="ops-tab active" type="button" data-ops-tab="evaluation">Evaluation</button><button class="ops-tab" type="button" data-ops-tab="training">Training</button><button class="ops-tab" type="button" data-ops-tab="deployment">Deployment</button>
-      </nav>
-      <section class="ops-panel" id="ops-training" hidden>
+      <section class="freshness-panel" aria-labelledby="freshnessHeading">
+        <div class="freshness-heading"><div><p class="eyebrow">DATA COVERAGE</p><h2 id="freshnessHeading">Which draw has each stage reached?</h2></div><button type="button" class="refresh-button" id="refreshData">Refresh data <span aria-hidden="true">↻</span></button></div>
+        <dl class="freshness-grid">
+          <div><dt>Live models through</dt><dd id="liveArchiveDate" data-state="loading">Checking…</dd></div>
+          <div><dt>Latest replay through</dt><dd id="batchArchiveDate" data-state="loading">Checking…</dd></div>
+          <div><dt>Research through</dt><dd id="researchArchiveDate" data-state="loading">Checking…</dd></div>
+        </dl>
+        <p class="freshness-note" id="archiveFreshness" role="status">Checking the latest published data for each stage…</p>
+      </section>
+      <div class="ops-tabs" id="operations" role="tablist" aria-label="Model operations sections">
+        <button class="ops-tab active" id="tab-evaluation" type="button" role="tab" aria-selected="true" aria-controls="ops-evaluation" data-ops-tab="evaluation">Evaluation</button>
+        <button class="ops-tab" id="tab-training" type="button" role="tab" aria-selected="false" aria-controls="ops-training" tabindex="-1" data-ops-tab="training">Training</button>
+        <button class="ops-tab" id="tab-deployment" type="button" role="tab" aria-selected="false" aria-controls="ops-deployment" tabindex="-1" data-ops-tab="deployment">Deployment</button>
+      </div>
+      <section class="ops-panel" id="ops-training" role="tabpanel" aria-labelledby="tab-training" tabindex="0" hidden>
         <div class="section-heading"><div><p class="eyebrow">01 / LIVE MODEL TELEMETRY</p><h2>Training operations</h2></div><div class="updated-label" id="trainingUpdated">Loading live model state…</div></div>
         <div class="ops-kpi-grid"><article class="metric-card"><div class="metric-label">MODEL VERSION</div><div class="metric-value ops-value" id="trainModelVersion">—</div><div class="metric-foot">Current live production model</div></article><article class="metric-card"><div class="metric-label">HISTORICAL OBSERVATIONS</div><div class="metric-value" id="trainObservations">—</div><div class="metric-foot">Chronological draws processed</div></article><article class="metric-card"><div class="metric-label">OPTIMIZER CYCLES / AGENT</div><div class="metric-value" id="trainCycles">—</div><div class="metric-foot">Configured candidate-weight search</div></article><article class="metric-card"><div class="metric-label">LAST TRAINING UPDATE</div><div class="metric-value ops-value" id="trainLastRun">—</div><div class="metric-foot" id="trainRunState">Reading training record</div></article></div>
         <div class="ops-two-col"><article class="panel"><div class="panel-heading"><div><p class="eyebrow">JOY / ADAPTIVE HIT MODEL</p><h2>Joy training state</h2></div><span class="ops-chip joy-chip">JOY</span></div><div id="joyTrainingCard" class="ops-agent-state"></div></article><article class="panel"><div class="panel-heading"><div><p class="eyebrow">KANE / ADAPTIVE HIT MODEL</p><h2>Kane training state</h2></div><span class="ops-chip kane-chip">KANE</span></div><div id="kaneTrainingCard" class="ops-agent-state"></div></article></div>
         <article class="panel"><div class="panel-heading"><div><p class="eyebrow">RESEARCH REGISTRY</p><h2>Experiment memory</h2></div><span class="ops-chip" id="researchStatus">WAITING</span></div><div id="researchSummary" class="ops-agent-state">Waiting for the first published research cycle.</div><div class="table-scroll"><table><thead><tr><th>Agent</th><th>Configuration</th><th>Historical hits</th><th>Research baseline</th><th>Decision</th><th>Package</th></tr></thead><tbody id="researchRows"><tr><td colspan="6">No experiments published.</td></tr></tbody></table></div><p class="caveat">Exploratory scores on previously observed data, not independent evidence. Each configuration is tested once per archive and engine version.</p></article>
         <article class="panel ops-explainer"><p class="eyebrow">HOW LIVE TRAINING WORKS</p><h2>Learning is separate from simulation</h2><p>The live prediction workflow scores sealed historical predictions after each reveal and updates each agent's independent signal weights. The daily optimizer searches up to one million candidate weight combinations per agent, subject to its 23-hour minimum interval. Simulation replays do not write to these live states.</p><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/sync-draws.yml" target="_blank" rel="noopener">Open live training workflow ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/blob/main/data/joy-kane-model-state.json" target="_blank" rel="noopener">Inspect model-state file ↗</a></div></article>
       </section>
-      <section class="ops-panel" id="ops-deployment" hidden>
+      <section class="ops-panel" id="ops-deployment" role="tabpanel" aria-labelledby="tab-deployment" tabindex="0" hidden>
         <div class="section-heading"><div><p class="eyebrow">03 / RELEASE GOVERNANCE</p><h2>Model deployment</h2></div><div class="updated-label" id="deploymentUpdated">Checking active production model…</div></div>
         <div class="ops-kpi-grid"><article class="metric-card"><div class="metric-label">ACTIVE LIVE VERSION</div><div class="metric-value ops-value" id="deployVersion">—</div><div class="metric-foot">Currently serving prediction workflow</div></article><article class="metric-card"><div class="metric-label">LIVE PREDICTION LOCK</div><div class="metric-value ops-value" id="deployIssue">—</div><div class="metric-foot" id="deployLockDate">No lock information</div></article><article class="metric-card"><div class="metric-label">CANDIDATE STATUS</div><div class="metric-value ops-value" id="candidateStatus">NOT READY</div><div class="metric-foot" id="candidateDetail">No approved candidate package has been published.</div></article><article class="metric-card"><div class="metric-label">AUTO-PROMOTION</div><div class="metric-value ops-value">DISABLED</div><div class="metric-foot">Simulation scores never replace live models automatically.</div></article></div>
         <article class="panel deployment-guard"><p class="eyebrow">EXPLICIT APPROVAL REQUIRED</p><h2>Promotion gate</h2><p>A candidate must have a traceable model-state package, pass chronological and leakage checks, include a matched random-baseline evaluation, and receive human approval. No simulation batch can promote a model by itself.</p><ol class="promotion-steps"><li><b>Prepare</b><span>Produce a candidate model-state package from a documented training run.</span></li><li><b>Evaluate</b><span>Run chronological holdout evaluation and compare against the matched random baseline.</span></li><li><b>Review</b><span>Inspect the evidence, weight changes and prediction-lock compatibility.</span></li><li><b>Approve</b><span>Approve a dedicated promotion change before it is merged into the live model files.</span></li></ol><div class="approval-status" id="approvalStatus">No candidate is currently eligible for promotion. The active live model remains unchanged.</div><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/holdout-evaluation.yml" target="_blank" rel="noopener">Run chronological evaluation ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/sync-draws.yml" target="_blank" rel="noopener">Inspect live workflow ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/pulls" target="_blank" rel="noopener">Review promotion changes ↗</a></div></article>
       </section>
-      <section class="ops-panel active" id="ops-evaluation">
+      <section class="ops-panel active" id="ops-evaluation" role="tabpanel" aria-labelledby="tab-evaluation" tabindex="0">
     <section class="section-heading">
         <div><p class="eyebrow">01 / BATCH TELEMETRY</p><h2>Latest batch</h2></div>
         <div class="updated-label" id="updatedAt">Connecting to simulation feed…</div>
@@ -60,13 +73,13 @@
         <article class="metric-card"><div class="metric-label">LATEST BATCH STATUS</div><div class="metric-value status-value" id="batchStatus">WAITING</div><div class="metric-foot" id="batchTime">The first production batch will appear here.</div></article>
         <article class="metric-card"><div class="metric-label">INDEPENDENT SIMULATIONS</div><div class="metric-value" id="runCount">0<span class="metric-unit"> / 100</span></div><div class="metric-foot" id="seedCheck">Unique seeds are checked before a batch passes.</div></article>
         <article class="metric-card"><div class="metric-label">DRAWS AUDITED / SIMULATION</div><div class="metric-value" id="drawCount">—</div><div class="metric-foot" id="dateRange">Complete historical walk-forward replay.</div></article>
-        <article class="metric-card"><div class="metric-label">BATCH RUNTIME</div><div class="metric-value" id="runtime">—</div><div class="metric-foot">Measured end-to-end on the hosted runner.</div></article>
+        <article class="metric-card"><div class="metric-label">BATCH RUNTIME</div><div class="metric-value" id="runtime">—</div><div class="metric-foot" id="runtimeNote">Runner time through feed publication.</div></article>
       </section>
       <section class="performance-grid">
         <article class="panel chart-panel">
           <div class="panel-heading"><div><p class="eyebrow">02 / SCORE TRAJECTORY</p><h2>Across daily batches</h2></div><div class="legend"><span class="legend-joy">Joy</span><span class="legend-kane">Kane</span><span class="legend-baseline">Random expectation</span></div></div>
           <div id="historyChart" class="chart-wrap"><div class="empty-state">The chart will appear after the first 100-run batch is complete.</div></div>
-          <p class="chart-note">Average best-ticket total hits per draw. The reference line is the theoretical random-ticket expectation of 1.047619 hits.</p>
+          <p class="chart-note">Average total hits per draw for each agent's single ticket. The dashed line is the random-ticket expectation of 1.047619 hits. Dates use Beijing time; exact values appear in the table below.</p>
         </article>
         <article class="panel benchmark-panel">
           <p class="eyebrow">03 / LATEST BATCH AVERAGES</p><h2>Joy vs Kane</h2>
@@ -80,10 +93,10 @@
         <a class="github-link" href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/daily-simulation-batch.yml" target="_blank" rel="noopener">Open workflow ↗</a>
       </section>
       <section class="panel table-panel">
-        <div class="table-scroll"><table><thead><tr><th>Batch</th><th>Started (KST)</th><th>Status</th><th>Runs</th><th>Joy avg.</th><th>Kane avg.</th><th>Runtime</th><th></th></tr></thead><tbody id="batchRows"><tr><td colspan="8" class="empty-cell">No completed batches have been published yet.</td></tr></tbody></table></div>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Recent simulation batches"><table><caption class="sr-only">Recent batch times in Beijing, results and workflow logs</caption><thead><tr><th scope="col">Batch</th><th scope="col">Time (Beijing)</th><th scope="col">Status</th><th scope="col">Runs</th><th scope="col">Joy avg.</th><th scope="col">Kane avg.</th><th scope="col">Runtime</th><th scope="col">Details</th></tr></thead><tbody id="batchRows"><tr><td colspan="8" class="empty-cell">Loading published batches…</td></tr></tbody></table></div>
         <p class="table-foot" id="historyMeta">The dashboard retains the 30 most recent batches.</p>
       </section>
-      <article class="panel"><p class="eyebrow">CHRONOLOGICAL EVALUATION</p><h2>Published holdout report</h2><p id="holdoutMeta">Checking report…</p><div id="holdoutMetrics" class="ops-agent-state"></div><p class="caveat">Previously inspected holdout data is not a fresh test for future candidates.</p></article>
+      <article class="panel holdout-panel"><p class="eyebrow">CHRONOLOGICAL EVALUATION</p><h2>Published holdout report</h2><p id="holdoutMeta">Checking report…</p><div id="holdoutMetrics" class="ops-agent-state"></div><p class="caveat">Previously inspected holdout data is not a fresh test for future candidates.</p><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/blob/simulation-data/data/chronological-holdout-report.json" target="_blank" rel="noopener">Inspect the published report ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/holdout-evaluation.yml" target="_blank" rel="noopener">Evaluation workflow ↗</a></div></article>
       <section class="method-grid">
         <article class="method-card">
           <p class="eyebrow">05 / REPLAY PROTOCOL</p><h2>Same archive. Separate minds.</h2>
@@ -109,7 +122,8 @@
     </main>
     <footer class="footer"><span>FEEL THE CHEE · JOY & KANE</span><span id="feedStatus">Dashboard feed: checking…</span></footer>
   </div>
-  <script src="./assets/simulation-dashboard.js?v=20261119-ops1"></script>
-  <script src="./assets/model-operations.js?v=20261125-research1"></script>
+  <noscript><p class="noscript-note">JavaScript is needed to load the live dashboards. Use the workflow and report links above to inspect the published results.</p></noscript>
+  <script src="./assets/simulation-dashboard.js?v=20261126-1"></script>
+  <script src="./assets/model-operations.js?v=20261126-1"></script>
 </body>
 </html>

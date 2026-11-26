@@ -1,9 +1,36 @@
+import tempfile
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
-from scripts.publish_simulation_dashboard import metric_stats, update_feed
+from scripts.publish_simulation_dashboard import build_batch, metric_stats, update_feed
 
 
 class SimulationDashboardPublishTests(unittest.TestCase):
+    def build_timed_batch(self, started_at):
+        with tempfile.TemporaryDirectory() as tmp:
+            archive = Path(tmp) / "draws.json"
+            archive.write_text('{"draws": []}', encoding="utf-8")
+            with patch("scripts.publish_simulation_dashboard.utc_now", return_value="2026-11-26T12:02:30+00:00"):
+                return build_batch(
+                    {"simulationCount": 100, "simulationSummaries": []},
+                    status="success", run_id="123", run_attempt="1", run_number="1",
+                    run_url="https://github.com/example/repo/actions/runs/123",
+                    started_at=started_at, archive_path=archive,
+                )
+
+    def test_batch_duration_uses_recorded_start_in_utc(self):
+        batch = self.build_timed_batch("2026-11-26T18:00:00+08:00")
+        self.assertEqual(batch["startedAt"], "2026-11-26T10:00:00+00:00")
+        self.assertEqual(batch["durationSeconds"], 7350)
+
+    def test_missing_invalid_or_future_start_is_unknown_not_zero(self):
+        for started_at in (None, "", "not-a-date", "2026-11-27T10:00:00Z"):
+            with self.subTest(started_at=started_at):
+                batch = self.build_timed_batch(started_at)
+                self.assertIsNone(batch["startedAt"])
+                self.assertIsNone(batch["durationSeconds"])
+
     def test_metric_stats_aggregates_seed_runs(self):
         rows = [
             {"joy": {"averageBestTotalHits": 1.0, "averageBestFrontHits": 0.7, "averageBestBackHits": 0.3}},

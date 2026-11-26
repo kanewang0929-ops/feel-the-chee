@@ -68,17 +68,18 @@ jobs:
         run: |
           git config user.name "feel-the-chee-learning-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/joy-kane-*
+          # All public outputs must describe the same synchronized archive.
+          git add data/draws.json data/chee-forecast.json data/chee-backtest.json data/joy-kane-*
 
           if git diff --cached --quiet; then
             echo "No draw, forecast, agent state, audit, or training-log changes detected."
             exit 0
           fi
 
-          git commit -m "data: refresh Joy and Kane predictions and learning audit"
-          # Discard generated draw/Feng Shui working-tree changes; their own workflow publishes them.
-          # The Joy/Kane artifacts are already committed and remain untouched by this restore.
+          git commit -m "data: refresh draw archive, forecasts and learning audit"
+          # Discard only unrelated working-tree changes after all public outputs are committed.
           git restore --worktree -- .
-          # Rebase only the Joy/Kane commit on top of any concurrent main-branch updates.
+          # Rebase the coherent publication on any concurrent main-branch updates.
+          # An overlapping conflict fails the run instead of overwriting newer data.
           git pull --rebase origin main
           git push origin main

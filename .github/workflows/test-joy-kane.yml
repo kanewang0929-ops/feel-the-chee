@@ -7,12 +7,26 @@ on:
       - feat/aws-simulation-platform
     paths:
       - "scripts/joy_kane_duel.py"
+      - "scripts/publish_simulation_dashboard.py"
+      - "assets/*.js"
+      - "assets/*.css"
+      - "index.html"
+      - "simulation.html"
       - "tests/**"
+      - ".github/workflows/daily-simulation-batch.yml"
+      - ".github/workflows/sync-draws.yml"
       - ".github/workflows/test-joy-kane.yml"
   pull_request:
     paths:
       - "scripts/joy_kane_duel.py"
+      - "scripts/publish_simulation_dashboard.py"
+      - "assets/*.js"
+      - "assets/*.css"
+      - "index.html"
+      - "simulation.html"
       - "tests/**"
+      - ".github/workflows/daily-simulation-batch.yml"
+      - ".github/workflows/sync-draws.yml"
       - ".github/workflows/test-joy-kane.yml"
 
 permissions:
@@ -30,3 +44,9 @@ jobs:
           python-version: "3.12"
       - name: Run Joy and Kane contract tests
         run: python -m unittest discover -s tests -v
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run website rendering and navigation tests
+        run: node --test tests/*.js

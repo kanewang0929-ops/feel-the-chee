@@ -1,10 +1,61 @@
-const tabs=[...document.querySelectorAll(".tab")];
-tabs.forEach(button=>button.addEventListener("click",()=>{
-  tabs.forEach(item=>item.classList.remove("active"));
-  button.classList.add("active");
-  document.querySelectorAll(".page").forEach(item=>item.classList.remove("active"));
-  document.getElementById(button.dataset.page)?.classList.add("active");
-}));
+const tabs=[...document.querySelectorAll("button.tab[data-page]")];
+function selectPage(page,updateUrl=false){
+  if(!tabs.some(button=>button.dataset.page===page)) page="prediction";
+  tabs.forEach(button=>{
+    const selected=button.dataset.page===page;
+    button.classList.toggle("active",selected);
+    button.setAttribute("aria-selected",String(selected));
+    button.tabIndex=selected?0:-1;
+  });
+  document.querySelectorAll(".page").forEach(panel=>{
+    const selected=panel.id===page;
+    panel.classList.toggle("active",selected);
+    panel.hidden=!selected;
+  });
+  if(updateUrl) history.replaceState(null,"",`#${page}`);
+}
+tabs.forEach((button,index)=>{
+  button.addEventListener("click",()=>selectPage(button.dataset.page,true));
+  button.addEventListener("keydown",event=>{
+    let next;
+    if(event.key==="ArrowRight") next=(index+1)%tabs.length;
+    if(event.key==="ArrowLeft") next=(index-1+tabs.length)%tabs.length;
+    if(event.key==="Home") next=0;
+    if(event.key==="End") next=tabs.length-1;
+    if(next===undefined) return;
+    event.preventDefault();
+    selectPage(tabs[next].dataset.page,true);
+    tabs[next].focus();
+  });
+});
+window.addEventListener("hashchange",()=>selectPage(location.hash.slice(1)));
+selectPage(location.hash.slice(1));
+
+function escapeText(value){
+  return String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+}
+
+function formatBeijing(value){
+  const date=new Date(value);
+  if(!value||Number.isNaN(date.getTime())) return "未记录";
+  return new Intl.DateTimeFormat("zh-CN",{timeZone:"Asia/Shanghai",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(date);
+}
+
+function beijingDate(now=new Date()){
+  const parts=new Intl.DateTimeFormat("en",{timeZone:"Asia/Shanghai",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(now);
+  const part=type=>parts.find(item=>item.type===type).value;
+  return `${part("year")}-${part("month")}-${part("day")}`;
+}
+
+function isPastTarget(targetDate,now=new Date()){
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(targetDate||""))&&targetDate<beijingDate(now);
+}
+
+function validTicket(ticket){
+  return [[ticket?.front,5,35],[ticket?.back,2,12]].every(([values,count,max])=>
+    Array.isArray(values)&&values.length===count&&new Set(values.map(Number)).size===count&&
+    values.every(value=>Number.isInteger(Number(value))&&Number(value)>=1&&Number(value)<=max));
+}
 
 const LIVE_HISTORY_URL="https://raw.githubusercontent.com/yangxb919/lottery-data/main/data/dlt.json";
 const LOCAL_HISTORY_URL="./data/draws.json";
@@ -16,16 +67,12 @@ function loadDuelPayload(){
 }
 
 let draws=[];
+let originalDraws=[];
 let currentPage=1;
 const pageSize=10;
 let editingIndex=null;
+let editingSourceIssue=null;
 let syncMeta={};
-
-const fallbackDraws=[
-  {issue:"26085",date:"2026-07-29",front:"03 04 14 28 31",back:"05 07",status:"已同步"},
-  {issue:"26084",date:"2026-07-27",front:"13 25 30 32 33",back:"04 05",status:"已同步"},
-  {issue:"26083",date:"2026-07-25",front:"14 15 16 23 26",back:"07 09",status:"已同步"}
-];
 
 function normalizeDraw(record){
   const front=Array.isArray(record.front)?record.front.join(" "):String(record.front||"").trim();
@@ -43,29 +90,45 @@ function normalizeDraw(record){
 function validDraw(record){
   const front=record.front.split(/\s+/).filter(Boolean).map(Number);
   const back=record.back.split(/\s+/).filter(Boolean).map(Number);
-  return Boolean(record.issue&&/^\d{4}-\d{2}-\d{2}$/.test(record.date))&&
-    front.length===5&&new Set(front).size===5&&front.every(number=>number>=1&&number<=35)&&
-    back.length===2&&new Set(back).size===2&&back.every(number=>number>=1&&number<=12);
+  return Boolean(/^\d+$/.test(record.issue)&&/^\d{4}-\d{2}-\d{2}$/.test(record.date))&&
+    front.length===5&&new Set(front).size===5&&front.every(number=>Number.isInteger(number)&&number>=1&&number<=35)&&
+    back.length===2&&new Set(back).size===2&&back.every(number=>Number.isInteger(number)&&number>=1&&number<=12);
+}
+
+function readLocalValue(key,fallback){
+  try{
+    const value=JSON.parse(localStorage.getItem(key)||"null");
+    if(Array.isArray(fallback)) return Array.isArray(value)?value:fallback;
+    return value&&typeof value==="object"&&!Array.isArray(value)?value:fallback;
+  }catch(error){return fallback;}
 }
 
 function applyBrowserOverrides(base){
-  const edits=JSON.parse(localStorage.getItem("cheeDrawEdits")||"{}");
-  const deleted=new Set(JSON.parse(localStorage.getItem("cheeDeletedDraws")||"[]"));
+  const edits=readLocalValue("cheeDrawEdits",{});
+  const deleted=new Set(readLocalValue("cheeDeletedDraws",[]));
   return base
     .filter(item=>!deleted.has(item.issue))
-    .map(item=>edits[item.issue]?{...item,...edits[item.issue]}:item);
+    .map(item=>{
+      const edited=edits[item.issue]?normalizeDraw({...item,...edits[item.issue]}):null;
+      return {...(edited&&validDraw(edited)?{...edited,status:"本地修改"}:item),_sourceIssue:item.issue};
+    });
 }
 
 async function fetchJson(url){
-  const response=await fetch(`${url}?v=${Date.now()}`,{cache:"no-store"});
-  if(!response.ok) throw new Error(`HTTP ${response.status}`);
-  return response.json();
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),12000);
+  try{
+    const response=await fetch(`${url}?v=${Date.now()}`,{cache:"no-store",signal:controller.signal});
+    if(!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  }finally{clearTimeout(timeout);}
 }
 
 async function fetchLiveHistory(){
   const payload=await fetchJson(LIVE_HISTORY_URL);
   if(!Array.isArray(payload)) throw new Error("历史数据格式错误");
-  const normalized=payload.map(normalizeDraw).filter(validDraw);
+  const today=beijingDate();
+  const normalized=payload.map(normalizeDraw).filter(record=>validDraw(record)&&record.date<=today);
   if(normalized.length<1000) throw new Error(`历史数据不足：${normalized.length}`);
   normalized.sort((a,b)=>b.date.localeCompare(a.date)||Number(b.issue)-Number(a.issue));
   return {
@@ -89,10 +152,25 @@ async function fetchLocalHistory(){
   normalized.sort((a,b)=>b.date.localeCompare(a.date)||Number(b.issue)-Number(a.issue));
   return {
     draws:normalized,
-    meta:Array.isArray(payload)
-      ?{total:normalized.length,source:"本地历史数据库"}
-      :{...(payload.meta||{}),total:normalized.length}
+    meta:{
+      ...(!Array.isArray(payload)?payload.meta||{}:{}),
+      source:(!Array.isArray(payload)&&payload.meta?.source)||"已发布历史数据库",
+      total:normalized.length,
+      latestIssue:normalized[0]?.issue,
+      latestDate:normalized[0]?.date,
+      earliestIssue:normalized.at(-1)?.issue,
+      earliestDate:normalized.at(-1)?.date
+    }
   };
+}
+
+function newerArchive(candidate,current){
+  if(!candidate?.draws?.length) return false;
+  if(candidate.draws[0].date>beijingDate()) return false;
+  if(!current?.draws?.length) return true;
+  if(candidate.draws.length<current.draws.length) return false;
+  const latest=candidate.draws[0],previous=current.draws[0];
+  return latest.date>previous.date||(latest.date===previous.date&&Number(latest.issue)>Number(previous.issue));
 }
 
 async function loadDraws(){
@@ -101,50 +179,59 @@ async function loadDraws(){
   let localResult=null;
   try{
     localResult=await fetchLocalHistory();
+    originalDraws=localResult.draws;
+    draws=applyBrowserOverrides(originalDraws);
+    syncMeta={...localResult.meta,refreshing:true};
+    renderAdmin();
   }catch(error){
     console.warn("Local history unavailable",error);
   }
 
   try{
     const liveResult=await fetchLiveHistory();
-    const selected=localResult&&localResult.draws.length>=liveResult.draws.length?localResult:liveResult;
-    draws=applyBrowserOverrides(selected.draws);
-    syncMeta=selected.meta;
+    if(newerArchive(liveResult,localResult)){
+      originalDraws=liveResult.draws;
+      // Re-read local overrides in case the user edited a record while the fetch was pending.
+      draws=applyBrowserOverrides(originalDraws);
+      syncMeta=liveResult.meta;
+    }else{
+      syncMeta={...syncMeta,refreshing:false};
+    }
   }catch(error){
     console.warn("Live history unavailable",error);
     if(localResult){
-      draws=applyBrowserOverrides(localResult.draws);
       syncMeta={...localResult.meta,error:String(error)};
     }else{
-      draws=applyBrowserOverrides(fallbackDraws);
-      syncMeta={total:draws.length,source:"应急预览数据",error:String(error)};
+      originalDraws=[];
+      draws=[];
+      syncMeta={unavailable:true,error:String(error)};
     }
   }
 
-  currentPage=1;
+  // Keep the reader's search and current page when a background refresh completes.
   renderAdmin();
 }
 
 function ball(number,back=false){
-  return `<span class="ball${back?" back":""}">${number}</span>`;
+  return `<span class="ball${back?" back":""}">${escapeText(String(number).padStart(2,"0"))}</span>`;
 }
 
 function scoreText(value){
   return Number(value||0).toFixed(1);
 }
 
-function forecastCard(result){
+function forecastCard(result,targetDate){
   return `<div class="forecast">
     <div class="forecast-top">
-      <strong>预测结果 ${result.rank} · ${result.label}</strong>
-      <span class="score">开奖后按命中数评分</span>
+      <strong>${isPastTarget(targetDate)?"历史号码":"目标号码"} · ${escapeText(result.label||"Joy Main")}</strong>
+      <span class="score">5 个前区 + 2 个后区</span>
     </div>
     <div class="numbers">
       ${(result.front||[]).map(number=>ball(number)).join("")}
       <span class="plus">+</span>
       ${(result.back||[]).map(number=>ball(number,true)).join("")}
     </div>
-    <div class="reason">${result.reason||""}</div>
+    ${result.reason?`<div class="reason">${escapeText(result.reason)}</div>`:""}
   </div>`;
 }
 
@@ -210,15 +297,31 @@ function renderAiLearning(payload){
 function renderForecast(payload){
   const card=document.getElementById("aiPredictionCard");
   if(!card) return;
-  const results=Array.isArray(payload.results)?payload.results.slice(0,1):[];
+  const results=Array.isArray(payload.results)?payload.results.filter(validTicket).slice(0,1):[];
   card.querySelector(".forecast-list").innerHTML=results.length
-    ?results.map(forecastCard).join("")
+    ?results.map(result=>forecastCard(result,payload.targetDate)).join("")
     :`<div class="forecast"><div class="muted">AI结果暂不可用。</div></div>`;
   card.querySelector(".section-head .muted").textContent=
-    `Joy 独立AI模型 · 已学习 ${Number(payload.historyCount||0).toLocaleString("zh-CN")} 期历史数据 · 严格逐期封存预测。`;
+    "按历史信号生成一组号码，开奖后按实际命中数评分。";
   card.querySelector(".section-head .badge").textContent=`Joy · ${results.length}组预测`;
+  card.querySelector(".forecast-meta").textContent=`第 ${payload.targetIssue||"—"} 期 · 目标开奖 ${payload.targetDate||"未记录"}`;
+  card.querySelector(".forecast-meta").classList.toggle("is-stale",isPastTarget(payload.targetDate));
   const next=document.querySelector(".next");
-  if(next) next.textContent=`下一期开奖：${payload.targetDate} · 第${payload.targetIssue}期`;
+  if(next) next.textContent=`${isPastTarget(payload.targetDate)?"最近发布目标":"目标开奖"}：${payload.targetDate||"未记录"} · 第 ${payload.targetIssue||"—"} 期`;
+}
+
+function renderHomeSummary(payload){
+  const forecast=payload.nextForecast||{};
+  const lock=payload.livePredictionLock||{};
+  const sealed=Boolean(lock.lockedAt&&String(lock.issue)===String(forecast.targetIssue)&&lock.date===forecast.targetDate);
+  const past=isPastTarget(forecast.targetDate);
+  document.getElementById("homeLockStatus").textContent=past?"显示最近发布的历史预测":sealed?"Joy / Kane 预测已封存":"封存状态未验证";
+  document.getElementById("homeLockStatus").classList.toggle("is-stale",past);
+  document.getElementById("homeLockDetail").textContent=past?"目标开奖日期已过，请核对模型更新记录":sealed?`${formatBeijing(lock.lockedAt)} · 北京时间`:"请在模型运行中心核对当前记录";
+  document.getElementById("homeUpdatedAt").textContent=formatBeijing(payload.generatedAt);
+  document.getElementById("homeVersion").textContent=payload.modelVersion||"版本未记录";
+  document.getElementById("homeArchiveCount").textContent=Number.isInteger(forecast.historyCount)?`${forecast.historyCount.toLocaleString("zh-CN")} 期历史开奖`:"样本数未记录";
+  document.getElementById("homeArchiveThrough").textContent=`数据截止 ${payload.summary?.dateRange?.latest||"未记录"}`;
 }
 
 function renderCheeFormula(payload){
@@ -287,12 +390,19 @@ function renderChee(payload){
 async function loadForecast(){
   try{
     const payload=await loadDuelPayload();
+    renderHomeSummary(payload);
     const joy=payload.nextForecast?.joy||{};
     renderForecast({...joy,targetIssue:payload.nextForecast?.targetIssue,targetDate:payload.nextForecast?.targetDate,historyCount:payload.nextForecast?.historyCount});
   }catch(error){
     console.warn("Forecast unavailable",error);
     const list=document.querySelector("#aiPredictionCard .forecast-list");
     if(list) list.innerHTML=`<div class="forecast"><div class="muted">AI结果加载失败，请稍后刷新。</div></div>`;
+    document.querySelector(".next").textContent="预测数据暂不可用";
+    document.getElementById("homeLockStatus").textContent="无法读取封存状态";
+    document.getElementById("homeLockDetail").textContent="请稍后刷新页面";
+    document.getElementById("homeVersion").textContent="模型数据暂不可用";
+    document.getElementById("homeArchiveThrough").textContent="模型数据暂不可用";
+    document.querySelector("#aiPredictionCard .forecast-meta").textContent="目标期次暂不可用";
   }
 }
 
@@ -337,34 +447,36 @@ function renderAdmin(){
   const rows=list.slice((currentPage-1)*pageSize,currentPage*pageSize);
 
   body.innerHTML=rows.map(item=>`<tr>
-    <td>${item.issue}</td>
-    <td>${item.date}</td>
-    <td>${item.front}${item.back?` + ${item.back}`:""}</td>
-    <td><span class="status ${statusClass(item.status)}">${item.status}</span></td>
+    <td>${escapeText(item.issue)}</td>
+    <td>${escapeText(item.date)}</td>
+    <td class="archive-numbers">${escapeText(item.front)}${item.back?` + ${escapeText(item.back)}`:""}</td>
+    <td><span class="status ${statusClass(item.status)}">${escapeText(item.status)}</span></td>
     <td>
-      <button class="btn edit" onclick="openEdit(${item._i})">编辑</button>
-      <button class="btn del" onclick="deleteDraw(${item._i})">删除</button>
+      <button class="btn edit" aria-label="本地编辑第 ${escapeText(item.issue)} 期" onclick="openEdit(${item._i})">本地编辑</button>
+      <button class="btn secondary" aria-label="在此浏览器隐藏第 ${escapeText(item.issue)} 期" onclick="deleteDraw(${item._i})">隐藏</button>
     </td>
-  </tr>`).join("");
+  </tr>`).join("")||`<tr><td colspan="5" class="empty-state">${syncMeta.unavailable?"开奖记录暂不可用，请稍后刷新。":"没有找到匹配的记录，请尝试其他期次、日期或号码。"}</td></tr>`;
 
   const windowSize=7;
   const start=Math.max(1,Math.min(currentPage-Math.floor(windowSize/2),pages-windowSize+1));
   const end=Math.min(pages,start+windowSize-1);
   const buttons=[];
-  if(currentPage>1) buttons.push(`<button onclick="currentPage--;renderAdmin()">‹</button>`);
+  if(currentPage>1) buttons.push(`<button aria-label="上一页" onclick="currentPage--;renderAdmin()">‹</button>`);
   if(start>1) buttons.push(`<button onclick="currentPage=1;renderAdmin()">1</button><span class="muted">…</span>`);
   for(let page=start;page<=end;page++){
-    buttons.push(`<button class="${page===currentPage?"active":""}" onclick="currentPage=${page};renderAdmin()">${page}</button>`);
+    buttons.push(`<button class="${page===currentPage?"active":""}" ${page===currentPage?'aria-current="page"':""} aria-label="第 ${page} 页" onclick="currentPage=${page};renderAdmin()">${page}</button>`);
   }
   if(end<pages) buttons.push(`<span class="muted">…</span><button onclick="currentPage=${pages};renderAdmin()">${pages}</button>`);
-  if(currentPage<pages) buttons.push(`<button onclick="currentPage++;renderAdmin()">›</button>`);
-  pager.innerHTML=buttons.join("");
+  if(currentPage<pages) buttons.push(`<button aria-label="下一页" onclick="currentPage++;renderAdmin()">›</button>`);
+  pager.innerHTML=list.length?buttons.join(""):"";
 
   const total=syncMeta.total||draws.length;
   const range=syncMeta.earliestDate&&syncMeta.latestDate
     ?`${syncMeta.earliestDate} 至 ${syncMeta.latestDate}`
     :"完整可用范围";
-  metaNode.textContent=`已同步 ${Number(total).toLocaleString("zh-CN")} 期 · ${range} · ${syncMeta.source||"历史开奖数据库"}`;
+  const sourceState=syncMeta.refreshing?"已显示快照，正在检查在线更新":syncMeta.error?"在线源暂不可用，显示已发布快照":"已读取";
+  metaNode.textContent=syncMeta.unavailable?"本地与在线数据均未能读取，页面未填充示例记录。":`${sourceState} ${Number(total).toLocaleString("zh-CN")} 期 · ${range} · ${syncMeta.source||"历史开奖数据库"}`;
+  document.getElementById("archiveResultCount").textContent=list.length?`共 ${list.length.toLocaleString("zh-CN")} 条匹配记录 · 第 ${currentPage} / ${pages} 页`:"0 条匹配记录";
 }
 
 document.getElementById("searchInput")?.addEventListener("input",()=>{
@@ -372,31 +484,48 @@ document.getElementById("searchInput")?.addEventListener("input",()=>{
   renderAdmin();
 });
 
+let modalReturnFocus=null;
 function openEdit(index){
   editingIndex=index;
   const item=draws[index];
   if(!item) return;
+  editingSourceIssue=item._sourceIssue||item.issue;
   editIssue.value=item.issue;
   editDate.value=item.date;
   editFront.value=item.front;
   editBack.value=item.back;
+  modalReturnFocus=document.activeElement;
   editModal.classList.add("show");
+  editIssue.focus();
 }
 
 function closeModal(){
   editModal.classList.remove("show");
+  if(modalReturnFocus?.isConnected) modalReturnFocus.focus();
+  else document.getElementById("searchInput")?.focus();
 }
 
+document.getElementById("editModal")?.addEventListener("keydown",event=>{
+  if(event.key==="Escape") {event.preventDefault();closeModal();return;}
+  if(event.key!=="Tab") return;
+  const controls=[...editModal.querySelectorAll("input,button")];
+  const first=controls[0],last=controls.at(-1);
+  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+  if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+});
+
 function saveEdit(){
+  // Incoming online records may change row indexes while this dialog is open.
+  if(editingSourceIssue!==null) editingIndex=draws.findIndex(item=>(item._sourceIssue||item.issue)===editingSourceIssue);
   if(editingIndex===null||!draws[editingIndex]) return;
-  const originalIssue=draws[editingIndex].issue;
+  const originalIssue=draws[editingIndex]._sourceIssue||draws[editingIndex].issue;
   const updated={
     ...draws[editingIndex],
     issue:editIssue.value.trim(),
     date:editDate.value.trim(),
     front:editFront.value.trim(),
     back:editBack.value.trim(),
-    status:"已同步"
+    status:"本地修改"
   };
 
   if(!validDraw(updated)){
@@ -404,25 +533,35 @@ function saveEdit(){
     return;
   }
 
+  const edits=readLocalValue("cheeDrawEdits",{});
+  edits[originalIssue]=updated;
+  try{localStorage.setItem("cheeDrawEdits",JSON.stringify(edits));}
+  catch(error){alert("浏览器未允许保存本地记录，请检查存储设置后重试。");return;}
   draws[editingIndex]=updated;
-  const edits=JSON.parse(localStorage.getItem("cheeDrawEdits")||"{}");
-  delete edits[originalIssue];
-  edits[updated.issue]=updated;
-  localStorage.setItem("cheeDrawEdits",JSON.stringify(edits));
   closeModal();
   renderAdmin();
 }
 
 function deleteDraw(index){
-  if(!draws[index]||!confirm("确认删除这条开奖记录？")) return;
-  const issue=draws[index].issue;
-  const deleted=JSON.parse(localStorage.getItem("cheeDeletedDraws")||"[]");
+  if(!draws[index]||!confirm("仅在此浏览器隐藏这条开奖记录？可通过“恢复原始记录”撤销。线上数据库不会改变。")) return;
+  const issue=draws[index]._sourceIssue||draws[index].issue;
+  const deleted=readLocalValue("cheeDeletedDraws",[]);
   if(!deleted.includes(issue)) deleted.push(issue);
-  localStorage.setItem("cheeDeletedDraws",JSON.stringify(deleted));
+  try{localStorage.setItem("cheeDeletedDraws",JSON.stringify(deleted));}
+  catch(error){alert("浏览器未允许保存本地记录，请检查存储设置后重试。");return;}
   draws.splice(index,1);
   renderAdmin();
 }
 
+document.getElementById("resetLocalChanges")?.addEventListener("click",()=>{
+  if(!confirm("清除此浏览器的编辑和隐藏记录，恢复原始公开数据？")) return;
+  try{localStorage.removeItem("cheeDrawEdits");localStorage.removeItem("cheeDeletedDraws");}
+  catch(error){alert("无法清除本地记录，请检查浏览器存储设置。");return;}
+  draws=applyBrowserOverrides(originalDraws);
+  currentPage=1;
+  renderAdmin();
+});
+
 loadDraws();
 loadForecast();
-loadCheeForecast();
+// Chee is rendered only by chee-runtime.js, which verifies its target draw.
