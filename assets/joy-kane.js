@@ -18,14 +18,14 @@ function jkNumber(value,digits=3){
 }
 
 function jkBall(value,back=false){
-  return `<span class="ball${back?" back":""}">${String(value).padStart(2,"0")}</span>`;
+  return `<span class="ball${back?" back":""}">${escapeText(String(value).padStart(2,"0"))}</span>`;
 }
 
-function jkTicketCard(ticket,agentName){
+function jkTicketCard(ticket,agentName,targetDate){
   return `<div class="forecast">
     <div class="forecast-top">
-      <strong>${agentName} · ${ticket.label||"预测 "+ticket.rank}</strong>
-      <span class="score">开奖后按命中数评分</span>
+      <strong>${isPastTarget(targetDate)?"历史号码":"目标号码"} · ${escapeText(ticket.label||agentName+" Main")}</strong>
+      <span class="score">5 个前区 + 2 个后区</span>
     </div>
     <div class="numbers">
       ${(ticket.front||[]).map(n=>jkBall(n)).join("")}
@@ -39,12 +39,14 @@ function renderKaneForecast(payload){
   const card=document.getElementById("kanePredictionCard");
   if(!card) return;
   const forecast=payload.nextForecast?.kane||{};
-  const picks=(forecast.results||[]).slice(0,1);
+  const picks=(forecast.results||[]).filter(validTicket).slice(0,1);
   card.querySelector(".section-head .muted").textContent=
-    `第${payload.nextForecast?.targetIssue||"-"}期 · Kane 使用独立统计模型挑战 Joy。`;
+    "使用独立信号与权重，与 Joy 在同一期次比较实际命中。";
+  card.querySelector(".forecast-meta").textContent=`第 ${payload.nextForecast?.targetIssue||"—"} 期 · 目标开奖 ${payload.nextForecast?.targetDate||"未记录"}`;
+  card.querySelector(".forecast-meta").classList.toggle("is-stale",isPastTarget(payload.nextForecast?.targetDate));
   card.querySelector(".section-head .badge").textContent=`Kane · ${picks.length}组挑战预测`;
   card.querySelector(".forecast-list").innerHTML=picks.length
-    ?picks.map(ticket=>jkTicketCard(ticket,"Kane")).join("")
+    ?picks.map(ticket=>jkTicketCard(ticket,"Kane",payload.nextForecast?.targetDate)).join("")
     :`<div class="forecast"><div class="muted">Kane 的预测暂不可用。</div></div>`;
 }
 
@@ -219,15 +221,18 @@ function renderJoyKaneAudit(){
 
 async function loadJoyKane(){
   try{
-    joyKaneDashboard=await joyKaneFetch(JOY_KANE_DASHBOARD_URL);
+    joyKaneDashboard=await loadDuelPayload();
     renderKaneForecast(joyKaneDashboard);
     renderJoyKaneLearning(joyKaneDashboard);
   }catch(error){
     console.warn("Joy/Kane dashboard unavailable",error);
     const card=document.getElementById("kanePredictionCard");
     if(card) card.querySelector(".forecast-list").innerHTML=`<div class="forecast"><div class="muted">Kane 的预测暂不可用，请检查后台运行记录。</div></div>`;
+    if(card) card.querySelector(".forecast-meta").textContent="目标期次暂不可用";
   }
 
+  // The public homepage has no audit table. Avoid downloading its full ledger.
+  if(!document.getElementById("joyKaneAudit")) return;
   try{
     const audit=await joyKaneFetch(JOY_KANE_AUDIT_URL);
     joyKaneAuditRows=Array.isArray(audit.rows)?audit.rows:[];

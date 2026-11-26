@@ -50,7 +50,9 @@ def build_batch(summary: dict[str, Any] | None, *, status: str, run_id: str, run
     finished_at = utc_now()
     started = parse_datetime(started_at)
     finished = parse_datetime(finished_at)
-    duration = max(0, round((finished - started).total_seconds())) if started and finished else None
+    if started and finished and started > finished:
+        started = None
+    duration = round((finished - started).total_seconds()) if started and finished else None
     normalized_status = "completed" if status == "success" and summary else (
         "failed" if status in {"failure", "cancelled", "timed_out"} or not summary else status
     )
@@ -67,7 +69,7 @@ def build_batch(summary: dict[str, Any] | None, *, status: str, run_id: str, run
         "runNumber": int(run_number or 0),
         "workflowRunUrl": run_url,
         "status": normalized_status,
-        "startedAt": started_at,
+        "startedAt": started.isoformat() if started else None,
         "finishedAt": finished_at,
         "durationSeconds": duration,
         "engineVersion": summary.get("engineVersion") if summary else None,

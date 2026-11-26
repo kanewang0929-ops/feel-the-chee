@@ -4,44 +4,57 @@
   var RANDOM_EXPECTED = 1.047619;
   var $ = function (id) { return document.getElementById(id); };
   var fmt = function (value, digits) { if (value === null || value === undefined || value === "") return "—"; var n = Number(value); return Number.isFinite(n) ? n.toFixed(digits == null ? 3 : digits) : "—"; };
-  var fmtInt = function (value) { var n = Number(value); return Number.isFinite(n) ? Math.round(n).toLocaleString("en-US") : "—"; };
+  var fmtInt = function (value) { var n = value == null || value === "" ? NaN : Number(value); return Number.isFinite(n) ? Math.round(n).toLocaleString("en-US") : "—"; };
   var fmtDate = function (value) {
     if (!value) return "—";
     var d = new Date(value);
-    if (!Number.isFinite(d.getTime())) return String(value);
-    return new Intl.DateTimeFormat("en-GB", { timeZone:"Asia/Seoul", year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit", hour12:false }).format(d) + " KST";
+    if (!Number.isFinite(d.getTime())) return "—";
+    return new Intl.DateTimeFormat("en-GB", { timeZone:"Asia/Shanghai", year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit", hour12:false }).format(d) + " Beijing";
   };
   var fmtDuration = function (seconds) {
-    var n = Number(seconds); if (!Number.isFinite(n) || n < 0) return "—";
-    return Math.floor(n / 60) + "m " + String(Math.round(n % 60)).padStart(2, "0") + "s";
+    var n = seconds == null || seconds === "" ? NaN : Number(seconds); if (!Number.isFinite(n) || n < 0) return "—";
+    n = Math.round(n);
+    return (n >= 3600 ? Math.floor(n / 3600) + "h " : "") + Math.floor(n / 60 % 60) + "m " + String(n % 60).padStart(2, "0") + "s";
   };
   var esc = function (value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) { return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[c]; }); };
   var metric = function (batch, agent, key) { return batch && batch[agent] && batch[agent][key] ? batch[agent][key].mean : null; };
+  var batchDate = function (batch) { return batch.startedAt || batch.finishedAt || ""; };
+  function archiveStatus(date, status) {
+    var node = $("batchArchiveDate");
+    if (node) { node.textContent = date || status; node.dataset.archiveDate = date || ""; node.dataset.state = status; }
+    document.dispatchEvent(new Event("ftc:data-updated"));
+  }
 
   function renderStatus(batch, feed) {
     if (!batch) {
       $("batchStatus").textContent = "WAITING"; $("batchStatus").className = "metric-value status-value";
-      $("batchTime").textContent = "Schedule is enabled. The first 100-run batch is queued on the production workflow.";
+      $("batchTime").textContent = "No batch has been published. Check the workflow for its current status.";
       $("runCount").innerHTML = "0<span class='metric-unit'> / 100</span>"; $("drawCount").textContent = "—"; $("runtime").textContent = "—";
       $("seedCheck").textContent = "Unique seeds are checked before a batch passes."; $("dateRange").textContent = "Complete historical walk-forward replay.";
-      $("updatedAt").textContent = "Waiting for the first published batch"; return;
+      $("updatedAt").textContent = "Waiting for the first published batch";
+      $("scheduleStatus").textContent = "NO PUBLISHED BATCH";
+      archiveStatus(null, "Not published"); return;
     }
     var done = batch.status === "completed";
     $("batchStatus").textContent = done ? "COMPLETED" : String(batch.status || "UNKNOWN").toUpperCase();
     $("batchStatus").className = "metric-value status-value " + (done ? "completed" : "failed");
-    $("batchTime").textContent = "Started " + fmtDate(batch.startedAt) + " · Batch " + (batch.batchId || "—");
+    $("batchTime").textContent = (batch.startedAt ? "Started " : "Published ") + fmtDate(batchDate(batch)) + " · Batch " + (batch.batchId || "—");
+    $("scheduleStatus").textContent = done ? "LATEST BATCH PASSED" : "LATEST BATCH " + String(batch.status || "UNKNOWN").toUpperCase();
     $("runCount").innerHTML = fmtInt(batch.simulationCount) + "<span class='metric-unit'> / 100</span>";
     $("drawCount").textContent = fmtInt(batch.drawsEvaluatedPerSimulation); $("runtime").textContent = fmtDuration(batch.durationSeconds);
+    $("runtimeNote").textContent = batch.durationSeconds == null ? "Timing was not recorded for this batch." : "Runner time through feed publication.";
     $("seedCheck").textContent = fmtInt(batch.independentFirstPredictions) + " distinct first predictions · " + (batch.allFirstPredictionsDistinct ? "seed check passed" : "seed check not passed");
     var range = batch.dateRange || {};
     $("dateRange").textContent = range.earliest && range.latest ? range.earliest + " → " + range.latest : "Full archive range not available";
     $("updatedAt").textContent = "Feed refreshed " + fmtDate(feed.updatedAt || batch.finishedAt);
+    archiveStatus(done ? range.latest : null, done ? "Published" : "Latest batch failed");
   }
   function renderAgents(batch) {
     if (!batch || batch.status !== "completed" || !batch.joy || !batch.kane) { $("agentScores").innerHTML = "<div class='empty-state'>No completed batch averages are available yet.</div>"; return; }
     function card(name, agent, colorClass) {
       var total = metric(batch, agent, "averageBestTotalHits"), front = metric(batch, agent, "averageBestFrontHits"), back = metric(batch, agent, "averageBestBackHits");
-      var min = batch[agent].averageBestTotalHits.min, max = batch[agent].averageBestTotalHits.max;
+      if (total == null || total === "" || !Number.isFinite(Number(total))) return "<div class='agent-score'><div class='agent-name'>" + name + "</div><p class='caveat'>Score was not recorded for this batch.</p></div>";
+      var range = batch[agent].averageBestTotalHits || {}, min = range.min, max = range.max;
       var width = Math.max(0, Math.min(100, (Number(total) / 1.5) * 100)), delta = Number(total) - RANDOM_EXPECTED;
       return "<div class='agent-score'><div class='agent-score-head'><span class='agent-name'>" + name + "</span><strong class='agent-score-number'>" + fmt(total, 4) + "</strong></div>" +
         "<div class='agent-score-sub'><span>Front " + fmt(front, 3) + " · Back " + fmt(back, 3) + "</span><span>" + (delta >= 0 ? "+" : "") + fmt(delta, 4) + " vs expectation</span></div>" +
@@ -51,7 +64,7 @@
     $("agentScores").innerHTML = card("JOY", "joy", "joy-fill") + card("KANE", "kane", "kane-fill");
   }
   function renderChart(batches) {
-    var rows = (batches || []).filter(function (b) { return b.status === "completed" && b.joy && b.kane; }).slice(0, 12).reverse();
+    var rows = (batches || []).filter(function (b) { return b.status === "completed" && ["joy", "kane"].every(function (agent) { var value = metric(b, agent, "averageBestTotalHits"); return value != null && value !== "" && Number.isFinite(Number(value)); }); }).slice(0, 12).reverse();
     if (!rows.length) { $("historyChart").innerHTML = "<div class='empty-state'>The chart will appear after the first 100-run batch is complete.</div>"; return; }
     var values = [];
     rows.forEach(function (b) { values.push(metric(b, "joy", "averageBestTotalHits")); values.push(metric(b, "kane", "averageBestTotalHits")); });
@@ -70,8 +83,8 @@
       "<line x1='30' y1='" + baseY + "' x2='746' y2='" + baseY + "' stroke='#e8bd69' stroke-width='1.5' stroke-dasharray='5 5'/>" +
       "<polyline points='" + joyPts + "' fill='none' stroke='#91aaff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/>" +
       "<polyline points='" + kanePts + "' fill='none' stroke='#70e0b5' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/>" +
-      rows.map(function (b, i) { return "<circle cx='" + x(i) + "' cy='" + y(metric(b, "joy", "averageBestTotalHits")) + "' r='3.8' fill='#91aaff'/><circle cx='" + x(i) + "' cy='" + y(metric(b, "kane", "averageBestTotalHits")) + "' r='3.8' fill='#70e0b5'/>"; }).join("") +
-      rows.map(function (b, i) { if (rows.length > 7 && i % 2) return ""; return "<text x='" + x(i) + "' y='215' text-anchor='middle' fill='#8392ad' font-size='9'>" + esc((b.startedAt || "").slice(5, 10)) + "</text>"; }).join("") + "</svg>";
+      rows.map(function (b, i) { return ["joy", "kane"].map(function (agent) { return "<circle cx='" + x(i) + "' cy='" + y(metric(b, agent, "averageBestTotalHits")) + "' r='4' fill='" + (agent === "joy" ? "#91aaff" : "#70e0b5") + "'><title>" + esc(agent.toUpperCase() + " · " + fmtDate(batchDate(b)) + " · " + fmt(metric(b, agent, "averageBestTotalHits"), 4) + " hits · batch " + b.batchId) + "</title></circle>"; }).join(""); }).join("") +
+      rows.map(function (b, i) { if (rows.length > 7 && i % 2 && i !== rows.length - 1) return ""; var stamp = batchDate(b), d = new Date(stamp); var label = stamp && Number.isFinite(d.getTime()) ? new Intl.DateTimeFormat("en-GB", {timeZone:"Asia/Shanghai",month:"short",day:"2-digit"}).format(d) : "Batch " + (i + 1); return "<text x='" + x(i) + "' y='215' text-anchor='middle' fill='#aab8cf' font-size='10'>" + esc(label) + "</text>"; }).join("") + "</svg>";
     $("historyChart").innerHTML = svg;
   }
   function renderTable(batches) {
@@ -79,24 +92,37 @@
     if (!rows.length) { $("batchRows").innerHTML = "<tr><td colspan='8' class='empty-cell'>No batches have been published yet. The initial production run will appear here.</td></tr>"; $("historyMeta").textContent = "The dashboard retains the 30 most recent batches."; return; }
     $("batchRows").innerHTML = rows.map(function (b) {
       var completed = b.status === "completed";
-      return "<tr><td>" + esc(b.batchId || "—") + "</td><td>" + esc(fmtDate(b.startedAt)) + "</td><td><span class='table-status " + (completed ? "completed" : "failed") + "'>" + esc(String(b.status || "unknown").toUpperCase()) + "</span></td>" +
+      return "<tr><td>" + esc(b.batchId || "—") + "</td><td>" + esc(fmtDate(batchDate(b))) + (!b.startedAt && b.finishedAt ? "<small class='date-note'>Published; start not recorded</small>" : "") + "</td><td><span class='table-status " + (completed ? "completed" : "failed") + "'>" + esc(String(b.status || "unknown").toUpperCase()) + "</span></td>" +
         "<td>" + esc(fmtInt(b.simulationCount)) + "</td><td>" + esc(fmt(metric(b, "joy", "averageBestTotalHits"), 4)) + "</td><td>" + esc(fmt(metric(b, "kane", "averageBestTotalHits"), 4)) + "</td><td>" + esc(fmtDuration(b.durationSeconds)) + "</td>" +
         "<td>" + (b.workflowRunUrl ? "<a class='run-link' href='" + esc(b.workflowRunUrl) + "' target='_blank' rel='noopener'>Logs ↗</a>" : "") + "</td></tr>";
     }).join("");
     $("historyMeta").textContent = "Showing " + rows.length + " recent batches. Full workflow logs and downloadable audit artifacts are linked per run.";
   }
   function render(feed) {
+    if (feed.schemaVersion !== 1 || !Array.isArray(feed.batches)) throw new Error("Unrecognized dashboard feed");
     var batches = Array.isArray(feed.batches) ? feed.batches.slice() : [];
-    batches.sort(function (a, b) { return String(b.startedAt || "").localeCompare(String(a.startedAt || "")); });
+    batches.sort(function (a, b) { return String(batchDate(b)).localeCompare(String(batchDate(a))); });
     renderStatus(batches[0] || null, feed); renderAgents(batches[0] || null); renderChart(batches); renderTable(batches);
-    $("feedStatus").textContent = "Feed: connected · " + batches.length + " batch record(s)";
+    var stale = Date.now() - Date.parse(feed.updatedAt || batchDate(batches[0] || {})) > 36 * 60 * 60 * 1000;
+    $("feedStatus").textContent = (stale ? "Feed: last publication over 36 hours ago" : "Feed: connected") + " · " + batches.length + " batch record(s) · All times Beijing (UTC+8)";
+    if (stale) $("scheduleStatus").textContent = "FEED UPDATE OVERDUE";
   }
-  fetch(FEED_URL + "?cache=" + Date.now(), { cache:"no-store" }).then(function (response) {
+  var controller = new AbortController();
+  var timer = setTimeout(function () { controller.abort(); }, 15000);
+  fetch(FEED_URL + "?cache=" + Date.now(), { cache:"no-store", signal:controller.signal }).then(function (response) {
     if (!response.ok) throw new Error("Feed returned HTTP " + response.status);
     return response.json();
   }).then(render).catch(function (error) {
-    $("feedStatus").textContent = "Feed unavailable · " + error.message;
-    $("updatedAt").textContent = "The first dashboard feed has not been published yet.";
-    render({ batches:[], schedule:{enabled:true} });
-  });
+    $("batchStatus").textContent = "UNAVAILABLE";
+    $("batchStatus").className = "metric-value status-value failed";
+    $("batchTime").textContent = "Unable to check the latest batch. Use Refresh data to try again.";
+    $("runCount").textContent = "—";
+    $("updatedAt").textContent = "Could not load the simulation feed.";
+    $("scheduleStatus").textContent = "FEED UNAVAILABLE";
+    $("feedStatus").textContent = "Feed unavailable · " + (error.name === "AbortError" ? "Request timed out" : error.message);
+    $("historyChart").innerHTML = "<div class='empty-state'>Replay history could not be loaded. Refresh data to retry.</div>";
+    $("agentScores").innerHTML = "<div class='empty-state'>Scores are unavailable while the feed cannot be reached.</div>";
+    $("batchRows").innerHTML = "<tr><td colspan='8' class='empty-cell'>Batch history is unavailable. The workflow link above remains available.</td></tr>";
+    archiveStatus(null, "Unavailable");
+  }).finally(function () { clearTimeout(timer); });
 }());

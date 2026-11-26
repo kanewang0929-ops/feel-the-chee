@@ -19,7 +19,9 @@ on:
       - ".github/workflows/daily-simulation-batch.yml"
       - "scripts/closed_loop_research.py"
       - "scripts/evaluate_chronological_holdout.py"
-      - "assets/model-operations.js"
+      - "assets/*.js"
+      - "assets/*.css"
+      - "index.html"
       - "simulation.html"
       - "scripts/run_simulation_batch.py"
       - "scripts/joy_kane_duel.py"
@@ -48,12 +50,22 @@ jobs:
           python-version: "3.12"
       - name: Run unit and simulation contract tests
         run: python -m unittest discover -s tests -v
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run website rendering and navigation tests
+        run: node --test tests/*.js
 
   daily-batch:
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     timeout-minutes: 180
     steps:
+      - name: Record batch start time
+        id: timing
+        shell: bash
+        run: printf 'started_at=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
       - name: Check out main branch
         id: checkout
         uses: actions/checkout@v4
@@ -88,7 +100,7 @@ jobs:
           RUN_ID: "${{ github.run_id }}"
           RUN_ATTEMPT: "${{ github.run_attempt }}"
           RUN_NUMBER: "${{ github.run_number }}"
-          RUN_STARTED_AT: "${{ github.run_started_at }}"
+          RUN_STARTED_AT: "${{ steps.timing.outputs.started_at }}"
           RUN_URL: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         run: |
           python scripts/publish_simulation_dashboard.py \
