@@ -1,13 +1,47 @@
 {
-  "modelVersion": "v1.1-joy-kane-no-optimizer",
-  "generatedAt": "2026-11-26T14:27:29.498533+00:00",
+  "modelVersion": "legacy-locked-prediction",
+  "runtimeVersion": "v2.0-quantum-chronological",
+  "generatedAt": "2026-11-26T14:52:05.027359+00:00",
   "walkForward": true,
   "futureLeakage": false,
+  "predictionGate": {
+    "requiredCycleCount": 100,
+    "packageStatus": "missing",
+    "batchId": null,
+    "waitingForIssue": "26136",
+    "lastScoredIssue": null,
+    "publicationCutoff": "2026-11-28T21:00:00+08:00",
+    "cutoffPolicy": "seal_before_draw_day_sales_close",
+    "cutoffSource": "https://m.lottery.gov.cn/xxgk/tzggz/20221220/10027143.html",
+    "status": "awaiting_result",
+    "reason": "Waiting for the actual result before another prediction can be issued."
+  },
+  "trainedBatch": {
+    "status": "missing",
+    "reason": "Waiting for a completed 100-cycle model package."
+  },
+  "dataCoverage": {
+    "latestIssue": "26135",
+    "latestDate": "2026-11-25",
+    "validDrawCount": 2953,
+    "archiveSha256": "c64c318f0150193626019b5cd2be99df6d0e387d061e2f278f41913b1a4db4bc"
+  },
+  "livePredictionLock": {
+    "issue": "26136",
+    "date": "2026-11-28",
+    "predictionId": "36acf3355c920e913f1ab28c",
+    "lockedAt": "2026-11-25T23:04:36.270846+00:00"
+  },
+  "optimizer": {
+    "enabled": false,
+    "status": "removed"
+  },
   "agents": {
     "joy": {
-      "name": "Joy",
+      "name": "joy",
       "modelVersion": "joy-adaptive-hit-model-v1",
-      "observations": 2753,
+      "modelFamily": "legacy-adaptive-hit-model",
+      "backend": "legacy_classical",
       "weights": {
         "front": {
           "curve": 0.24588768514596437,
@@ -22,84 +56,45 @@
           "recency": 0.2396846071246258
         }
       },
-      "signalEma": {
-        "front": {
-          "curve": 0.6444012242659717,
-          "transition": 0.6259356390529314,
-          "frequency": 0.7725189365374808,
-          "recency": 0.605433233604638
-        },
-        "back": {
-          "curve": 0.3641238111497761,
-          "transition": 0.3090516523393164,
-          "frequency": 0.26447981769553097,
-          "recency": 0.24761492227746626
-        }
-      },
-      "exploration": 0.19490670774416743,
+      "observations": null,
+      "updatedAt": "2026-11-25T23:04:36.270846+00:00",
+      "stateScope": "locked_prediction_snapshot",
       "duel": {
-        "wins": 950,
-        "losses": 906,
-        "ties": 897,
-        "opponentScoreTotal": 2927.0
-      },
-      "updatedAt": "2026-11-26T14:27:29.492198+00:00"
+        "wins": 0,
+        "losses": 0,
+        "ties": 0
+      }
     },
     "kane": {
-      "name": "Kane",
+      "name": "kane",
       "modelVersion": "kane-adaptive-hit-model-v1",
-      "observations": 2753,
+      "modelFamily": "legacy-adaptive-hit-model",
+      "backend": "legacy_classical",
       "weights": {
         "front": {
-          "frequency": 0.20761737603682492,
-          "interval": 0.229115024850634,
-          "deviation": 0.18729389451175854,
-          "distribution": 0.18438956995931385,
-          "overdue": 0.1915841346414686
+          "frequency": 0.000447562936939488,
+          "interval": 0.9982097482522421,
+          "deviation": 0.000447562936939488,
+          "distribution": 0.000447562936939488,
+          "overdue": 0.000447562936939488
         },
         "back": {
-          "frequency": 0.18773821065367075,
-          "interval": 0.19759541105906853,
-          "deviation": 0.2170111702240064,
-          "distribution": 0.20731976759859913,
-          "overdue": 0.1903354404646552
+          "frequency": 0.997210691265262,
+          "interval": 0.0006973271836845089,
+          "deviation": 0.0006973271836845089,
+          "distribution": 0.0006973271836845089,
+          "overdue": 0.0006973271836845089
         }
       },
-      "signalEma": {
-        "front": {
-          "frequency": 0.8446789265225934,
-          "interval": 0.96059342297386,
-          "deviation": 0.7234814725882202,
-          "distribution": 0.7050952795714962,
-          "overdue": 0.7501262325632608
-        },
-        "back": {
-          "frequency": 0.24130176574432435,
-          "interval": 0.30150537253980825,
-          "deviation": 0.41177274459095825,
-          "distribution": 0.35802397334320946,
-          "overdue": 0.2574658784342756
-        }
-      },
-      "exploration": 0.1887863396766282,
+      "observations": null,
+      "updatedAt": "2026-11-25T23:04:36.270846+00:00",
+      "stateScope": "locked_prediction_snapshot",
       "duel": {
-        "wins": 906,
-        "losses": 950,
-        "ties": 897,
-        "opponentScoreTotal": 2991.0
-      },
-      "updatedAt": "2026-11-26T14:27:29.492242+00:00"
+        "wins": 0,
+        "losses": 0,
+        "ties": 0
+      }
     }
   },
-  "optimizer": {
-    "enabled": false,
-    "status": "removed"
-  },
-  "crossLearning": "Agents compare their best-ticket hit counts after each reveal. Their model weights remain independent; each adjusts its own exploration rate from the head-to-head outcome.",
-  "livePredictionLock": {
-    "issue": "26136",
-    "date": "2026-11-28",
-    "predictionId": "36acf3355c920e913f1ab28c",
-    "lockedAt": "2026-11-25T23:04:36.270846+00:00"
-  }
+  "trainingPolicy": "Only the 100-cycle chronological batch updates model parameters."
 }
