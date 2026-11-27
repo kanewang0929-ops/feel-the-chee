@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-26T19:38:22.917626+00:00",
+  "updatedAt": "2026-11-27T19:37:48.346673+00:00",
   "schedule": {
     "enabled": true,
     "simulationsPerBatch": 100,
@@ -10,6 +10,2891 @@
     "description": "Daily 100-simulation full-history replay."
   },
   "batches": [
+    {
+      "batchId": "46055960410.1",
+      "runId": "46055960410",
+      "runAttempt": 1,
+      "runNumber": 24,
+      "workflowRunUrl": "https://github.com/kanewang0929-ops/feel-the-chee/actions/runs/46055960410",
+      "status": "completed",
+      "startedAt": "2026-11-27T19:20:14+00:00",
+      "finishedAt": "2026-11-27T19:37:48.345142+00:00",
+      "durationSeconds": 1054,
+      "engineVersion": "joy-kane-quantum-sim-v2",
+      "modelVersion": "v2.0-quantum-chronological",
+      "selectedCycle": 100,
+      "selectionPolicy": "fixed_final_cycle",
+      "archiveNormalizedSha256": "c64c318f0150193626019b5cd2be99df6d0e387d061e2f278f41913b1a4db4bc",
+      "batchSeed": "46055960410-1",
+      "archiveSha256": "21e15cfcf3a2fe3445d6dbb648b64a115c6a211961d8b93495684c6dc2e19a3c",
+      "simulationCount": 100,
+      "independentFirstPredictions": 100,
+      "allFirstPredictionsDistinct": true,
+      "drawsEvaluatedPerSimulation": 2753,
+      "dateRange": {
+        "earliest": "2008-09-15",
+        "latest": "2026-11-25"
+      },
+      "joy": {
+        "averageBestFrontHits": {
+          "mean": 0.720963,
+          "min": 0.689066,
+          "max": 0.753723,
+          "stdev": 0.013216
+        },
+        "averageBestBackHits": {
+          "mean": 0.335834,
+          "min": 0.314929,
+          "max": 0.361787,
+          "stdev": 0.008947
+        },
+        "averageBestTotalHits": {
+          "mean": 1.056796,
+          "min": 1.023611,
+          "max": 1.094079,
+          "stdev": 0.015605
+        }
+      },
+      "kane": {
+        "averageBestFrontHits": {
+          "mean": 0.714711,
+          "min": 0.676716,
+          "max": 0.744642,
+          "stdev": 0.014009
+        },
+        "averageBestBackHits": {
+          "mean": 0.335049,
+          "min": 0.315292,
+          "max": 0.354522,
+          "stdev": 0.009122
+        },
+        "averageBestTotalHits": {
+          "mean": 1.04976,
+          "min": 1.011987,
+          "max": 1.092263,
+          "stdev": 0.017406
+        }
+      },
+      "duelWins": {
+        "joy": 108818,
+        "kane": 107278,
+        "tie": 59204
+      },
+      "simulations": [
+        {
+          "simulationId": 1,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "d6f89687d168eecebb870bacf36b69525bbeff53b825645b265ddffcdc09e804",
+            "kane": "4396555816f27212fc7e9999f3286e4ea38988325f71ce0a326519e54a1ccaf2"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.734471,
+            "averageBestBackHits": 0.334907,
+            "averageBestTotalHits": 1.069379
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.697784,
+            "averageBestBackHits": 0.344715,
+            "averageBestTotalHits": 1.042499
+          },
+          "duelWins": {
+            "joy": 1136,
+            "kane": 1045,
+            "tie": 572
+          },
+          "firstPredictionFingerprint": "7f5f7aaeec748dd5b4c503f5eb7aee045fa203f717a373286b199560a9646973",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 2,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "4635dbeced565fd1bf831118c272cc7dd2b9eca1da91b665217cdbf28f54d0e8",
+            "kane": "d811a429799fe548693efc5ba94b43f3654115d9db3dc8c640be5b1d1e714a61"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.723938,
+            "averageBestBackHits": 0.341082,
+            "averageBestTotalHits": 1.06502
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.729023,
+            "averageBestBackHits": 0.342535,
+            "averageBestTotalHits": 1.071558
+          },
+          "duelWins": {
+            "joy": 1050,
+            "kane": 1070,
+            "tie": 633
+          },
+          "firstPredictionFingerprint": "b6116ec4fb7358bf2659e349163519dd6fb6f408dd55a5e7997a4a6e01bbe429",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 3,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "a894ad88e5c850e3084d6b09b707dd8642b3d27c444d1ce7666a4005f6707a49",
+            "kane": "8e8e8eff177c25bad44c8af5c6df6ebaa330071242c46634c98a8c8fb82a0968"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.732292,
+            "averageBestBackHits": 0.353069,
+            "averageBestTotalHits": 1.085361
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.686161,
+            "averageBestBackHits": 0.348347,
+            "averageBestTotalHits": 1.034508
+          },
+          "duelWins": {
+            "joy": 1125,
+            "kane": 1036,
+            "tie": 592
+          },
+          "firstPredictionFingerprint": "b41474ac6d1ff283a700905c5dc92ee0064159dfe6ca7037b4bae4acf86e9b1b",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 4,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "d370cb0ca1c4b6f126d2fb7e039902c530e8d39a3ee00c8768de4eeda0ce9cbf",
+            "kane": "448b4a1422ab2603690ddb15ee1a27d2397e6f03e9e6ff84aefdd2a56fff521f"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.731929,
+            "averageBestBackHits": 0.337087,
+            "averageBestTotalHits": 1.069016
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.697784,
+            "averageBestBackHits": 0.323647,
+            "averageBestTotalHits": 1.021431
+          },
+          "duelWins": {
+            "joy": 1108,
+            "kane": 1040,
+            "tie": 605
+          },
+          "firstPredictionFingerprint": "ceb0f4a6950e4180b2bbfa83baf11042cd2250223b3f72648ff6e3d4639dfbc4",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 5,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "627e65c689f5d6f6a2d5c499e33a7fa19c203349c1cd5eb32032ea6dee6a0dfc",
+            "kane": "923343e4fb3d3b07c1dbb8c3243c2879d236d4579a08420100f7108f3a170adc"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.702143,
+            "averageBestBackHits": 0.33636,
+            "averageBestTotalHits": 1.038503
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.709045,
+            "averageBestBackHits": 0.341082,
+            "averageBestTotalHits": 1.050127
+          },
+          "duelWins": {
+            "joy": 1078,
+            "kane": 1116,
+            "tie": 559
+          },
+          "firstPredictionFingerprint": "45717ae179b318447ab9738fad3aec700ec0a37007f48aaa477992b28d23ca5a",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 6,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "11226166f16d7db12fc458ff5169303b9a8a763673b2a82e7a72f320d2614072",
+            "kane": "fe331498f6c0cf6952f4df8c43b95cd2f0c2e56a2fe60d8430e3c2d52dd836a5"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.716673,
+            "averageBestBackHits": 0.334181,
+            "averageBestTotalHits": 1.050854
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.701417,
+            "averageBestBackHits": 0.335271,
+            "averageBestTotalHits": 1.036687
+          },
+          "duelWins": {
+            "joy": 1084,
+            "kane": 1071,
+            "tie": 598
+          },
+          "firstPredictionFingerprint": "640508774a952faf84a0b4c69b819824cebf3047c5967068bb54cc2690b6f0f8",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 7,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "199ae99d23dc847f98d6a9ca888003076c17057bc243b22d0ca10163558d5d17",
+            "kane": "dcc6c45253a0b3c2de6146073bdf97df8c9e601020a9912cfca516b699879090"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.732292,
+            "averageBestBackHits": 0.326916,
+            "averageBestTotalHits": 1.059208
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.718489,
+            "averageBestBackHits": 0.353069,
+            "averageBestTotalHits": 1.071558
+          },
+          "duelWins": {
+            "joy": 1082,
+            "kane": 1069,
+            "tie": 602
+          },
+          "firstPredictionFingerprint": "91a1cdd3944238fedce38865786535f01bb1771964e3c579f6dc23891aae8fff",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 8,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "24f56dce7763769d9596f8ca998c21e59cea96a539e1d89d335386bb2cce5d06",
+            "kane": "2281a3b91aca794a5c84d536c47d452c9afa84fb32abdb5d1346edd0d672a57e"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.726843,
+            "averageBestBackHits": 0.318562,
+            "averageBestTotalHits": 1.045405
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.723211,
+            "averageBestBackHits": 0.323284,
+            "averageBestTotalHits": 1.046495
+          },
+          "duelWins": {
+            "joy": 1089,
+            "kane": 1082,
+            "tie": 582
+          },
+          "firstPredictionFingerprint": "44a416bd182785b14fff8c349549f165fc0fe7d5a7925d5254c74cac4d5421e8",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 9,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "86dfafd998e56a921d93dc7377b7bead08ccc7e32b100760942c1d17e57f5b92",
+            "kane": "be06af43308af36bc47015249e332f35721a407816ffd83f80210ea65e8abfa2"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.701053,
+            "averageBestBackHits": 0.334181,
+            "averageBestTotalHits": 1.035234
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.717762,
+            "averageBestBackHits": 0.341809,
+            "averageBestTotalHits": 1.059571
+          },
+          "duelWins": {
+            "joy": 1046,
+            "kane": 1091,
+            "tie": 616
+          },
+          "firstPredictionFingerprint": "3789c7cb4f6a3c562d3a2f15fc8ad2062fcccebb99f4ea71cd97edc1e9dd9d95",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 10,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "16273d37112fe0c4ec92a3e58a05de8f43c80aa626d08a1e16268c4eb5b60959",
+            "kane": "4f38ac04a40259f162e2acbe9795917dd47ffe3701bf5a5e108dd1c359b04c79"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.732655,
+            "averageBestBackHits": 0.324737,
+            "averageBestTotalHits": 1.057392
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.698147,
+            "averageBestBackHits": 0.352343,
+            "averageBestTotalHits": 1.05049
+          },
+          "duelWins": {
+            "joy": 1095,
+            "kane": 1050,
+            "tie": 608
+          },
+          "firstPredictionFingerprint": "8e0c34c069ef36ed2ab77c092309ff9e7d27cc2e85275202d2eeea0c51ddfac2",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 11,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "0724b7a69716612ef2484d5fa6741e83a91d72b8be5625ebe7bc0756ab29afb0",
+            "kane": "592afdb72f3158d2462233b924b59ce3dddb28c84c99f42c207bdba8160fea79"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.708681,
+            "averageBestBackHits": 0.343262,
+            "averageBestTotalHits": 1.051943
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.732292,
+            "averageBestBackHits": 0.330185,
+            "averageBestTotalHits": 1.062477
+          },
+          "duelWins": {
+            "joy": 1082,
+            "kane": 1084,
+            "tie": 587
+          },
+          "firstPredictionFingerprint": "a5a7e4c266de7598b12b6376a367bc5d1964a58863aac524ef83d6177fdda509",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 12,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "ff17be51562b9140ec8bf6b86890e6b79061bac88333295dd2168c60a1b490a1",
+            "kane": "06c257764068a2ca4ca887b8ced1e0a062a67a40d677d25f7696faed6fe80c64"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.703959,
+            "averageBestBackHits": 0.346531,
+            "averageBestTotalHits": 1.05049
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.699237,
+            "averageBestBackHits": 0.337813,
+            "averageBestTotalHits": 1.03705
+          },
+          "duelWins": {
+            "joy": 1080,
+            "kane": 1058,
+            "tie": 615
+          },
+          "firstPredictionFingerprint": "00ffa1c694f871c032e15fbbb563c35f9b8330675c0fe50ae6847efc1a862b2d",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 13,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "7deda20cd5f059e08c0da42babfa9ca0f050efb1c7c0c2cd22a21df76d71dc6d",
+            "kane": "9eb478c3254523f898ed9fe2fd4163f4c05deb1a88be8daf888dd1c18c02a4ea"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.704686,
+            "averageBestBackHits": 0.323284,
+            "averageBestTotalHits": 1.027969
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.709045,
+            "averageBestBackHits": 0.334544,
+            "averageBestTotalHits": 1.043589
+          },
+          "duelWins": {
+            "joy": 1053,
+            "kane": 1080,
+            "tie": 620
+          },
+          "firstPredictionFingerprint": "87074a12e3b299908c3e1f2117d3fe92e1d0056416ad52108a06a66381bf0d45",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 14,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "5039795cbe2357db3e70b3794b2074057aeb1f85c2fa60ac47d793cb59b27b0b",
+            "kane": "f21f757b227989fe90b80597e56a8fb1c828e78c94d127d8767d4d74f0d92471"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.724664,
+            "averageBestBackHits": 0.338903,
+            "averageBestTotalHits": 1.063567
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.706139,
+            "averageBestBackHits": 0.340356,
+            "averageBestTotalHits": 1.046495
+          },
+          "duelWins": {
+            "joy": 1112,
+            "kane": 1065,
+            "tie": 576
+          },
+          "firstPredictionFingerprint": "788373e8159a0e7af59bfc2b6e01a280c71b90569da2b3557adc865ea736a61e",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 15,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "17b1e1fef4d1640717d4c9f324f764fe9d61bd67f40d19995f11dfdd737fce7c",
+            "kane": "0235efd05f58df410c0652aa1ed521b2a00a167d82f0c172728110c1e7df3949"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.735198,
+            "averageBestBackHits": 0.335634,
+            "averageBestTotalHits": 1.070832
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.705412,
+            "averageBestBackHits": 0.320378,
+            "averageBestTotalHits": 1.02579
+          },
+          "duelWins": {
+            "joy": 1103,
+            "kane": 1005,
+            "tie": 645
+          },
+          "firstPredictionFingerprint": "16bfbf71f49cf846de73de9ce4549c1c96ca8be76f13148f5ead73a2a76ae84f",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 16,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "a205892a1db30b376db764281266d63a97ada6b1af56827c4382fc960e3091f9",
+            "kane": "680d540916580d4eedda57926e6d42f5e027e577cd224924b2ac04f420e6ed01"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.717036,
+            "averageBestBackHits": 0.325463,
+            "averageBestTotalHits": 1.042499
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.698147,
+            "averageBestBackHits": 0.341809,
+            "averageBestTotalHits": 1.039956
+          },
+          "duelWins": {
+            "joy": 1066,
+            "kane": 1082,
+            "tie": 605
+          },
+          "firstPredictionFingerprint": "1b452f917ac715aaf7a5fdfdbf5ed91de74fa655e7dc961411b8090793d91614",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 17,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "cf2327dd8691f2641637118b88b86975bd6b586062cf1ca43ec35eb1262150e9",
+            "kane": "ef4fdd61bd073d8cc89eab8985c5f3e1e7348ba03b705472923cf11c766b2801"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.715583,
+            "averageBestBackHits": 0.314929,
+            "averageBestTotalHits": 1.030512
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.721032,
+            "averageBestBackHits": 0.335997,
+            "averageBestTotalHits": 1.057029
+          },
+          "duelWins": {
+            "joy": 1054,
+            "kane": 1089,
+            "tie": 610
+          },
+          "firstPredictionFingerprint": "b9d261810fee6274a19a69d9d409455bbf0bfe0f98219730d6995130830a72a0",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 18,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "4300859a5535e2a448935279e9e8ad6c42fa15e3c476adc5c8a05a7ce1f9a7eb",
+            "kane": "80339900d9c0bb343fb36b86c4ed63d38c3d353cd4664632c75e974950289b9b"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.716673,
+            "averageBestBackHits": 0.320015,
+            "averageBestTotalHits": 1.036687
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.724664,
+            "averageBestBackHits": 0.351616,
+            "averageBestTotalHits": 1.07628
+          },
+          "duelWins": {
+            "joy": 1076,
+            "kane": 1105,
+            "tie": 572
+          },
+          "firstPredictionFingerprint": "bc0c981b35deb96018413032353d366855f1f6f57016ad6efff5514996fabfc2",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 19,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "0bf40cf1f8b0e54917b39e98e59a2a663d37d626bcb69321daa3c6ced647180b",
+            "kane": "63ad253c5ffffc7f911c6a7b4263cbce39124dfdd687e317c36b79fe947d36f0"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.720305,
+            "averageBestBackHits": 0.328732,
+            "averageBestTotalHits": 1.049037
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.716673,
+            "averageBestBackHits": 0.329459,
+            "averageBestTotalHits": 1.046131
+          },
+          "duelWins": {
+            "joy": 1081,
+            "kane": 1085,
+            "tie": 587
+          },
+          "firstPredictionFingerprint": "e62b61a675452060398b3d76af93fc42a1230f795fbb76dfa265d207ac5428fe",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 20,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "e24d40e0babebfeb1ca832bce79442beae08c734cc9a866aa1f277240682afa0",
+            "kane": "c4f1387d02da7ab781bfe6ee863f7351db80e7392cf9cf329994cb7d16525ac0"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.7421,
+            "averageBestBackHits": 0.3498,
+            "averageBestTotalHits": 1.0919
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.719579,
+            "averageBestBackHits": 0.318198,
+            "averageBestTotalHits": 1.037777
+          },
+          "duelWins": {
+            "joy": 1126,
+            "kane": 1030,
+            "tie": 597
+          },
+          "firstPredictionFingerprint": "1ab821385e61fc6ffda81303ecd5fbfbc8adc213ce6ecb5570a5df18adba5f1d",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 21,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "b5877887f8335d5322498d0a97e334b2d97163a7864b62e6829e63b152519b60",
+            "kane": "9ff02f37367fb14ff858472e6db58b84013c519bbb1b32def5dbc117d69d843f"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.737014,
+            "averageBestBackHits": 0.322557,
+            "averageBestTotalHits": 1.059571
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.703959,
+            "averageBestBackHits": 0.332365,
+            "averageBestTotalHits": 1.036324
+          },
+          "duelWins": {
+            "joy": 1085,
+            "kane": 1068,
+            "tie": 600
+          },
+          "firstPredictionFingerprint": "243c9bae689d757f671e6f7794565189ab81a2f34bb9ea8d30a38e2a88181b5d",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 22,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "f82643946ecbea7c5090e0183455cd64b0f2cd4f976041917ab543bdb3eb5d96",
+            "kane": "f29093a6e9af5230a68ea3dc89b7bfb4f3b2befdab1ec007a227d189a8c2a4e0"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.724301,
+            "averageBestBackHits": 0.332365,
+            "averageBestTotalHits": 1.056665
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.676716,
+            "averageBestBackHits": 0.341082,
+            "averageBestTotalHits": 1.017799
+          },
+          "duelWins": {
+            "joy": 1116,
+            "kane": 1031,
+            "tie": 606
+          },
+          "firstPredictionFingerprint": "2afa0bb8f2c0b8ea1fc754ab0da9b3c2dd6c2611916843a38c0b21f079bb1a30",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 23,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "f64fdd9f5f479d820951d0283955bddf2cd8deca5af2c39cea30dfeef80096ea",
+            "kane": "7e58f593ae13fe9e3b2a35c77206a37b97f5d58426424f3e4f94b29b3fea17ae"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.706865,
+            "averageBestBackHits": 0.32619,
+            "averageBestTotalHits": 1.033055
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.694515,
+            "averageBestBackHits": 0.324737,
+            "averageBestTotalHits": 1.019252
+          },
+          "duelWins": {
+            "joy": 1080,
+            "kane": 1053,
+            "tie": 620
+          },
+          "firstPredictionFingerprint": "6918a3c4022d95d0c53b2c558d09e1ca9dcd148d954449ab921d925eed462dec",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 24,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "a6e05a3912a9c826707b48e5686bbd4ab35fd93468e6fc4fb8905ad9cf982fbf",
+            "kane": "162a1c0e2b10355893d254cc2ee5b77f469fe0f4eb730f1a1c1eb5bbcdc5ef5f"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.725754,
+            "averageBestBackHits": 0.32401,
+            "averageBestTotalHits": 1.049764
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.709408,
+            "averageBestBackHits": 0.347258,
+            "averageBestTotalHits": 1.056665
+          },
+          "duelWins": {
+            "joy": 1092,
+            "kane": 1081,
+            "tie": 580
+          },
+          "firstPredictionFingerprint": "3462ffca6d1020a876e511a8e3e3a6535620876e3ebc28cd3cac22f0a99c0810",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 25,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "6d790a7b0c62d5c927f9a95ed180be1f012295f2719f43020809c8f3d13dc439",
+            "kane": "144473284ec66feda6c61ddea7811984bcbe78b6aaef21b635659b3d3b6ece93"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.719579,
+            "averageBestBackHits": 0.341446,
+            "averageBestTotalHits": 1.061024
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.731202,
+            "averageBestBackHits": 0.354522,
+            "averageBestTotalHits": 1.085725
+          },
+          "duelWins": {
+            "joy": 1064,
+            "kane": 1134,
+            "tie": 555
+          },
+          "firstPredictionFingerprint": "c0e83f13cee87e56bdae284f2f6d07004a5916ea7c83821f7f4029b865f69a94",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 26,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "67261b4d5b68d6edace5f5f86086562377097f32a1bea6bb792db3755fa82841",
+            "kane": "2060b12cc535595a574b106f765818e10ccacb5f440ffe3bc936d8e46e4ce4a1"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.714857,
+            "averageBestBackHits": 0.335997,
+            "averageBestTotalHits": 1.050854
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.713404,
+            "averageBestBackHits": 0.336724,
+            "averageBestTotalHits": 1.050127
+          },
+          "duelWins": {
+            "joy": 1095,
+            "kane": 1094,
+            "tie": 564
+          },
+          "firstPredictionFingerprint": "8c37842de482ed13a0d927d504080f7ced94d7abf2c74b7afe375aece64015d8",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 27,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "fe0fca417edf1db7861b842c1adea86f216dc88a620baca8c2b0c03178f75f9c",
+            "kane": "d975b86e840a9364173f9735096e84b1751d017c57ddbd23db988181be8d7588"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.752997,
+            "averageBestBackHits": 0.329822,
+            "averageBestTotalHits": 1.082819
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.717762,
+            "averageBestBackHits": 0.336724,
+            "averageBestTotalHits": 1.054486
+          },
+          "duelWins": {
+            "joy": 1117,
+            "kane": 1044,
+            "tie": 592
+          },
+          "firstPredictionFingerprint": "da508a656f437fe3c69aefccab8d269aa53931adb1df19bff7fc3c0398e29359",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 28,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "37a4bbbc91d87a533bf68c0b9bc3eeacc344fe996966613c3bcd75342e77c1ca",
+            "kane": "b7a5296d2ed4e3b2196b5e7c0f110fb85d0bb92838ea183c38110420cdb252c6"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.724664,
+            "averageBestBackHits": 0.344352,
+            "averageBestTotalHits": 1.069016
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.721395,
+            "averageBestBackHits": 0.341809,
+            "averageBestTotalHits": 1.063204
+          },
+          "duelWins": {
+            "joy": 1073,
+            "kane": 1077,
+            "tie": 603
+          },
+          "firstPredictionFingerprint": "d739e681b311e88264d61191928269852a86d79523216935023f46d4c65d7512",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 29,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "f55fcacb6492d4c2e1f9ca822a9627a34e459192ea2c480fc6f623fb3b303184",
+            "kane": "558a2b1494d72b844f086b19a0852b3677def3f870f24fc9fc156ee73a66da3f"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.731929,
+            "averageBestBackHits": 0.324373,
+            "averageBestTotalHits": 1.056302
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.72757,
+            "averageBestBackHits": 0.333818,
+            "averageBestTotalHits": 1.061388
+          },
+          "duelWins": {
+            "joy": 1083,
+            "kane": 1064,
+            "tie": 606
+          },
+          "firstPredictionFingerprint": "84c8e86fcaffab83151e69a3ce858a74f08ed5a4e07d8086986347f434b0b3ab",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 30,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "ee44c22f390b80534ecdd101c47ae9ce317d617bd60ced196aae312a20e45b65",
+            "kane": "a03306100e6c71e96c1920ba847f6924d09a9658d580d201e18077873fdfd4ff"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.731566,
+            "averageBestBackHits": 0.346531,
+            "averageBestTotalHits": 1.078097
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.711587,
+            "averageBestBackHits": 0.341446,
+            "averageBestTotalHits": 1.053033
+          },
+          "duelWins": {
+            "joy": 1095,
+            "kane": 1057,
+            "tie": 601
+          },
+          "firstPredictionFingerprint": "96fb0aeea126356ce06dec95c5082880e1f7a6164e44f3c7e0ed92ff92c1f44a",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 31,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "87948daafbc7b1d5b41e79ced17a6255893d9e63c5bdf4d3cb40b4f7904e7f58",
+            "kane": "52d534c1502b89a56332b7414bb8c8a6df8e63c13a33db5271161158ff3b39bd"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.729023,
+            "averageBestBackHits": 0.339993,
+            "averageBestTotalHits": 1.069016
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.707228,
+            "averageBestBackHits": 0.330185,
+            "averageBestTotalHits": 1.037414
+          },
+          "duelWins": {
+            "joy": 1115,
+            "kane": 1074,
+            "tie": 564
+          },
+          "firstPredictionFingerprint": "aa8779710aab77f8d424f20f84ede184edf2f3dbaa923a31f77ec3886784bb04",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 32,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "1d960ece05523ee5e507e65e9cc366f0bb08d1ec006156a5baa1dd15f91a8a54",
+            "kane": "09f8c1f1aaaad2cec91fadf81659a8bfe497c886308b84722d94c111f9c3f4ef"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.709045,
+            "averageBestBackHits": 0.326553,
+            "averageBestTotalHits": 1.035598
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.710498,
+            "averageBestBackHits": 0.329822,
+            "averageBestTotalHits": 1.04032
+          },
+          "duelWins": {
+            "joy": 1060,
+            "kane": 1079,
+            "tie": 614
+          },
+          "firstPredictionFingerprint": "aa01103859a9486a3824bce0604c62208943f4d90c3308ad0650ce6c408773eb",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 33,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "c887dd0074062e5320571867741b3977bf98eb76f81bd87a536105cba2a56f09",
+            "kane": "9431861ac946e5836928355fed700e1e9e5289d4d1d91e8e6b8210d576b5bf62"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.753723,
+            "averageBestBackHits": 0.340356,
+            "averageBestTotalHits": 1.094079
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.70069,
+            "averageBestBackHits": 0.329822,
+            "averageBestTotalHits": 1.030512
+          },
+          "duelWins": {
+            "joy": 1152,
+            "kane": 1033,
+            "tie": 568
+          },
+          "firstPredictionFingerprint": "48a71ba15d943cea55277df48271c8ea503c053eaeefa039d0bd0d4adc759971",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 34,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "d0b0865d0a57cf64a5b2f887385bb90f1bd87ec4beb285358c85e14e3ffe9155",
+            "kane": "a64f2e19941a60d59d9e704d8a548d22cc518905870f274164cca5a8a3bae2a3"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.711951,
+            "averageBestBackHits": 0.34871,
+            "averageBestTotalHits": 1.060661
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.721758,
+            "averageBestBackHits": 0.336724,
+            "averageBestTotalHits": 1.058482
+          },
+          "duelWins": {
+            "joy": 1065,
+            "kane": 1091,
+            "tie": 597
+          },
+          "firstPredictionFingerprint": "4cbfa4c228141bb8dcdddf0a529cb69080c4ad395869a9158063b653129d680d",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 35,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "f3a7c60526fbe161dc5580c131c851a627f8d0f07661e1e51303b81b406c6484",
+            "kane": "ba9e74388eaf2c065d5b21c321e6887507b84c60ad6c3bc80197cc1457cc44a1"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.706502,
+            "averageBestBackHits": 0.346531,
+            "averageBestTotalHits": 1.053033
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.737377,
+            "averageBestBackHits": 0.328006,
+            "averageBestTotalHits": 1.065383
+          },
+          "duelWins": {
+            "joy": 1079,
+            "kane": 1103,
+            "tie": 571
+          },
+          "firstPredictionFingerprint": "420063c7209a04549a881ed1c2cc063681fbd0c3b1a831ecdd93012a40c3ace5",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 36,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "6d7e0d028950fd0daf13185042724604cadc71ca28e701d9597556d071ed0d5c",
+            "kane": "e26e419c9855b55988c03510cb25136f8059dcb2217101ed0cebf77e0425045f"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.700327,
+            "averageBestBackHits": 0.340356,
+            "averageBestTotalHits": 1.040683
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.691246,
+            "averageBestBackHits": 0.325826,
+            "averageBestTotalHits": 1.017072
+          },
+          "duelWins": {
+            "joy": 1099,
+            "kane": 1059,
+            "tie": 595
+          },
+          "firstPredictionFingerprint": "a2970d18ab1ffdab9018397f9b4c0e8c5c44d17d7ee646cdfc6b61512f42efcb",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 37,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "6936768cfccf54d240ee8233f11a4899a5cf71842a92e5689f6401770b6f76a0",
+            "kane": "b0bd20e2077305e0543cf718f1a3e83f99887eb224f665fd9bad3e09db412487"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.732292,
+            "averageBestBackHits": 0.330548,
+            "averageBestTotalHits": 1.062841
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.719942,
+            "averageBestBackHits": 0.342172,
+            "averageBestTotalHits": 1.062114
+          },
+          "duelWins": {
+            "joy": 1085,
+            "kane": 1073,
+            "tie": 595
+          },
+          "firstPredictionFingerprint": "d9010dcaee2104b2094022b024f44e426b512bd3b9af3e28a08d0d16aa4d2c05",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 38,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "24d5a64a73a6ded588a007e3fc151f2ab3cea5ec48efb4846a62db5f619ce345",
+            "kane": "555ce61fcc07695f8abbc7a9ebe61484098fdd9286e52b51a26e5fbe7bbda206"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.730113,
+            "averageBestBackHits": 0.322194,
+            "averageBestTotalHits": 1.052307
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.718489,
+            "averageBestBackHits": 0.34871,
+            "averageBestTotalHits": 1.067199
+          },
+          "duelWins": {
+            "joy": 1066,
+            "kane": 1066,
+            "tie": 621
+          },
+          "firstPredictionFingerprint": "5dceef77e9956e024853b27f1467bf1f11f3e3d2c9dad384c13088b3820b62ea",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 39,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "2268c3f142213120a3a5d8170f93f7a385a693db1d9e01f56f6f556905a7b517",
+            "kane": "e6a785e4ec796465e484c6659915b345938db572c6aa8f5e29c59b23128f3cac"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.705412,
+            "averageBestBackHits": 0.337813,
+            "averageBestTotalHits": 1.043226
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.723938,
+            "averageBestBackHits": 0.334544,
+            "averageBestTotalHits": 1.058482
+          },
+          "duelWins": {
+            "joy": 1050,
+            "kane": 1103,
+            "tie": 600
+          },
+          "firstPredictionFingerprint": "ba41330476740b6795a505a029b0a7d78d488f5f50e207c8014ae2227735d137",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 40,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "f54361bc1069f5e2cc6aa3fccf8a4cc5737f7861f19f2b2f3ee04a127aa96353",
+            "kane": "ab29d8bf1ad3ad4fc7d307aa7a05a0a311950d19ac9e49ad1cfbafef439f1d8c"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.718489,
+            "averageBestBackHits": 0.342535,
+            "averageBestTotalHits": 1.061024
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.740283,
+            "averageBestBackHits": 0.335271,
+            "averageBestTotalHits": 1.075554
+          },
+          "duelWins": {
+            "joy": 1067,
+            "kane": 1111,
+            "tie": 575
+          },
+          "firstPredictionFingerprint": "af5c79b06f9034452f307b1b7632228d18f3d642a15fc3d8f51535a718d1b03c",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 41,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "fdb470a30de2ced394b3e53dd1026f1f8a8fdd2ab4a23646fa7e4622c6eb4739",
+            "kane": "7983c85842f9f681f99cf0d6c0676607b6771df6217b468460415c6302de6635"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.72648,
+            "averageBestBackHits": 0.321467,
+            "averageBestTotalHits": 1.047948
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.717036,
+            "averageBestBackHits": 0.32401,
+            "averageBestTotalHits": 1.041046
+          },
+          "duelWins": {
+            "joy": 1083,
+            "kane": 1072,
+            "tie": 598
+          },
+          "firstPredictionFingerprint": "cb2427e1b024c45d11ff1a39c42177533841955a506cee2aae44a68c4d273a64",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 42,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "305b14bb1ca49cb48e404ec3bc95061d5b28f7e1072bd68276a6a77e473bf9c1",
+            "kane": "c4032c4ec06944a598c269053f894056ee7e76c33fec48afd12b00913655fabe"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.711587,
+            "averageBestBackHits": 0.329459,
+            "averageBestTotalHits": 1.041046
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.691972,
+            "averageBestBackHits": 0.320015,
+            "averageBestTotalHits": 1.011987
+          },
+          "duelWins": {
+            "joy": 1128,
+            "kane": 1052,
+            "tie": 573
+          },
+          "firstPredictionFingerprint": "093913d0eb3ccc3ff01dc48c9dc4ddcf27f4d023d107949e2e01b919fee79f90",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 43,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "73aaf0ba1c57b35cc68e067bd2194490517e84a3845e782edc316e9277388b53",
+            "kane": "74c9ecef095638aa544a01f43fe3a61bee5ebdde2878efbbf4eb4b470672d6a4"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.725027,
+            "averageBestBackHits": 0.346894,
+            "averageBestTotalHits": 1.071922
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.71522,
+            "averageBestBackHits": 0.332728,
+            "averageBestTotalHits": 1.047948
+          },
+          "duelWins": {
+            "joy": 1078,
+            "kane": 1048,
+            "tie": 627
+          },
+          "firstPredictionFingerprint": "a6947a15fb18a9a433368e9199b5b0633059f6d533176c9ddf5e9c3a9c707b84",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 44,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "5aaee790aa2b944d3c8079c459cce99ecee5ce39b19de4c48b9d4aa81f881386",
+            "kane": "704686ea9f255f5aa908cde2e4ea3195f3cb522c7427d56800992dac9dac01aa"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.729386,
+            "averageBestBackHits": 0.341809,
+            "averageBestTotalHits": 1.071195
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.714493,
+            "averageBestBackHits": 0.335997,
+            "averageBestTotalHits": 1.05049
+          },
+          "duelWins": {
+            "joy": 1099,
+            "kane": 1060,
+            "tie": 594
+          },
+          "firstPredictionFingerprint": "3af12672b2128f6129d3a07fc49d4f44e939996bf9b70827eaf95a9997ea9e69",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 45,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "e784edaaa49c73de54c9d0af856d568df7a3afb46d3db22fe75d2ef1c5569dcd",
+            "kane": "25517b3539a6de269344b7b57460cb2be04e3ef07b4b81e3d46ae02afd9bc770"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.723211,
+            "averageBestBackHits": 0.329459,
+            "averageBestTotalHits": 1.05267
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.719215,
+            "averageBestBackHits": 0.332365,
+            "averageBestTotalHits": 1.05158
+          },
+          "duelWins": {
+            "joy": 1078,
+            "kane": 1058,
+            "tie": 617
+          },
+          "firstPredictionFingerprint": "6ae7912c1e3081530fd927234944463f945569be1312d6a850cd0bb14dc616b3",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 46,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "626701142ed5de8eb66d95da0dd6869b9ac4bc801f71652b3006c7d2f6144edf",
+            "kane": "98368d20243aa0011760b3ef461925dce3f9758ae2d07efa22baf9652b1c2189"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.743552,
+            "averageBestBackHits": 0.336724,
+            "averageBestTotalHits": 1.080276
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.719942,
+            "averageBestBackHits": 0.331638,
+            "averageBestTotalHits": 1.05158
+          },
+          "duelWins": {
+            "joy": 1123,
+            "kane": 1070,
+            "tie": 560
+          },
+          "firstPredictionFingerprint": "3b51d89ebd655dcb8f87713c99488e260458e4660952eba06623f569221feabe",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 47,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "63976d0988d762e53e03bce2701a33a938e17f155378709f36649eadf0c44e9c",
+            "kane": "5601f204c38a1f88a865c45e350ba07f86c6f557eac4f105effe22223e3da39d"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.698147,
+            "averageBestBackHits": 0.328732,
+            "averageBestTotalHits": 1.02688
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.742826,
+            "averageBestBackHits": 0.320015,
+            "averageBestTotalHits": 1.062841
+          },
+          "duelWins": {
+            "joy": 1021,
+            "kane": 1120,
+            "tie": 612
+          },
+          "firstPredictionFingerprint": "865dcd79c27860243118f30539e8d803e60c9b6fd4881a5af657da19f071de29",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 48,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "14d808a42861457dd164b39da21ac212284ebf542675912ea6ddc2911ca1cb3d",
+            "kane": "715ba53b7461bae6c8cbb00e9f5de6aff4cdb971979c44c4dfe110f71e5440d2"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.741736,
+            "averageBestBackHits": 0.346894,
+            "averageBestTotalHits": 1.088631
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.714493,
+            "averageBestBackHits": 0.329822,
+            "averageBestTotalHits": 1.044315
+          },
+          "duelWins": {
+            "joy": 1100,
+            "kane": 1048,
+            "tie": 605
+          },
+          "firstPredictionFingerprint": "4c494114a1415b98b433e9b16d9591b14372b9f68b0eeab4ef85793b2a9dab43",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 49,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "2e284f5a67f298e8d53b42caa0687e61ff3edeb8f11abaf4b69e34e023369d6c",
+            "kane": "fb9aa4f216350763fe4e5bc9fa84af43b3c6e19e68f7de27738777d2f36fdde8"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.703233,
+            "averageBestBackHits": 0.33854,
+            "averageBestTotalHits": 1.041773
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.704323,
+            "averageBestBackHits": 0.342172,
+            "averageBestTotalHits": 1.046495
+          },
+          "duelWins": {
+            "joy": 1091,
+            "kane": 1092,
+            "tie": 570
+          },
+          "firstPredictionFingerprint": "0410e44a5349311428d146906ab481d026e1b42c07c41c7e881ebb2c3f82895e",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 50,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "148b083d768153c4b11a155b3957a69d224bd7edc1bd4ebae9e0307f05d469e8",
+            "kane": "703eabc31433df2787a4e5713e591bfb00354d7b5d8cec56be76548b09f15f41"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.725027,
+            "averageBestBackHits": 0.331638,
+            "averageBestTotalHits": 1.056665
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.731566,
+            "averageBestBackHits": 0.341446,
+            "averageBestTotalHits": 1.073011
+          },
+          "duelWins": {
+            "joy": 1095,
+            "kane": 1055,
+            "tie": 603
+          },
+          "firstPredictionFingerprint": "61fab792862ad81228075976335b7453083f7de417e523424ebce3469953239c",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 51,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "f4624e79854f2254fb9c74c9cfe12a285242cf0d70b60a91cad54606c34c506c",
+            "kane": "472fd70ff64a4a2bb8c24ded5aca302a41b134d2678dd8e0d4c83a4e00293ed9"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.713404,
+            "averageBestBackHits": 0.361787,
+            "averageBestTotalHits": 1.075191
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.711587,
+            "averageBestBackHits": 0.334181,
+            "averageBestTotalHits": 1.045768
+          },
+          "duelWins": {
+            "joy": 1090,
+            "kane": 1057,
+            "tie": 606
+          },
+          "firstPredictionFingerprint": "18a72787d82815f46f59dcba37bac9af838a45218480b72d7dbb1eeb36a09d7e",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 52,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "01b3697836cba25865d7f5c2d5cf033bddef1cddfb1b1f7971f8c2d2ae71af9f",
+            "kane": "51ac7de78bf52e3c730fe36d1e0da76db42ca8a48fac04d2dab10d4c248a10d9"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.709045,
+            "averageBestBackHits": 0.3498,
+            "averageBestTotalHits": 1.058845
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.695242,
+            "averageBestBackHits": 0.345078,
+            "averageBestTotalHits": 1.04032
+          },
+          "duelWins": {
+            "joy": 1096,
+            "kane": 1059,
+            "tie": 598
+          },
+          "firstPredictionFingerprint": "b337928168700820826ee143093b29458e57cf130d29665f3d665d00eec724d9",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 53,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "13a2b0359c2e96826ffc4c2761031393983b2c5c8773c6722d4e7f7ff0880392",
+            "kane": "6abc1a93c07b659a46c83fed100c2b043986fffb2e3714999a4ed29570aa7e60"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.733382,
+            "averageBestBackHits": 0.317472,
+            "averageBestTotalHits": 1.050854
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.711224,
+            "averageBestBackHits": 0.324373,
+            "averageBestTotalHits": 1.035598
+          },
+          "duelWins": {
+            "joy": 1132,
+            "kane": 1051,
+            "tie": 570
+          },
+          "firstPredictionFingerprint": "a6e33e50836dd7ac0858773f052f627014d62f3cd8241f3c1e3fcc40883205a1",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 54,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "892653595395738f77691e7579dc6a05f9b9558676e5d9479e5b6fc7f3f5ed34",
+            "kane": "e71809c30320591ab73b40f549d9ef25d6c97ba788ec6d83cf0f9d999af08133"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.705049,
+            "averageBestBackHits": 0.329459,
+            "averageBestTotalHits": 1.034508
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.722485,
+            "averageBestBackHits": 0.318925,
+            "averageBestTotalHits": 1.041409
+          },
+          "duelWins": {
+            "joy": 1068,
+            "kane": 1086,
+            "tie": 599
+          },
+          "firstPredictionFingerprint": "be8f9ff13cf0fff670672dd7d09c7748e52c2df81aabd44cb89a3028a6594d15",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 55,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "cdb15328a8af1aaf94d50027e85cb81d1f0806aae04f6c49989984d946aea452",
+            "kane": "ce8730bfa7b921fb56819a9fb894694a937ab54db0b831a5134ec4c9bc07a393"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.710861,
+            "averageBestBackHits": 0.349074,
+            "averageBestTotalHits": 1.059935
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.706139,
+            "averageBestBackHits": 0.329459,
+            "averageBestTotalHits": 1.035598
+          },
+          "duelWins": {
+            "joy": 1082,
+            "kane": 1084,
+            "tie": 587
+          },
+          "firstPredictionFingerprint": "f6259cbcfd378076fafff78abfe0e66c672ff41bdef05f5cbccf6b5079c8ef6b",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 56,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "3ee5261a23bfbe541c6e155ef007e3d86c84f3c7a385bbcb7d2c279384a0da3a",
+            "kane": "69293f72cad5e4266008b7e97e9a9fe4a0c818b7af2cd3489fe3a56b49de6301"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.727207,
+            "averageBestBackHits": 0.345078,
+            "averageBestTotalHits": 1.072285
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.691609,
+            "averageBestBackHits": 0.323647,
+            "averageBestTotalHits": 1.015256
+          },
+          "duelWins": {
+            "joy": 1113,
+            "kane": 1031,
+            "tie": 609
+          },
+          "firstPredictionFingerprint": "3850a5080e5eab1fdbd2d84b96e958f3fe40364d7f5510d96e2dbd8adb25c629",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 57,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "9e85220fd58f64967ad70bab4fc527fc54f5d7ea864cf2eb36e9b6b97faef14e",
+            "kane": "166ea0da19bb921826ee8a92d36752e0ea9a5b33b4666926f698c240bf8208e3"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.717399,
+            "averageBestBackHits": 0.347984,
+            "averageBestTotalHits": 1.065383
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.71522,
+            "averageBestBackHits": 0.315292,
+            "averageBestTotalHits": 1.030512
+          },
+          "duelWins": {
+            "joy": 1104,
+            "kane": 1066,
+            "tie": 583
+          },
+          "firstPredictionFingerprint": "a6d7cc72255f1abcb89d493929da41b5427accd29489d79d7d88f8df10fe4530",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 58,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "7d9176c18c904a2d3cf862fb5f6174821755a18fa6a7d765c549d5c6b0a3649f",
+            "kane": "54a4f3f1ad18d758cbb30cd89b6ec65964f8f456332747551889cb78afd67f70"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.734108,
+            "averageBestBackHits": 0.3498,
+            "averageBestTotalHits": 1.083908
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.716309,
+            "averageBestBackHits": 0.340719,
+            "averageBestTotalHits": 1.057029
+          },
+          "duelWins": {
+            "joy": 1121,
+            "kane": 1073,
+            "tie": 559
+          },
+          "firstPredictionFingerprint": "b0a72d9f31ff2889836ac0de2273b4061b4d28eb2aab589ed64b8a1b62a13fdf",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 59,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "4faa467a80b1c9e714ec5716dc23b46263a77e4c9112d68c1243439e21666a49",
+            "kane": "fe322794c46cbaf6b5826b906ecc8d71e84b872ed1a1ef71e64a2111241b0d46"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.731202,
+            "averageBestBackHits": 0.318198,
+            "averageBestTotalHits": 1.049401
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.717399,
+            "averageBestBackHits": 0.318925,
+            "averageBestTotalHits": 1.036324
+          },
+          "duelWins": {
+            "joy": 1083,
+            "kane": 1090,
+            "tie": 580
+          },
+          "firstPredictionFingerprint": "4cb349f0c5fad8b1a6d3bdab75c17da285d8da6d89352915e762af86829e26b6",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 60,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "fef0488ec3878d8898d195547ec34cccf49e2982879ac3631965bbcafbfb15a8",
+            "kane": "db528783f7c5efe3d53861d5f2c1d52606db1d351c97d4cfd336120d0b0612de"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.717036,
+            "averageBestBackHits": 0.349437,
+            "averageBestTotalHits": 1.066473
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.711224,
+            "averageBestBackHits": 0.340719,
+            "averageBestTotalHits": 1.051943
+          },
+          "duelWins": {
+            "joy": 1079,
+            "kane": 1079,
+            "tie": 595
+          },
+          "firstPredictionFingerprint": "115b1c416d7627a0c55ebae8dd9d8ed89b5d19b5c83bd056a1a6b8ef66652463",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 61,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "cd2e6dcb56c286f3fb66191aacfb7e6b45d218ff9848c9ff37802d636a1e49a1",
+            "kane": "18e93b7570b1b214ae9f52ca5ef30aecdbb30bfdb754f5b4296699416ba29b75"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.703959,
+            "averageBestBackHits": 0.338903,
+            "averageBestTotalHits": 1.042862
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.728296,
+            "averageBestBackHits": 0.339993,
+            "averageBestTotalHits": 1.068289
+          },
+          "duelWins": {
+            "joy": 1049,
+            "kane": 1081,
+            "tie": 623
+          },
+          "firstPredictionFingerprint": "02dd1e42582a614925d45c1433aca4c0c99cdf62105a83a9b43384681de8943f",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 62,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "af54cc02f7cdae9badc70b32bf6a7442af024a12fe48ae3affcd5badf6ff403c",
+            "kane": "1f37d1562694c0cb56bcfde5ddb9115a1a621dda7fe1b4d149c65d62bd4352be"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.716673,
+            "averageBestBackHits": 0.328369,
+            "averageBestTotalHits": 1.045042
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.744642,
+            "averageBestBackHits": 0.334181,
+            "averageBestTotalHits": 1.078823
+          },
+          "duelWins": {
+            "joy": 1057,
+            "kane": 1110,
+            "tie": 586
+          },
+          "firstPredictionFingerprint": "0f9d10d933af75f8af9c5f7a66b1dd2bce4c46991295e48cd9954c44b29554a3",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 63,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "875c3af2a573381a307d9f605857746da01188b2c39ba921411347ef6223e0dd",
+            "kane": "fc6e036b1f09e081ee9b00a200b6d9370f0eaf85d76430bc888b8b16281f214c"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.704686,
+            "averageBestBackHits": 0.335634,
+            "averageBestTotalHits": 1.04032
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.687977,
+            "averageBestBackHits": 0.331275,
+            "averageBestTotalHits": 1.019252
+          },
+          "duelWins": {
+            "joy": 1113,
+            "kane": 1057,
+            "tie": 583
+          },
+          "firstPredictionFingerprint": "70132d9a570cddcb26ce126afa3cf4524d0c365d008ad1c8765a762ff5ffcd83",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 64,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "7c56c86601d4e326415689530a6adb8eeffbb12d55b2a49de6916e371371ea11",
+            "kane": "ced173941252affdca072d9076fe1b716b3859db5b749cb535bff9274779a020"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.717036,
+            "averageBestBackHits": 0.344715,
+            "averageBestTotalHits": 1.061751
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.721032,
+            "averageBestBackHits": 0.341809,
+            "averageBestTotalHits": 1.062841
+          },
+          "duelWins": {
+            "joy": 1099,
+            "kane": 1064,
+            "tie": 590
+          },
+          "firstPredictionFingerprint": "34fd7b3d519c07283376455e8d6881d404a001dddce95a27315c85e2b8b00197",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 65,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "901663f030dc9a0e70f521aca008de11efd382bda227836f83e127bafb5011a4",
+            "kane": "706a00de6f2b37b65f206ec49f78114f94894d33a7e152318be1790487ebb440"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.72866,
+            "averageBestBackHits": 0.330185,
+            "averageBestTotalHits": 1.058845
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.721395,
+            "averageBestBackHits": 0.343625,
+            "averageBestTotalHits": 1.06502
+          },
+          "duelWins": {
+            "joy": 1088,
+            "kane": 1078,
+            "tie": 587
+          },
+          "firstPredictionFingerprint": "cd0bb59097b5790f83f023eaeb1f41a66202b5b675d6dbf988d2ad2df78e47fc",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 66,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "45f2ed84d6ee2f937fdde988aaa63579073a535f6b771a962023a9bf7ecae85d",
+            "kane": "625703ba33179e1484e6ea083973c9fa49130ff88d0a7f50b519bec778382f61"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.689066,
+            "averageBestBackHits": 0.345078,
+            "averageBestTotalHits": 1.034145
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.712677,
+            "averageBestBackHits": 0.333091,
+            "averageBestTotalHits": 1.045768
+          },
+          "duelWins": {
+            "joy": 1061,
+            "kane": 1102,
+            "tie": 590
+          },
+          "firstPredictionFingerprint": "11cfaee9582550cb2bc65bc8f81bdb8b290dee0dad5c285cf3a16ad1af5f7537",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 67,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "4e4122cb36e1a08c7d678d18cd9f97d3e071a7d398af80b15400d85908f9837b",
+            "kane": "d2d53d85d0eee93c27692905ca81736fa050589e86c7285ee44484066771b40d"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.714493,
+            "averageBestBackHits": 0.332365,
+            "averageBestTotalHits": 1.046858
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.704686,
+            "averageBestBackHits": 0.347621,
+            "averageBestTotalHits": 1.052307
+          },
+          "duelWins": {
+            "joy": 1097,
+            "kane": 1072,
+            "tie": 584
+          },
+          "firstPredictionFingerprint": "0b9263a3eb07581b3890af9cc5df7e4ec1f7ba64f7c7906877adbe5327565662",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 68,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "9723f3a664a57d8fbf66313c4b2c01034d2d19f1fb42f77f96d2ce5c6eefe3e8",
+            "kane": "1ed8629d23e7d0c9461f31de281799e292760aec3b1bf6b2b7a879bb9fc51bce"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.713767,
+            "averageBestBackHits": 0.33636,
+            "averageBestTotalHits": 1.050127
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.716673,
+            "averageBestBackHits": 0.33745,
+            "averageBestTotalHits": 1.054123
+          },
+          "duelWins": {
+            "joy": 1081,
+            "kane": 1073,
+            "tie": 599
+          },
+          "firstPredictionFingerprint": "1156f93fb7d4433ec7361129c600caab900ee9a0f267b953cd780150cfe212b0",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 69,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "07524b7434cb9a5e17f8eecebd86403219675bb1d280ed25ef086f868c1ebe0b",
+            "kane": "7f0c40ff54ec2aad155786a935c61d09d5298d056553479fdf44538ec66be619"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.731202,
+            "averageBestBackHits": 0.347621,
+            "averageBestTotalHits": 1.078823
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.733745,
+            "averageBestBackHits": 0.337813,
+            "averageBestTotalHits": 1.071558
+          },
+          "duelWins": {
+            "joy": 1118,
+            "kane": 1097,
+            "tie": 538
+          },
+          "firstPredictionFingerprint": "e53175790d705efc500df1bd0ef386e34a1b9acfdae8bbbbdd6e4903b99bf247",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 70,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "213cb665a4fcafbc825a5edcab2d15270753bf28dc1518d0c15bb09017031326",
+            "kane": "f1c6661440114f8e2b9428b82e3cd7921f8d667016f50725b1704106cca9a79c"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.723574,
+            "averageBestBackHits": 0.3251,
+            "averageBestTotalHits": 1.048674
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.698511,
+            "averageBestBackHits": 0.343988,
+            "averageBestTotalHits": 1.042499
+          },
+          "duelWins": {
+            "joy": 1113,
+            "kane": 1084,
+            "tie": 556
+          },
+          "firstPredictionFingerprint": "c13b5ad9fd78d9616ee1753efa05f44f306e1dfe50657d4d4eadef1cbee18ad1",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 71,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "be13be6c637d90b00fcc77dce4388e3f70982b7488d39aebce7d7fbf11e441cd",
+            "kane": "9646ba81dea06a8c9a406cf5aeaee90c4cc9edd5cf4dbe78a7d9282c7d872070"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.715946,
+            "averageBestBackHits": 0.339629,
+            "averageBestTotalHits": 1.055576
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.722848,
+            "averageBestBackHits": 0.320378,
+            "averageBestTotalHits": 1.043226
+          },
+          "duelWins": {
+            "joy": 1058,
+            "kane": 1068,
+            "tie": 627
+          },
+          "firstPredictionFingerprint": "06abf88f5b15b71dfbc575048a248d352b741ac75fa12bd0bcabcbfebd3030b1",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 72,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "83be4903a2a1cb9db9099b7d2d08f9c33b7e062e12c36a63338117113bbfbd71",
+            "kane": "fede43b02f0630a84aac12edea3a47c2baad32287a9c63229a635e20796d79ba"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.730113,
+            "averageBestBackHits": 0.33636,
+            "averageBestTotalHits": 1.066473
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.727933,
+            "averageBestBackHits": 0.339266,
+            "averageBestTotalHits": 1.067199
+          },
+          "duelWins": {
+            "joy": 1095,
+            "kane": 1078,
+            "tie": 580
+          },
+          "firstPredictionFingerprint": "6ff82089a5e3d398064b3fd7e62596f53420abcd7f0187251cd577f01d36694f",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 73,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "b3ccc738d8c42253071c8f76f7caafd99e8a92333e00fda720e1e0cb5a547ad2",
+            "kane": "3157c4558f2fe6c32bf82ed4637d5880d2d8fbfa3f8655b09b860f1129ed5304"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.703596,
+            "averageBestBackHits": 0.335271,
+            "averageBestTotalHits": 1.038867
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.722848,
+            "averageBestBackHits": 0.339629,
+            "averageBestTotalHits": 1.062477
+          },
+          "duelWins": {
+            "joy": 1059,
+            "kane": 1070,
+            "tie": 624
+          },
+          "firstPredictionFingerprint": "7e77c153dcc580022c837e771d040aea37f3d3c72a3cabde9ce715d7db0ad9a8",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 74,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "1f460264d0454aacfda82c6996b9d0d999d2833e76acee8a772844005179e370",
+            "kane": "cc4887002bf7c65a26768b11e80558f26a4db810d4e0556a3dd9b29bf051dea8"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.706502,
+            "averageBestBackHits": 0.340356,
+            "averageBestTotalHits": 1.046858
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.709045,
+            "averageBestBackHits": 0.336724,
+            "averageBestTotalHits": 1.045768
+          },
+          "duelWins": {
+            "joy": 1097,
+            "kane": 1087,
+            "tie": 569
+          },
+          "firstPredictionFingerprint": "e79f7cf9ec346bca7f70922c6681a4a45f9ae83f8873ce3cf0fb1ada497b2611",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 75,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "1cda758966f92c66a258edf4b6c172f8ff73847d927fee11dc7cf69f4bc7de89",
+            "kane": "45db2d8dffef677aaf15872cc425dfe5f36a6b383d7789ea6b00642889d85ba3"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.71413,
+            "averageBestBackHits": 0.335634,
+            "averageBestTotalHits": 1.049764
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.714493,
+            "averageBestBackHits": 0.33745,
+            "averageBestTotalHits": 1.051943
+          },
+          "duelWins": {
+            "joy": 1086,
+            "kane": 1089,
+            "tie": 578
+          },
+          "firstPredictionFingerprint": "8f7a8961409bc1bf27d11d3c0723eab77f1ed30476b2efbca32e87b7b52a50c7",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 76,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "ffb154afa4bd6fc7ce12b891c27cd54a99e609e363d58f65f81093e1314bc1c7",
+            "kane": "add6f95d19439a9f8307590d73725fc3ec65f1ea021036eaa2df78070de7aa17"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.735561,
+            "averageBestBackHits": 0.335997,
+            "averageBestTotalHits": 1.071558
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.736651,
+            "averageBestBackHits": 0.33854,
+            "averageBestTotalHits": 1.075191
+          },
+          "duelWins": {
+            "joy": 1075,
+            "kane": 1090,
+            "tie": 588
+          },
+          "firstPredictionFingerprint": "b2dbc6033af93baaf1c893710936df30e22cd4d7d11cdf78e5ea169aad339eeb",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 77,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "c8d64c24330e6d74916991921129c44a7a923370e433fbe6681277369a6e76d8",
+            "kane": "4069b6504a9baf2e03584c44bccdf171a4526d9f31d720ab26352a017a8c226e"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.739194,
+            "averageBestBackHits": 0.335634,
+            "averageBestTotalHits": 1.074827
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.699964,
+            "averageBestBackHits": 0.330912,
+            "averageBestTotalHits": 1.030875
+          },
+          "duelWins": {
+            "joy": 1145,
+            "kane": 1062,
+            "tie": 546
+          },
+          "firstPredictionFingerprint": "f99862e3ade735ba1782d0d178e8981679242e09605acf948d9c4ba57b74ff59",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 78,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "66d4f19ab53fc4762be8e5cc15142005f76abb1f6d057cd70daab96383c72d32",
+            "kane": "b06707071bdb24f7741be7fa8d0aeb307897614649d1bd9d0524216893d88390"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.698874,
+            "averageBestBackHits": 0.324737,
+            "averageBestTotalHits": 1.023611
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.739194,
+            "averageBestBackHits": 0.345805,
+            "averageBestTotalHits": 1.084998
+          },
+          "duelWins": {
+            "joy": 1044,
+            "kane": 1141,
+            "tie": 568
+          },
+          "firstPredictionFingerprint": "50e62f9ef9f3a700e2324fddfe9086a76e82f8dc22ab9d6f401990dd3581145b",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 79,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "5f68562e7d01bd305f69e6f6539f127502736328ee23b72ce86b629e60ffee1a",
+            "kane": "69a1ec0c8fd03614e006646f6c90e8b63106cd96a702cf3207989080eedb2c23"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.733745,
+            "averageBestBackHits": 0.347621,
+            "averageBestTotalHits": 1.081366
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.707955,
+            "averageBestBackHits": 0.335271,
+            "averageBestTotalHits": 1.043226
+          },
+          "duelWins": {
+            "joy": 1110,
+            "kane": 1042,
+            "tie": 601
+          },
+          "firstPredictionFingerprint": "8d29e166a05b9ecfd1f9ca5b1405a69af3f993c93e137ec1cc1c2215b82fc917",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 80,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "4b8176d165ea276985faf7be6a2d08354b4d60582792616f710850eec2c93058",
+            "kane": "04b240ff24d431534235757d0906e2a3b7100308fa2b85d1d8e3ced6f1cb395b"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.719942,
+            "averageBestBackHits": 0.328006,
+            "averageBestTotalHits": 1.047948
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.709045,
+            "averageBestBackHits": 0.331638,
+            "averageBestTotalHits": 1.040683
+          },
+          "duelWins": {
+            "joy": 1098,
+            "kane": 1096,
+            "tie": 559
+          },
+          "firstPredictionFingerprint": "b3cffac940342b3cdb87d45b5e43a3f782c160dbd6ebef6a60a962d68bf30ce1",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 81,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "e655f76a38ef52e2fc1a3392f2c8812206da394833d8c56b7135e16be33c208d",
+            "kane": "9bc1188601defd6ede654d343015b9dc5073e409502fde6a6e2a9d2272b23775"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.715583,
+            "averageBestBackHits": 0.33636,
+            "averageBestTotalHits": 1.051943
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.705049,
+            "averageBestBackHits": 0.339266,
+            "averageBestTotalHits": 1.044315
+          },
+          "duelWins": {
+            "joy": 1067,
+            "kane": 1057,
+            "tie": 629
+          },
+          "firstPredictionFingerprint": "c055823d864ae83a7f53d10fd4e64ec98fa31fbc4a0116f2826e8ad09736a5b3",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 82,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "7784de83ff6682a0080f56b7fd5821b17fe2f951fa6c7e3c5c3795fb96a6d2b4",
+            "kane": "e224557af72f9264d832186f3cab0e1ca45601f825bd4947ea09e419565dcd5f"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.703596,
+            "averageBestBackHits": 0.336724,
+            "averageBestTotalHits": 1.04032
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.690883,
+            "averageBestBackHits": 0.325463,
+            "averageBestTotalHits": 1.016346
+          },
+          "duelWins": {
+            "joy": 1085,
+            "kane": 1074,
+            "tie": 594
+          },
+          "firstPredictionFingerprint": "b42f41ac0de7426f4638fd37e170a581dcf2ca2d9dbae1b1dcafd2e6e659f7bd",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 83,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "62147894c74586746f83ef3bdea75a290132fae04aa79fa7c6dc5d76f255db4b",
+            "kane": "df813f84aa9f04358d4d7b39f70b8f8cf5ecd8bf1c5474c3cfd6704102b57600"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.714857,
+            "averageBestBackHits": 0.339993,
+            "averageBestTotalHits": 1.054849
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.696695,
+            "averageBestBackHits": 0.325463,
+            "averageBestTotalHits": 1.022158
+          },
+          "duelWins": {
+            "joy": 1106,
+            "kane": 1015,
+            "tie": 632
+          },
+          "firstPredictionFingerprint": "367d0156d5383fc19cb13772baf0aaf067c33f9992c904fff0c219066b58cf4f",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 84,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "7b486cac97e76e0604d49bd2e53e7590a190cb3caa0dee434a0b7789b352532b",
+            "kane": "770981fd1f6cd0e755e99539e0489b477d98e3564841523a01eff49f08e64516"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.743552,
+            "averageBestBackHits": 0.336724,
+            "averageBestTotalHits": 1.080276
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.724301,
+            "averageBestBackHits": 0.344715,
+            "averageBestTotalHits": 1.069016
+          },
+          "duelWins": {
+            "joy": 1100,
+            "kane": 1094,
+            "tie": 559
+          },
+          "firstPredictionFingerprint": "76ac1a8ded95edf81b54d0da774dc73e6b2e259ce507f0fa236920cf0442d562",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 85,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "0a8a501a7b9d0c2a63992dafab5fcd9c98456f660d6c48f42ab5af006ad9b9f5",
+            "kane": "f5fc36a6be074bf8dc3f53942ccf3db9e6758e0f23af49621a1e0f6ef0d3965a"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.734108,
+            "averageBestBackHits": 0.334544,
+            "averageBestTotalHits": 1.068652
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.716673,
+            "averageBestBackHits": 0.346531,
+            "averageBestTotalHits": 1.063204
+          },
+          "duelWins": {
+            "joy": 1111,
+            "kane": 1045,
+            "tie": 597
+          },
+          "firstPredictionFingerprint": "7f36e131fba80f5d6d92648f75c77725496db616a826d210d770019ac612bd03",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 86,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "5afbd53a105992df5f36d323a89b333418a242ef5397f04ac4bcacfae2894ff8",
+            "kane": "8ffc465f89aa77233c2bcc5e0183ae693e2122c1de3afd09505ddcd2f3bd540d"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.722121,
+            "averageBestBackHits": 0.332728,
+            "averageBestTotalHits": 1.054849
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.708318,
+            "averageBestBackHits": 0.328369,
+            "averageBestTotalHits": 1.036687
+          },
+          "duelWins": {
+            "joy": 1096,
+            "kane": 1055,
+            "tie": 602
+          },
+          "firstPredictionFingerprint": "ccc8b6ee81f61f028e7f70655bfd52196a782ae9c83f8a765749baf878847d52",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 87,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "e38874a31b3ec9624e1ebd03b3e9a710bab1a92e096ce13813e2eb1ad6ac2163",
+            "kane": "3912ccb37c4267e952d9829f63deb8ff60abc379006cc3cb10972567144b3434"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.708318,
+            "averageBestBackHits": 0.333091,
+            "averageBestTotalHits": 1.041409
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.731929,
+            "averageBestBackHits": 0.318562,
+            "averageBestTotalHits": 1.05049
+          },
+          "duelWins": {
+            "joy": 1053,
+            "kane": 1122,
+            "tie": 578
+          },
+          "firstPredictionFingerprint": "fc8cd3ebe8326db94030a43d0c8e711c9be8cd1d3f2e1d592b736b9fc78e0445",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 88,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "c435480c5c9d25bcd966fa47413100a3f9547d68f29ca2f1ba7562fd6436745e",
+            "kane": "ad03281059089c045ccbe62ea35bb1d1fa0201e617a227766897431055b59255"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.713767,
+            "averageBestBackHits": 0.343625,
+            "averageBestTotalHits": 1.057392
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.720305,
+            "averageBestBackHits": 0.342899,
+            "averageBestTotalHits": 1.063204
+          },
+          "duelWins": {
+            "joy": 1060,
+            "kane": 1092,
+            "tie": 601
+          },
+          "firstPredictionFingerprint": "a9369aeb9da819042d38a832337f124231df36449df2847ca94d9b961800ed4f",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 89,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "76dd456f89799ff03c559bdea536cc323fd1a8bece8f6675f1a917725ed7cde4",
+            "kane": "214c9656f0d2f729267d8567d90852d6c551750b9bd46c495191945b1f4b6087"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.709771,
+            "averageBestBackHits": 0.331275,
+            "averageBestTotalHits": 1.041046
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.729386,
+            "averageBestBackHits": 0.330185,
+            "averageBestTotalHits": 1.059571
+          },
+          "duelWins": {
+            "joy": 1049,
+            "kane": 1081,
+            "tie": 623
+          },
+          "firstPredictionFingerprint": "feb858bbf7ae8efdadb4b212d141f93393bd4ee30e2e9994910663aeaa985554",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 90,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "52d2d29912844e1b3c431b9c899fe5c58b3e55049dd9d1556d3e5b991b3f98a8",
+            "kane": "a7b9875c3b72ac5c9a6f50fdd3ac02452baa5ad068ed4d9df9fb12a4f6c478fc"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.719579,
+            "averageBestBackHits": 0.330912,
+            "averageBestTotalHits": 1.05049
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.742463,
+            "averageBestBackHits": 0.3498,
+            "averageBestTotalHits": 1.092263
+          },
+          "duelWins": {
+            "joy": 1049,
+            "kane": 1108,
+            "tie": 596
+          },
+          "firstPredictionFingerprint": "12fb818dea1cbc77f0c340c8a3805245b10a91ca0f526a191b0a5f3981ef201b",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 91,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "d23a08b8ebcc329e83031006a47a66e6ceebda10501d4d88d0e943d4dcd424eb",
+            "kane": "976d5f80910e7db8139f6af7c671e948bbd00a274965e3faeab4d8f298940784"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.720305,
+            "averageBestBackHits": 0.334544,
+            "averageBestTotalHits": 1.054849
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.71304,
+            "averageBestBackHits": 0.317109,
+            "averageBestTotalHits": 1.030149
+          },
+          "duelWins": {
+            "joy": 1101,
+            "kane": 1049,
+            "tie": 603
+          },
+          "firstPredictionFingerprint": "c0423b3b2ad68fb539cbcbb2e9718f7cfa269f63b10ffaae63716174da40ced9",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 92,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "196b8db6d3d57114b637097ce456b48edc279eaa20c1da1deea7bd6820e11591",
+            "kane": "8cae4bd396a1aa3655a7dbce244a975ddf8a9af9709f4c1858e91de7cff96f7b"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.708318,
+            "averageBestBackHits": 0.339993,
+            "averageBestTotalHits": 1.048311
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.724301,
+            "averageBestBackHits": 0.345441,
+            "averageBestTotalHits": 1.069742
+          },
+          "duelWins": {
+            "joy": 1069,
+            "kane": 1102,
+            "tie": 582
+          },
+          "firstPredictionFingerprint": "d2b0f8ef868972ab34a5b0c68c775f8a8eae62c99522962e38dab2f72df73771",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 93,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "c3b27ac24c18d974246eecfc476c2df839dd882f1fecbb1a5075af7ca8cec0ef",
+            "kane": "d8ebcb487baa030d9d336475a7ca24aedbd53e2ff67241d00aef4121a8634328"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.731929,
+            "averageBestBackHits": 0.336724,
+            "averageBestTotalHits": 1.068652
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.6996,
+            "averageBestBackHits": 0.33745,
+            "averageBestTotalHits": 1.03705
+          },
+          "duelWins": {
+            "joy": 1106,
+            "kane": 1074,
+            "tie": 573
+          },
+          "firstPredictionFingerprint": "43ccb5e9c3e31aa606887072573b3d04340ac14747975c6de0fd6a833a84cb92",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 94,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "19baf8eb88fd2372f1032be43658ef8ac7c45a4fba590f269c931eaae4e47d36",
+            "kane": "9158fbfe8a796e0c6dde92be73ed194e7d063d58e664d7550f77833f1f3eb875"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.746095,
+            "averageBestBackHits": 0.330548,
+            "averageBestTotalHits": 1.076644
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.734471,
+            "averageBestBackHits": 0.343625,
+            "averageBestTotalHits": 1.078097
+          },
+          "duelWins": {
+            "joy": 1108,
+            "kane": 1057,
+            "tie": 588
+          },
+          "firstPredictionFingerprint": "bf5ea4ad2b2688f8a1a7664085b527ddee185bb1be7abc31483245b7c08865eb",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 95,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "742329d6c6dbfdead32aab3856c641c6827c7e3cf38721b9db5f3b7305151b87",
+            "kane": "b1303c58ce7263553959f6d49802c7c13cc8640b27c2c042af325d66d5f71782"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.748638,
+            "averageBestBackHits": 0.336724,
+            "averageBestTotalHits": 1.085361
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.7421,
+            "averageBestBackHits": 0.339993,
+            "averageBestTotalHits": 1.082092
+          },
+          "duelWins": {
+            "joy": 1109,
+            "kane": 1088,
+            "tie": 556
+          },
+          "firstPredictionFingerprint": "2c053a845a4142ae1fd4755ece68268d0880e6d717281da8ecda1e0475384097",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 96,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "1ab070c90c0ca8293f123c804ca1e919042366a1607bcfd726f2789992f8aa6c",
+            "kane": "5dcbbe04b27758db3ebc72d60ad0b09ac4f0d6f5fb00c93c2775b561a628e684"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.72648,
+            "averageBestBackHits": 0.330548,
+            "averageBestTotalHits": 1.057029
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.701053,
+            "averageBestBackHits": 0.327279,
+            "averageBestTotalHits": 1.028333
+          },
+          "duelWins": {
+            "joy": 1111,
+            "kane": 1047,
+            "tie": 595
+          },
+          "firstPredictionFingerprint": "0b96a83dd86fb5a4e5344fa548db906798c5642a9649cc985fb9872038e11b68",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 97,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "d480da0b81587855153be39f4ca4e49b447c9e7411e157bd861b1f31e1b4e544",
+            "kane": "efd3a28b735fb1a308b87c6577255d7747482778244e3dd16f58d7ce92bf4970"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.727207,
+            "averageBestBackHits": 0.337087,
+            "averageBestTotalHits": 1.064293
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.708318,
+            "averageBestBackHits": 0.333091,
+            "averageBestTotalHits": 1.041409
+          },
+          "duelWins": {
+            "joy": 1115,
+            "kane": 1029,
+            "tie": 609
+          },
+          "firstPredictionFingerprint": "0023194e7eb9ad9cef2e675de55c7a12d4b683bb77cbcf4ca7f6c2b8bc4d4355",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 98,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "2d29aa3e0e671be0dda1755b43b2725b2cea0dee6a35196ea0d3529e8b807fb3",
+            "kane": "c98e15a76dc145a16937b3e3b1de062da97e46f8f02ed2cad8cf3013c2676118"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.71522,
+            "averageBestBackHits": 0.330912,
+            "averageBestTotalHits": 1.046131
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.729023,
+            "averageBestBackHits": 0.319288,
+            "averageBestTotalHits": 1.048311
+          },
+          "duelWins": {
+            "joy": 1078,
+            "kane": 1077,
+            "tie": 598
+          },
+          "firstPredictionFingerprint": "eb1e3d40c48bbdee5fe3d80694262beff1a412d0c7b0817ce7fe169a96ef6286",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 99,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "fb88490143515f0f64e94f821a8b18f8c3efda60dc18286b4ebdb1a2790be43b",
+            "kane": "3efaaf1072d2ae1007bdf2d43532031e2d7a4614b914983c60309474119ea40c"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.704323,
+            "averageBestBackHits": 0.337087,
+            "averageBestTotalHits": 1.041409
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.710134,
+            "averageBestBackHits": 0.32619,
+            "averageBestTotalHits": 1.036324
+          },
+          "duelWins": {
+            "joy": 1071,
+            "kane": 1086,
+            "tie": 596
+          },
+          "firstPredictionFingerprint": "02d9675b4c7a187132b601be493f0a704b80225415b18d33e86b0c5f693770a4",
+          "fullReplayAuditRowsValidated": 2753
+        },
+        {
+          "simulationId": 100,
+          "drawsEvaluated": 2753,
+          "trainedDrawCount": 2953,
+          "finalModelHashes": {
+            "joy": "7dbd2fe5e14c78c2b508bee40c7f2b6cc7a4172ec6cbe74d0380d8cc41bc04cc",
+            "kane": "f2064ec53f1c68ae8d70a4f28971e87aeda39c960c88d75180c0adaadc334de5"
+          },
+          "joy": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.726117,
+            "averageBestBackHits": 0.349074,
+            "averageBestTotalHits": 1.075191
+          },
+          "kane": {
+            "draws": 2753,
+            "averageBestFrontHits": 0.723938,
+            "averageBestBackHits": 0.338177,
+            "averageBestTotalHits": 1.062114
+          },
+          "duelWins": {
+            "joy": 1103,
+            "kane": 1086,
+            "tie": 564
+          },
+          "firstPredictionFingerprint": "1fd04b8721cdb09bdc6b7c1a5378399e3059a7e0113be2d6aba46967cd8f7505",
+          "fullReplayAuditRowsValidated": 2753
+        }
+      ],
+      "guardrails": {
+        "oneOfficialTicketPerAgentPerDraw": true,
+        "allPredictionResultAuditRowsValidated": true,
+        "livePredictionLockReadOrWrite": false,
+        "dailyOptimizerRan": false,
+        "walkForwardArchiveReplay": true,
+        "trainingOnlyInsideCycles": true,
+        "modelInitialization": "fresh independent state at the start of each cycle",
+        "learningObjective": "unordered_ticket_negative_log_likelihood",
+        "warmupLearning": "First 200 draws train the model but are excluded from reported hit scores.",
+        "detailedTracePolicy": "Cycles 1 and 100 retained; every cycle audited; all 100 final model checkpoints retained."
+      }
+    },
     {
       "batchId": "45883385420.1",
       "runId": "45883385420",
