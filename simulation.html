@@ -78,6 +78,20 @@
         <article class="panel deployment-guard"><p class="eyebrow">AUTOMATIC · REQUIRED CHECKS</p><h2 id="gateStatus">Checking publication gate…</h2><p id="gateDetail">Waiting for the published gate record.</p><ol class="promotion-steps"><li><b>Compare</b><span>Score the exact previously sealed tickets against the verified actual draw.</span></li><li><b>Train</b><span>Complete all 100 chronological cycles using an archive that includes that result.</span></li><li><b>Verify</b><span>Check the archive, engine version, package integrity and fixed final-cycle checkpoint.</span></li><li><b>Seal</b><span>Generate one next-draw ticket from Joy and one from Kane, then lock both.</span></li></ol><div class="approval-status">Last genuinely scored live issue: <strong id="lastScoredIssue">Checking…</strong></div><p class="caveat">Missing results, an incomplete or stale batch, or a failed check leave the next prediction pending. A newer batch never changes an unresolved prediction.</p><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/actions/workflows/sync-draws.yml" target="_blank" rel="noopener">Inspect result and publication workflow ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/blob/main/data/joy-kane-live-lock.json" target="_blank" rel="noopener">Inspect current lock ↗</a></div></article>
       </section>
       <section class="ops-panel active" id="ops-evaluation" role="tabpanel" aria-labelledby="tab-evaluation" tabindex="0">
+      <article class="panel" aria-labelledby="liveEvaluationHeading">
+        <div class="panel-heading"><div><p class="eyebrow">PROSPECTIVE EVIDENCE · LIVE ONLY</p><h2 id="liveEvaluationHeading">Quantum Model Evaluation Center</h2></div><span class="ops-chip" id="liveEvalStatus" role="status">CHECKING</span></div>
+        <p id="liveEvalMeta" class="caveat" role="status">Checking the verified live ledger and model provenance…</p>
+        <div id="liveEvalOverview" class="ops-agent-state"></div>
+        <div class="ops-links"><label for="liveEvalCohort">Model generation</label><select id="liveEvalCohort" aria-label="Select evaluated model generation" disabled></select></div>
+        <div id="liveEvalCohortDetail" class="caveat"></div>
+        <div id="liveEvalMetrics" class="ops-agent-state ops-two-col"></div>
+        <p class="caveat">Chance bands are exact 95% reference ranges under independent fair draws, not confidence intervals for the model mean. Tail probabilities are descriptive fixed-sample comparisons; repeated checks do not establish significance. Negative log likelihood uses sealed probabilities for the actual unordered sets; lower is better. Parameter drift compares sealed snapshots, not within-cycle learning.</p>
+        <h3>Actual draw comparison ledger</h3>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Actual live draw comparisons"><table><thead><tr><th>Issue / date</th><th>Actual numbers</th><th>Joy ticket / hits</th><th>Kane ticket / hits</th><th>Joy / Kane NLL</th><th>Sealed (Beijing)</th><th>Batch</th></tr></thead><tbody id="liveEvalRows"><tr><td colspan="7" class="empty-cell">Waiting for verified live evidence.</td></tr></tbody></table></div>
+        <p id="liveEvalMissing" class="caveat"></p>
+        <div class="ops-links"><a href="./data/joy-kane-live-evaluation.json" target="_blank" rel="noopener">Read evaluation JSON ↗</a><a href="https://github.com/kanewang0929-ops/feel-the-chee/blob/main/data/joy-kane-live-ledger.jsonl" target="_blank" rel="noopener">Inspect authoritative ledger ↗</a><a href="#simulation-cycles">Browse individual simulation cycles ↓</a></div>
+      </article>
+
     <section class="section-heading">
         <div><p class="eyebrow">01 / BATCH TELEMETRY</p><h2>Latest batch</h2></div>
         <div class="updated-label" id="updatedAt">Connecting to simulation feed…</div>
@@ -109,6 +123,15 @@
         <div class="table-scroll" tabindex="0" role="region" aria-label="Recent simulation batches"><table><caption class="sr-only">Recent batch times in Beijing, results and workflow logs</caption><thead><tr><th scope="col">Batch</th><th scope="col">Model engine</th><th scope="col">Time (Beijing)</th><th scope="col">Status</th><th scope="col">Runs</th><th scope="col">Joy avg.</th><th scope="col">Kane avg.</th><th scope="col">Runtime</th><th scope="col">Details</th></tr></thead><tbody id="batchRows"><tr><td colspan="9" class="empty-cell">Loading published batches…</td></tr></tbody></table></div>
         <p class="table-foot" id="historyMeta">The dashboard retains the 30 most recent batches.</p>
       </section>
+
+      <article class="panel" id="simulation-cycles" style="margin-top:16px;scroll-margin-top:16px">
+        <div class="panel-heading"><div><p class="eyebrow">HISTORICAL REPLAY · INDIVIDUAL RUNS</p><h2>Simulation history: all 100 cycles</h2></div><span class="ops-chip" id="cycleHistoryCount" role="status">CHECKING</span></div>
+        <div class="ops-links"><label for="cycleBatchSelect">Select completed batch</label><select id="cycleBatchSelect" aria-label="Select simulation batch" disabled></select></div>
+        <p class="caveat" id="cycleHistoryMeta">Loading individual cycle records from the published batch feed…</p>
+        <div class="table-scroll" style="max-height:440px;overflow:auto" tabindex="0" role="region" aria-label="Individual simulation cycle results"><table><thead><tr><th>Cycle</th><th>Joy front</th><th>Joy back</th><th>Joy total</th><th>Kane front</th><th>Kane back</th><th>Kane total</th><th>Draws evaluated</th></tr></thead><tbody id="cycleHistoryRows"><tr><td colspan="8" class="empty-cell">Waiting for completed batches.</td></tr></tbody></table></div>
+        <p class="caveat">Each row is one complete historical replay. Same draw archive, distinct seeds. The fixed final quantum cycle is the checkpoint used for eligible live packages, not the highest-scoring cycle.</p>
+        <div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/blob/simulation-data/data/simulation-dashboard-history.json" target="_blank" rel="noopener">Inspect full published simulation history ↗</a></div>
+      </article>
       <article class="panel holdout-panel"><p class="eyebrow">LEGACY EVALUATION ARCHIVE</p><h2>Earlier model holdout report</h2><p id="holdoutMeta">Checking report…</p><div id="holdoutMetrics" class="ops-agent-state"></div><p class="caveat">This archived report evaluates earlier adaptive models. It does not validate Joy’s Born machine or Kane’s quantum walk.</p><div class="ops-links"><a href="https://github.com/kanewang0929-ops/feel-the-chee/blob/simulation-data/data/chronological-holdout-report.json" target="_blank" rel="noopener">Inspect the published report ↗</a></div></article>
       <section class="method-grid">
         <article class="method-card">
@@ -137,7 +160,7 @@
     <footer class="footer"><span>FEEL THE CHEE · JOY & KANE</span><span id="feedStatus">Dashboard feed: checking…</span></footer>
   </div>
   <noscript><p class="noscript-note">JavaScript is needed to load the live dashboards. Use the workflow and report links above to inspect the published results.</p></noscript>
-  <script src="./assets/simulation-dashboard.js?v=20261126-quantum-v2"></script>
-  <script src="./assets/model-operations.js?v=20261126-quantum-v2"></script>
+  <script src="./assets/simulation-dashboard.js?v=20261127-evaluation-v1"></script>
+  <script src="./assets/model-operations.js?v=20261127-evaluation-v1"></script>
 </body>
 </html>

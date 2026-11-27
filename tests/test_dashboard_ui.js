@@ -62,7 +62,7 @@ async function page(data, scripts = ["simulation-dashboard.js", "model-operation
     window:{addEventListener(name,handler){listeners[name]=handler;}},console,Intl,Date,Event,AbortController,setTimeout,clearTimeout,
     fetch:async url=>{
       requests.push(url);
-      const key=url.includes("simulation-dashboard-history")?"feed":url.includes("model-state")?"state":url.includes("joy-kane-dashboard")?"dashboard":"report";
+      const key=url.includes("simulation-dashboard-history")?"feed":url.includes("model-state")?"state":url.includes("joy-kane-dashboard")?"dashboard":url.includes("joy-kane-live-evaluation")?"evaluation":"report";
       const value=data[key];
       if(value instanceof Error)throw value;
       if(typeof value==="number")return {ok:false,status:value};
@@ -217,4 +217,47 @@ test("deep-linked tabs, arrow keys and refresh preserve selected section",async(
   nodes.refreshData.listeners.click();
   assert.equal(location.reloaded,true);
   assert.equal(location.hash,"#deployment");
+});
+
+
+test("prospective evaluation does not turn a pending legacy ticket into a quantum score",async()=>{
+  const data=fixtures();
+  data.dashboard.generatedAt="2026-11-26T19:39:28Z";
+  data.dashboard.dataCoverage.archiveSha256="archive";
+  data.dashboard.summary={scope:"live_predictions_only",drawsEvaluated:0,missingPredictions:0};
+  data.dashboard.livePredictionLock.predictionId="pending";
+  const metric={drawCount:0,meanTotalHits:null,meanFrontHits:null,meanBackHits:null,deltaVsRandom:null,
+    nllDrawCount:0,meanNegativeLogLikelihood:null,rolling:{"10":null,"30":null,"100":null},parameterComparisons:0};
+  const cohort=(id,current,version)=>({id,isCurrent:current,identity:{engineDigest:current?"abcdef012345":null,versions:{joy:version,kane:version}},drawCount:0,rows:[],agents:{joy:metric,kane:metric}});
+  data.evaluation={schemaVersion:1,status:"available",scope:"sealed_live_predictions_only",generatedAt:data.dashboard.generatedAt,
+    archive:{sha256:"archive",lastDate:"2026-11-25"},scoredDrawCount:0,missingDrawCount:0,missingPredictions:[],
+    pending:{predictionId:"pending",issue:"26136",date:"2026-11-28",cohortId:"legacy"},currentCohortId:"current",
+    cohorts:[cohort("current",true,"v2.0-quantum-chronological"),cohort("legacy",false,"legacy")],
+    baseline:{meanFrontHits:5/7,meanBackHits:1/3,meanTotalHits:22/21,negativeLogLikelihood:17}};
+  const {nodes}=await page(data);
+  assert.equal(nodes.liveEvalStatus.textContent,"AWAITING QUANTUM RESULTS");
+  assert.match(nodes.liveEvalOverview.innerHTML,/26136.*earlier model/);
+  assert.match(nodes.liveEvalRows.innerHTML,/No genuinely scored/);
+  assert.match(nodes.liveEvalMetrics.innerHTML,/Mean total hits.*—/);
+  nodes.liveEvalCohort.value="legacy";nodes.liveEvalCohort.listeners.change();
+  assert.match(nodes.liveEvalCohortDetail.textContent,/legacy/);
+  data.evaluation.generatedAt="different";
+  const stale=await page(data);
+  assert.equal(stale.nodes.liveEvalStatus.textContent,"UNAVAILABLE");
+});
+
+test("all 100 published cycle rows are selectable and fixed checkpoint is labeled",async()=>{
+  const data=fixtures();
+  const rows=Array.from({length:100},(_,i)=>({simulationId:i+1,drawsEvaluated:2753,
+    joy:{averageBestFrontHits:.7,averageBestBackHits:.3,averageBestTotalHits:1},
+    kane:{averageBestFrontHits:.8,averageBestBackHits:.3,averageBestTotalHits:1.1}}));
+  data.feed.batches[1]={...data.feed.batches[1],simulations:rows,selectedCycle:100};
+  data.feed.batches[0]={...data.feed.batches[0],engineVersion:"joy-kane-sim-v1",simulations:rows};
+  const {nodes}=await page(data);
+  assert.equal(nodes.cycleHistoryCount.textContent,"100 / 100 recorded");
+  assert.equal((nodes.cycleHistoryRows.innerHTML.match(/<tr>/g)||[]).length,100);
+  assert.match(nodes.cycleHistoryRows.innerHTML,/#100 · checkpoint/);
+  nodes.cycleBatchSelect.value="1";nodes.cycleBatchSelect.listeners.change();
+  assert.match(nodes.cycleHistoryMeta.textContent,/Legacy adaptive/);
+  assert.doesNotMatch(nodes.cycleHistoryRows.innerHTML,/checkpoint/);
 });
