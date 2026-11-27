@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "scope": "sealed_live_predictions_only",
+  "status": "available",
+  "generatedAt": "2026-11-27T08:59:20.944392+00:00",
+  "archive": {
+    "sha256": "c64c318f0150193626019b5cd2be99df6d0e387d061e2f278f41913b1a4db4bc",
+    "validDrawCount": 2953,
+    "lastIssue": "26135",
+    "lastDate": "2026-11-25"
+  },
+  "source": {
+    "ledgerEventCount": 1,
+    "lastEventHash": "564d09531527e280964026207bc9d933c7e9a2d86c3935e963af7a7dbfb954f8"
+  },
+  "baseline": {
+    "meanFrontHits": 0.7142857142857143,
+    "meanBackHits": 0.3333333333333333,
+    "meanTotalHits": 1.0476190476190477,
+    "negativeLogLikelihood": 16.880102254101306
+  },
+  "scoredDrawCount": 0,
+  "missingDrawCount": 0,
+  "missingPredictions": [],
+  "pending": {
+    "issue": "26136",
+    "date": "2026-11-28",
+    "predictionId": "36acf3355c920e913f1ab28c",
+    "cohortId": "5131d59d91c14c53c226b4861e5e331712097e8ea37150ac3085b71e342b4d31",
+    "sealedAt": "2026-11-25T23:04:36.270846+00:00"
+  },
+  "currentCohortId": "2bbc7d57731a96197a86cd0aa1211e964c328fc11b955298426c701b806f3c17",
+  "cohorts": [
+    {
+      "id": "2bbc7d57731a96197a86cd0aa1211e964c328fc11b955298426c701b806f3c17",
+      "identity": {
+        "engineDigest": "7f5b4624cfeeceba53de16a9a02f64b924807e528007faf680c66346e02f71a5",
+        "versions": {
+          "joy": "v2.0-quantum-chronological",
+          "kane": "v2.0-quantum-chronological"
+        }
+      },
+      "isCurrent": true,
+      "rows": [],
+      "wins": {
+        "joy": 0,
+        "kane": 0,
+        "tie": 0
+      },
+      "drawCount": 0,
+      "agents": {
+        "joy": {
+          "drawCount": 0,
+          "totalHits": 0,
+          "meanFrontHits": null,
+          "meanBackHits": null,
+          "meanTotalHits": null,
+          "deltaVsRandom": null,
+          "chanceReference": null,
+          "nllDrawCount": 0,
+          "meanNegativeLogLikelihood": null,
+          "lastParameterShiftRmsRadians": null,
+          "parameterComparisons": 0,
+          "rolling": {
+            "10": null,
+            "30": null,
+            "100": null
+          }
+        },
+        "kane": {
+          "drawCount": 0,
+          "totalHits": 0,
+          "meanFrontHits": null,
+          "meanBackHits": null,
+          "meanTotalHits": null,
+          "deltaVsRandom": null,
+          "chanceReference": null,
+          "nllDrawCount": 0,
+          "meanNegativeLogLikelihood": null,
+          "lastParameterShiftRmsRadians": null,
+          "parameterComparisons": 0,
+          "rolling": {
+            "10": null,
+            "30": null,
+            "100": null
+          }
+        }
+      }
+    },
+    {
+      "id": "5131d59d91c14c53c226b4861e5e331712097e8ea37150ac3085b71e342b4d31",
+      "identity": {
+        "engineDigest": null,
+        "versions": {
+          "joy": "joy-adaptive-hit-model-v1",
+          "kane": "kane-adaptive-hit-model-v1"
+        }
+      },
+      "isCurrent": false,
+      "rows": [],
+      "wins": {
+        "joy": 0,
+        "kane": 0,
+        "tie": 0
+      },
+      "drawCount": 0,
+      "agents": {
+        "joy": {
+          "drawCount": 0,
+          "totalHits": 0,
+          "meanFrontHits": null,
+          "meanBackHits": null,
+          "meanTotalHits": null,
+          "deltaVsRandom": null,
+          "chanceReference": null,
+          "nllDrawCount": 0,
+          "meanNegativeLogLikelihood": null,
+          "lastParameterShiftRmsRadians": null,
+          "parameterComparisons": 0,
+          "rolling": {
+            "10": null,
+            "30": null,
+            "100": null
+          }
+        },
+        "kane": {
+          "drawCount": 0,
+          "totalHits": 0,
+          "meanFrontHits": null,
+          "meanBackHits": null,
+          "meanTotalHits": null,
+          "deltaVsRandom": null,
+          "chanceReference": null,
+          "nllDrawCount": 0,
+          "meanNegativeLogLikelihood": null,
+          "lastParameterShiftRmsRadians": null,
+          "parameterComparisons": 0,
+          "rolling": {
+            "10": null,
+            "30": null,
+            "100": null
+          }
+        }
+      }
+    }
+  ],
+  "interpretation": "Exact fixed-sample fair-draw reference, descriptive only. Repeated looks and historical replays are not independent confirmation."
+}
