@@ -102,11 +102,36 @@
     }).join("");
     $("historyMeta").textContent = "Showing " + rows.length + " recent batches with their engine labels. The chart includes Quantum v2 only; legacy scores do not evaluate the new models.";
   }
+
+  function renderCycleHistory(batches) {
+    var available=batches.filter(function(b){return b.status==="completed"&&Array.isArray(b.simulations)&&b.simulations.length>0;});
+    var select=$("cycleBatchSelect");
+    function display(batch){
+      var rows=batch.simulations.slice().sort(function(a,b){return Number(a.simulationId)-Number(b.simulationId);});
+      $("cycleHistoryCount").textContent=rows.length+" / "+batch.simulationCount+" recorded";
+      $("cycleHistoryMeta").textContent=engineLabel(batch)+" · "+fmtDate(batchDate(batch))+" · "+batch.batchId+" · archive through "+((batch.dateRange||{}).latest||"not recorded");
+      $("cycleHistoryRows").innerHTML=rows.map(function(s){
+        function scores(a){return ["averageBestFrontHits","averageBestBackHits","averageBestTotalHits"].map(function(key){return "<td>"+esc(fmt((s[a]||{})[key],4))+"</td>";}).join("");}
+        var chosen=currentEngine(batch)&&Number(s.simulationId)===Number(batch.selectedCycle);
+        return "<tr><td>"+esc("#"+String(s.simulationId).padStart(3,"0")+(chosen?" · checkpoint":""))+"</td>"+scores("joy")+scores("kane")+"<td>"+esc(fmtInt(s.drawsEvaluated))+"</td></tr>";
+      }).join("");
+    }
+    if(!available.length){
+      select.disabled=true;
+      $("cycleHistoryCount").textContent="NO RECORDS";
+      $("cycleHistoryMeta").textContent="No individual simulation records are available in the retained feed.";
+      $("cycleHistoryRows").innerHTML="<tr><td colspan='8' class='empty-cell'>No individual cycles published.</td></tr>";return;
+    }
+    select.innerHTML=available.map(function(b,i){return "<option value='"+i+"'>"+esc(fmtDate(batchDate(b))+" · "+engineLabel(b)+" · "+b.batchId)+"</option>";}).join("");
+    var initial=available.findIndex(currentEngine);if(initial<0)initial=0;
+    select.value=String(initial);select.disabled=false;display(available[initial]);
+    select.addEventListener("change",function(){var b=available[Number(select.value)];if(b)display(b);});
+  }
   function render(feed) {
     if (feed.schemaVersion !== 1 || !Array.isArray(feed.batches)) throw new Error("Unrecognized dashboard feed");
     var batches = Array.isArray(feed.batches) ? feed.batches.slice() : [];
     batches.sort(function (a, b) { return String(batchDate(b)).localeCompare(String(batchDate(a))); });
-    renderStatus(batches[0] || null, feed); renderAgents(batches[0] || null); renderChart(batches); renderTable(batches);
+    renderStatus(batches[0] || null, feed); renderAgents(batches[0] || null); renderChart(batches); renderTable(batches); renderCycleHistory(batches);
     var stale = Date.now() - Date.parse(feed.updatedAt || batchDate(batches[0] || {})) > 36 * 60 * 60 * 1000;
     $("feedStatus").textContent = (stale ? "Feed: last publication over 36 hours ago" : "Feed: connected") + " · " + batches.length + " batch record(s) · All times Beijing (UTC+8)";
     if (stale) $("scheduleStatus").textContent = "FEED UPDATE OVERDUE";
@@ -127,6 +152,9 @@
     $("historyChart").innerHTML = "<div class='empty-state'>Replay history could not be loaded. Refresh data to retry.</div>";
     $("agentScores").innerHTML = "<div class='empty-state'>Scores are unavailable while the feed cannot be reached.</div>";
     $("batchRows").innerHTML = "<tr><td colspan='9' class='empty-cell'>Batch history is unavailable. The workflow link above remains available.</td></tr>";
+    $("cycleHistoryCount").textContent="UNAVAILABLE";
+    $("cycleHistoryMeta").textContent="Individual cycle history could not be loaded. Refresh to retry.";
+    $("cycleHistoryRows").innerHTML="<tr><td colspan='8' class='empty-cell'>Simulation feed unavailable.</td></tr>";
     archiveStatus(null, "Unavailable");
   }).finally(function () { clearTimeout(timer); });
 }());

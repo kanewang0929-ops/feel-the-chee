@@ -28,6 +28,7 @@ class WorkflowPublicationTests(unittest.TestCase):
             "data/draws.json", "data/joy-kane-audit.json",
             "data/joy-kane-dashboard.json", "data/joy-kane-model-state.json",
             "data/joy-kane-live-lock.json", "data/joy-kane-live-ledger.jsonl",
+            "data/joy-kane-live-evaluation.json",
         ]
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

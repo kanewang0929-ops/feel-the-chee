@@ -10,6 +10,7 @@ on:
     paths:
       - "scripts/sync_draws.py"
       - "scripts/joy_kane_live.py"
+      - "scripts/evaluate_live_predictions.py"
       - "scripts/retire_legacy_simulation_run.py"
       - "scripts/quantum_protocol.py"
       - "scripts/quantum_models.py"
@@ -66,11 +67,13 @@ jobs:
           fi
       - name: Score sealed results and apply the next-prediction gate
         run: python scripts/joy_kane_live.py --batch-models /tmp/joy-kane-batch-models.json
+      - name: Build read-only live evaluation from the verified ledger
+        run: python scripts/evaluate_live_predictions.py
       - name: Commit draw database, forecasts, agent states, and audit ledgers
         run: |
           git config user.name "feel-the-chee-learning-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/draws.json data/joy-kane-dashboard.json data/joy-kane-model-state.json data/joy-kane-audit.json
+          git add data/draws.json data/joy-kane-dashboard.json data/joy-kane-model-state.json data/joy-kane-audit.json data/joy-kane-live-evaluation.json
           for output in data/joy-kane-live-lock.json data/joy-kane-live-ledger.jsonl; do
             if test -f "$output"; then git add "$output"; fi
           done

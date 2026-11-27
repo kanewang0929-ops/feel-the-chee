@@ -104,6 +104,72 @@
     archiveStatus("live",next.historyThroughDate,active?"Not recorded":"No prediction");
     archiveStatus("verified",(dashboard.dataCoverage||{}).latestDate,(dashboard.dataCoverage||{}).latestDate?"Published":"Not recorded");
   }
+
+  function evaluationUnavailable(message) {
+    $("liveEvalStatus").textContent="UNAVAILABLE";
+    $("liveEvalMeta").textContent=message+" Refresh data to retry.";
+    $("liveEvalOverview").textContent="";
+    $("liveEvalMetrics").textContent="";
+    $("liveEvalCohort").disabled=true;
+    $("liveEvalRows").innerHTML="<tr><td colspan='7' class='empty-cell'>No verified evaluation available.</td></tr>";
+  }
+  function cohortLabel(cohort) {
+    var identity=cohort.identity||{}, versions=identity.versions||{};
+    return (cohort.isCurrent?"Current · ":"")+(versions.joy===versions.kane?versions.joy:versions.joy+" / "+versions.kane)+(identity.engineDigest?" · "+identity.engineDigest.slice(0,8):" · legacy");
+  }
+  function evalNumber(value,digits) { return typeof value==="number"&&Number.isFinite(value)?number(value,digits):"—"; }
+  function evalTail(value) { return typeof value==="number"&&Number.isFinite(value)?(value<0.0001?value.toExponential(2):number(value,4)):"—"; }
+  function liveTicket(ticket) {
+    return ticket&&Array.isArray(ticket.front)&&Array.isArray(ticket.back)?ticket.front.join(" ")+" | "+ticket.back.join(" "):"—";
+  }
+  function renderLiveCohort(cohort, baseline) {
+    $("liveEvalCohortDetail").textContent=cohortLabel(cohort)+" · "+count(cohort.drawCount)+" scored live draw(s)"+(cohort.drawCount===0?" · Awaiting first actual result":"");
+    $("liveEvalMetrics").innerHTML=["joy","kane"].map(function(name){
+      var m=cohort.agents[name], ref=m.chanceReference||{}, band=ref.meanReference95;
+      var rolling=m.rolling||{};
+      return "<div class='panel'><h3>"+esc(name.toUpperCase())+"</h3>"+
+        row("Scored draws",count(m.drawCount))+row("Mean front hits",evalNumber(m.meanFrontHits,4)+" / "+evalNumber(baseline.meanFrontHits,4)+" chance")+
+        row("Mean back hits",evalNumber(m.meanBackHits,4)+" / "+evalNumber(baseline.meanBackHits,4)+" chance")+
+        row("Mean total hits",evalNumber(m.meanTotalHits,4))+row("Delta vs chance",evalNumber(m.deltaVsRandom,4))+
+        row("95% chance mean range",Array.isArray(band)?evalNumber(band[0],4)+" to "+evalNumber(band[1],4):"—")+
+        row("Tail P (at least observed)",evalTail(ref.oneSidedTailAtLeastObserved))+
+        row("Mean NLL",evalNumber(m.meanNegativeLogLikelihood,4)+" · "+count(m.nllDrawCount)+" draw(s)")+
+        row("Uniform-ticket NLL",evalNumber(baseline.negativeLogLikelihood,4))+
+        row("10 / 30 / 100-draw rolling means",["10","30","100"].map(function(w){return evalNumber((rolling[w]||{}).meanTotalHits,4);}).join(" / "))+
+        row("Last angular RMS change (rad)",evalNumber(m.lastParameterShiftRmsRadians,4))+
+        row("Comparable snapshot pairs",count(m.parameterComparisons))+"</div>";
+    }).join("");
+    $("liveEvalRows").innerHTML=cohort.rows.slice().reverse().map(function(r){
+      var j=r.agents.joy,k=r.agents.kane;
+      function scored(a){return esc(liveTicket(a.ticket))+" · "+esc(a.frontHits+"+"+a.backHits+"="+a.totalHits);}
+      return "<tr><td>"+esc(r.issue+" / "+r.date)+"</td><td>"+esc(liveTicket(r.actual))+"</td><td>"+scored(j)+"</td><td>"+scored(k)+"</td><td>"+esc(evalNumber(j.negativeLogLikelihood,4)+" / "+evalNumber(k.negativeLogLikelihood,4))+"</td><td>"+esc(date(r.sealedAt))+"</td><td>"+esc(r.batchId||"Legacy")+"</td></tr>";
+    }).join("")||"<tr><td colspan='7' class='empty-cell'>No genuinely scored predictions for this model generation yet.</td></tr>";
+  }
+  function loadProspective(dashboard) {
+    fetchJSON(ROOT+"joy-kane-live-evaluation.json").then(function(report){
+      if(!report||report.schemaVersion!==1||report.scope!=="sealed_live_predictions_only"||report.status!=="available")throw new Error("No validated prospective report");
+      if(report.generatedAt!==dashboard.generatedAt||(report.archive||{}).sha256!==(dashboard.dataCoverage||{}).archiveSha256||
+          report.scoredDrawCount!==(dashboard.summary||{}).drawsEvaluated||report.missingDrawCount!==(dashboard.summary||{}).missingPredictions||
+          (report.pending||{}).predictionId!==(dashboard.livePredictionLock||{}).predictionId)throw new Error("Evaluation and live publication do not match");
+      if(!Array.isArray(report.cohorts)||!report.baseline||!Array.isArray(report.missingPredictions))throw new Error("Invalid evaluation schema");
+      var current=report.cohorts.find(function(c){return c.id===report.currentCohortId&&c.isCurrent===true;});
+      if(!current||!report.cohorts.every(function(c){return Array.isArray(c.rows)&&c.agents&&c.agents.joy&&c.agents.kane&&c.drawCount===c.rows.length;}))throw new Error("Invalid cohort records");
+      if(report.cohorts.reduce(function(sum,c){return sum+c.drawCount;},0)!==report.scoredDrawCount)throw new Error("Inconsistent evaluation count");
+      $("liveEvalStatus").textContent=current.drawCount?"VERIFIED":"AWAITING QUANTUM RESULTS";
+      $("liveEvalMeta").textContent="Validated live ledger · archive through "+report.archive.lastDate+" · publication "+date(report.generatedAt)+". Historical simulation scores are separate.";
+      var pending=report.pending, pendingCohort=pending&&report.cohorts.find(function(c){return c.id===pending.cohortId;});
+      $("liveEvalOverview").innerHTML=row("Genuine live draws scored",count(report.scoredDrawCount))+
+        row("Current quantum generation scored",count(current.drawCount))+row("Draws without a prior prediction",count(report.missingDrawCount))+
+        row("Pending sealed prediction",pending?pending.issue+" · "+pending.date+(pendingCohort&&pendingCohort.isCurrent?" · current":" · earlier model"):"None")+
+        row("Random expected matches",evalNumber(report.baseline.meanTotalHits,6));
+      $("liveEvalMissing").textContent=report.missingPredictions.length?"No prior prediction: "+report.missingPredictions.slice(-10).map(function(r){return r.issue+" ("+r.date+")";}).join(", ")+". These draws are excluded from scoring.":"No missing predictions recorded in the live ledger.";
+      var select=$("liveEvalCohort");
+      select.innerHTML=report.cohorts.map(function(c){return "<option value='"+esc(c.id)+"'>"+esc(cohortLabel(c))+"</option>";}).join("");
+      select.disabled=false;select.value=current.id;
+      select.addEventListener("change",function(){var selected=report.cohorts.find(function(c){return c.id===select.value;});if(selected)renderLiveCohort(selected,report.baseline);});
+      renderLiveCohort(current,report.baseline);
+    }).catch(function(){evaluationUnavailable("Prospective evaluation is missing, unavailable or out of sync.");});
+  }
   function loadHoldout() {
     var url="https://raw.githubusercontent.com/kanewang0929-ops/feel-the-chee/simulation-data/data/chronological-holdout-report.json";
     fetchJSON(url).then(function(report){
@@ -145,7 +211,8 @@
     $("refreshData").addEventListener("click",function(){location.reload();});
   }
   initTabs();
-  Promise.all([fetchJSON(ROOT+"joy-kane-model-state.json"),fetchJSON(ROOT+"joy-kane-dashboard.json")]).then(function(rows){loadTraining(rows[0],rows[1]);}).catch(function(){
+  Promise.all([fetchJSON(ROOT+"joy-kane-model-state.json"),fetchJSON(ROOT+"joy-kane-dashboard.json")]).then(function(rows){loadTraining(rows[0],rows[1]);loadProspective(rows[1]);}).catch(function(){
+    evaluationUnavailable("Live publication is unavailable.");
     $("trainingUpdated").textContent="Model publication unavailable. Refresh data to retry.";
     $("joyTrainingCard").textContent="Unable to verify Joy model provenance.";
     $("kaneTrainingCard").textContent="Unable to verify Kane model provenance.";
